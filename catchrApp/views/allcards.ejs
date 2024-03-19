@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+  <%- include (`partials/header.ejs`) %>
+  <!-- Body -->
+  <body
+    class="border-4 border-green-600 box-border bg-cover bg-no-repeat h-screen"
+    style="background-image: url('/images/fireandwater.png')"
+  >
+    <!-- Main grid containing all cards -->
+    <div
+      class="justify-center items-center h-full grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 p-10 m-10 overflow-scroll"
+      id="gridDiv"
+    >
+
+      <% cardData.forEach((card) => {  %>
+
+        <script>
+          
+        </script>
+
+        <% if (card.card_category_id === 3) { %>
+
+         <script>
+          let cardname = "<%= card.card_name %>" ;
+          addStage1Card(cardname);
+          </script>
+        <% } %>
+
+      <% }) %>
+
+      <%- include(`partials/BasicCard.ejs`) %>
+    </div>
+  </body>
+
+  <%- include (`partials/footer.ejs`) %>
+</html>

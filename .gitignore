@@ -1,0 +1,9 @@
+# Ignore node_modules directory
+/catchrApp/node_modules
+/catchrApi/node_modules
+
+# Ignore logs and other generated files
+/logs/
+/temp/
+/dist/
+/coverage/
