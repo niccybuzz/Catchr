@@ -2,6 +2,7 @@ require('dotenv').config();
 const express = require("express");
 const app = express();
 const mysql = require('mysql2');
+const fs = require('fs');
 
 const PORT = process.env.PORT || 4000;
 app.set('view engine', 'ejs');
@@ -25,14 +26,26 @@ connection.getConnection((err)=>{
 
 app.get('/allcards', (req, res)=> { 
 
-    let cardsSql = `SELECT * FROM cards`;
+    
+    fs.readFile('./SQLqueries/allCards.sql', 'utf8', (err, data) => {
+        if (err) {
+            console.error('Error reading SQL file:', err);
+            return;
+        }
+     
+        // Use the SQL query string in your code
+        let sqlQuery = data;
 
-    connection.query(cardsSql, (err, data) => {
+        connection.query(sqlQuery, (err, data) => {
 
-        if (err) throw err;
-        res.json(data);
-        
-    })
+            if (err) throw err;
+            res.json(data);
+            
+        });
+
+    });
+
+
 
 });
 
