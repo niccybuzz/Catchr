@@ -6,6 +6,7 @@ const ejs = require('ejs');
 const app = express();
 const path = require('path');
 const axios = require('axios');
+const fs = require('fs');
 
 //serving static files
 app.use(express.static(path.join(__dirname,"/public/")));

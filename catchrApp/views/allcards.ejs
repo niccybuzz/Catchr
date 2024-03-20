@@ -3,32 +3,61 @@
   <%- include (`partials/header.ejs`) %>
   <!-- Body -->
   <body
-    class="border-4 border-green-600 box-border bg-cover bg-no-repeat h-screen"
-    style="background-image: url('/images/fireandwater.png')"
+    class="border-4 border-green-600 box-border bg-cover bg-no-repeat h-screen bg-black"
   >
     <!-- Main grid containing all cards -->
     <div
       class="justify-center items-center h-full grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 p-10 m-10 overflow-scroll"
       id="gridDiv"
-    >
+    >  
 
-      <% cardData.forEach((card) => {  %>
+    <!-- Iterating through each pokemon (row in data) and creates a card object each -->
+    <% cardData.forEach((card) => { %>
 
-        <script>
+         <script> 
+          // Using var here to allow me to re-declare each time it loops
+          var card = {
+            "category": "<%= card.category %>",
+            "categoryID": "<%= card.categoryID %>",
+            "name": "<%= card.name %>",
+            "image": "<%= card.image %>",
+            "height_weight": "<%= card.height_weight %>",
+            "cardType": "<%= card.cardType %>",
+            "ability1Name": "<%= card.ability1Name %>",
+            "ability1Descr": "<%= card.ability1Descr %>",
+            "ability1Dmg": "<%= card.ability1Dmg %>",
+            "ability1Type": "<%= card.ability1Type %>",
+            "ability2Name": "<%= card.ability2Name %>",
+            "ability2Descr": "<%= card.ability2Descr %>",
+            "ability2Dmg": "<%= card.ability2Dmg %>",
+            "ability2Type": "<%= card.ability2Type %>",
+            "weaknessType": "<%= card.weaknessType %>",
+            "resistanceType": "<%= card.resistanceType %>",
+            "retreatType": "<%= card.retreatType %>",
+            "descr": "<%= card.descr %>",
+            "illustrator": "<%= card.illustrator %>",
+            "fineprint": "<%= card.fineprint %>",
+            "rarity": "<%= card.rarity %>",
+            "cardNumber" : "<%= card.cardNumber %>",
+            "nameOfSet" : "<%= card.setname %>",
+            "backgroundImg": "<%= card.backgroundImg %>"
+          }
+
+          if (card.categoryID == 3) {
+            createBasicCard(card) ;
+          } else if (card.categoryID == 1) {
+            createTrainerCard(card) ;
+          }
+
           
         </script>
-
-        <% if (card.card_category_id === 3) { %>
-
-         <script>
-          let cardname = "<%= card.card_name %>" ;
-          addStage1Card(cardname);
-          </script>
-        <% } %>
-
+        
+        
+        
       <% }) %>
 
-      <%- include(`partials/BasicCard.ejs`) %>
+        <%- include('partials/TrainerCard.ejs'); %>
+
     </div>
   </body>
 
