@@ -3,63 +3,22 @@
   <%- include (`partials/header.ejs`) %>
   <!-- Body -->
   <body
-    class="border-4 border-green-600 box-border bg-cover bg-no-repeat h-screen bg-black"
+    class="border-4 border-green-600 box-border bg-cover bg-no-repeat h-full centered-bg bg-arena" 
   >
     <!-- Main grid containing all cards -->
     <div
       class="justify-center items-center h-full grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 p-10 m-10 overflow-scroll"
       id="gridDiv"
-    >  
-
-    <!-- Iterating through each pokemon (row in data) and creates a card object each -->
-    <% cardData.forEach((card) => { %>
-
-         <script> 
-          // Using var here to allow me to re-declare each time it loops
-          var card = {
-            "category": "<%= card.category %>",
-            "categoryID": "<%= card.categoryID %>",
-            "name": "<%= card.name %>",
-            "image": "<%= card.image %>",
-            "height_weight": "<%= card.height_weight %>",
-            "cardType": "<%= card.cardType %>",
-            "ability1Name": "<%= card.ability1Name %>",
-            "ability1Descr": "<%= card.ability1Descr %>",
-            "ability1Dmg": "<%= card.ability1Dmg %>",
-            "ability1Type": "<%= card.ability1Type %>",
-            "ability2Name": "<%= card.ability2Name %>",
-            "ability2Descr": "<%= card.ability2Descr %>",
-            "ability2Dmg": "<%= card.ability2Dmg %>",
-            "ability2Type": "<%= card.ability2Type %>",
-            "weaknessType": "<%= card.weaknessType %>",
-            "resistanceType": "<%= card.resistanceType %>",
-            "retreatType": "<%= card.retreatType %>",
-            "descr": "<%= card.descr %>",
-            "illustrator": "<%= card.illustrator %>",
-            "fineprint": "<%= card.fineprint %>",
-            "rarity": "<%= card.rarity %>",
-            "cardNumber" : "<%= card.cardNumber %>",
-            "nameOfSet" : "<%= card.setname %>",
-            "backgroundImg": "<%= card.backgroundImg %>"
-          }
-
-          if (card.categoryID == 3) {
-            createBasicCard(card) ;
-          } else if (card.categoryID == 1) {
-            createTrainerCard(card) ;
-          }
-
-          
-        </script>
-        
-        
-        
-      <% }) %>
-
-        <%- include('partials/TrainerCard.ejs'); %>
+    >
+      <!-- Iterating through each pokemon (row in data) and creates a card object each -->
+      <% cardData.forEach((card) => { %>
+        <a href="#" class="p-7 flex flex-col justify-center items-center hover:scale-105 transition-transform">
+          <img src="<%= card.image %>">
+          <h2 class="text-white font-eightbit"> <%= card.name %> </h2>
+        </a>
+       <% }) %> 
 
     </div>
   </body>
-
   <%- include (`partials/footer.ejs`) %>
 </html>

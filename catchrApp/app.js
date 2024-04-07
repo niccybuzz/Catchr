@@ -29,9 +29,7 @@ app.get("/allcards", (req, res) => {
     axios.get(endp).then((response) => {
         let cardData = response.data;
         res.render("allcards", {cardData});
-    })
-
-   
+    })   
 })
 
 //exporting app to the server

@@ -27,8 +27,7 @@
     rarity.rarity_description AS rarity,
     cards.card_number AS cardNumber,
     card_set.set_name AS setname,
-    card_set.no_of_cards AS numCards,
-    background_image.bg_image_url AS backgroundImg
+    card_set.no_of_cards AS numCards
     
     FROM cards 
     
@@ -72,7 +71,5 @@
     
     -- getting set
     LEFT JOIN card_set ON cards.set_id = card_set.set_id
-
-    LEFT JOIN background_image ON cards.background_image_id = background_image.image_id
 
     
