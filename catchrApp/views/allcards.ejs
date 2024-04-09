@@ -1,23 +1,28 @@
 <!DOCTYPE html>
 <html>
-  <%- include (`partials/header.ejs`) %>
+  <head>
+    <%- include (`partials/header.ejs`) %>
+    <title>Browse All Cards</title>
+  </head>
   <!-- Body -->
-  <body
-    class="border-4 border-green-600 box-border bg-cover bg-no-repeat h-full centered-bg bg-arena" 
-  >
+  <body class="box-border h-full bg-pokeballs">
+    <!-- Header Bar -->
+    <%- include (`partials/nav.ejs`) %>
     <!-- Main grid containing all cards -->
     <div
-      class="justify-center items-center h-full grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 p-10 m-10 overflow-scroll"
+      class="justify-center items-center h-full grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 p-10 overflow-scroll mx-32"
       id="gridDiv"
     >
       <!-- Iterating through each pokemon (row in data) and creates a card object each -->
       <% cardData.forEach((card) => { %>
-        <a href="#" class="p-7 flex flex-col justify-center items-center hover:scale-105 transition-transform">
-          <img src="<%= card.image %>">
-          <h2 class="text-white font-eightbit"> <%= card.name %> </h2>
-        </a>
-       <% }) %> 
-
+      <a
+        href="#"
+        class="p-4 flex flex-col justify-center items-center hover:scale-105 transition-transform h-96 w-64"
+      >
+        <img src="<%= card.image %>" />
+        <h2 class="text-white font-eightbit"><%= card.name %></h2>
+      </a>
+      <% }) %>
     </div>
   </body>
   <%- include (`partials/footer.ejs`) %>

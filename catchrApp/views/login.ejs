@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <%- include (`partials/header.ejs`) %>
+    <title>Login</title>
+
+  </head>
+  <body class="box-border bg-black md:bg-pokeballsblue h-fit font-mono">
+    <div>
+      <%- include (`partials/nav.ejs`) %>
+    </div>
+    
+
+    <!-- Full screen size flexbox -->
+    <div class="flex justify-center place-items-start flex-1 pb-10 overflow-y-auto">
+      <!-- Login Box -->
+      <div
+        class="flex flex-col justify-center items-center bg-black border-4 border-blue-600 p-2 md:p-8 m-10 rounded shadow-md h-fit w-10/12 lg:w-1/3 lg:1/3"
+      >
+        <!-- Header Line -->
+        <h2 class="text-2xl font-bold mb-4 text-white text-center">
+          Log In
+        </h2>
+
+        <img src="images/siteIcons/gyarados.png" class="w-1/2";
+
+        <!-- Main form -->
+        <form method="POST" action="/register" class="h-full flex flex-col justify-between w-5/6">
+          <div class="m-4">
+            <!-- Username box -->
+            <label
+              for="username"
+              class="block text-xl font-medium text-gray-500"
+              >Username/Email</label
+            >
+            <input
+              type="text"
+              name="username"
+              class="mt-1 block w-full h-1/2 rounded-md border-gray-300 shadow-sm"
+              minlength="3"
+              required
+            />
+          </div>
+
+
+          <!-- Password box -->
+          <div class="m-4">
+            <label
+              for="password"
+              class="block text-xl font-medium text-gray-500"
+              >Password</label
+            >
+            <input
+              type="password"
+              name="password"
+              class="mt-1 block w-full h-1/2 rounded-md border-gray-300 shadow-sm"
+              required
+            />
+          </div>
+
+          <!-- Submit button -->
+          <div class="h-1/6 m-4 flex justify-center">
+            <button
+              type="submit"
+              class="py-4 px-8 bg-blue-600 text-white rounded-3xl text-center text-lg hover:bg-white hover:text-black hover:transition-colors duration-300"
+            >
+              <a href="/login">Log In</a>
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <script src="../functions/validateForm.js"></script>
+  </body>
+  <%- include (`partials/footer.ejs`) %>
+</html>

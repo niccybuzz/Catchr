@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <%- include (`partials/header.ejs`) %>
+    <title>Register</title>
+
+  </head>
+  <body class="box-border bg-pokeballs h-screen font-mono">
+    <div>
+      <%- include (`partials/nav.ejs`) %>
+    </div>
+    
+
+    <!-- Full screen size flexbox -->
+    <div class="flex justify-center items-center h-full pb-10">
+      <!-- Registration Box -->
+      <div
+        class="bg-black border-4 border-red-900 p-8 rounded shadow-md h-fit w-10/12 md:w-1/3 lg:1/3"
+      >
+        <!-- Header Line -->
+        <h2 class="text-2xl font-bold mb-4 text-white text-center">
+          User Registration
+        </h2>
+
+        <!-- Main form -->
+        <form method="POST" action="/register" class="h-full flex flex-col justify-between">
+          <div class="m-4">
+            <!-- Username box -->
+            <label
+              for="username"
+              class="block text-xl font-medium text-gray-500"
+              >Username</label
+            >
+            <input
+              type="text"
+              name="username"
+              class="mt-1 block w-full h-1/2 rounded-md border-gray-300 shadow-sm"
+              minlength="3"
+              required
+            />
+          </div>
+
+          <!-- Email box -->
+          <div class="m-4">
+            <label for="email" class="block text-xl font-medium text-gray-500"
+              >Email</label
+            >
+            <input
+              type="email"
+              name="email"
+              class="mt-1 block w-full h-1/2 rounded-md border-gray-300 shadow-sm"
+              required
+            />
+          </div>
+
+          <!-- Password box -->
+          <div class="m-4">
+            <label
+              for="password"
+              class="block text-xl font-medium text-gray-500"
+              >Password</label
+            >
+            <input
+              type="password"
+              name="password"
+              class="mt-1 block w-full h-1/2 rounded-md border-gray-300 shadow-sm"
+              required
+            />
+            <% if (validpassword == false) { %>
+              <p class="text-white font-bold">Passwords do not match.</p>
+            <% } %>
+          </div>
+
+          <!-- Password confirmation box -->
+          <div class="m-4">
+            <label
+              for="password_confirmation"
+              class="block text-xl font-medium text-gray-500"
+              >Confirm Password</label
+            >
+            <input
+              type="password"
+              name="password_confirmation"
+              class="mt-1 block w-full h-1/2 rounded-md border-gray-300"
+              required
+            />
+          </div>
+
+          <!-- Submit button -->
+          <div class="h-1/6 m-4 flex justify-center">
+            <button
+              type="submit"
+              class="px-8 py-4 bg-red-500 text-white rounded-3xl text-center hover:bg-blue-600 hover:transition-colors duration-300"
+            >
+              Submit
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    
+  </body>
+  <%- include (`partials/footer.ejs`) %>
+</html>
