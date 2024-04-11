@@ -6,19 +6,18 @@ let validaccount = true;
 
 // get login page
 router.get("/", (req, res) => {
-
   const sessionObj = req.session;
-  console.log(sessionObj.authen);
-  if (sessionObj.authen){
-    res.redirect("allcards");
+  validaccount = true;
+  if (sessionObj.authen) {
+    res.redirect("/allcards");
   } else {
-    res.render("login", { accountvalid: validaccount, user:sessionObj});
+    console.log("couldnt get to allCards from login get route");
+    res.render("login", { validaccount: validaccount });
   }
-
 });
 
 //post new login request
-router.post("/", (req, res) => {
+router.post("/", async (req, res) => {
   const username = req.body.username;
   const password = req.body.password;
 
@@ -37,13 +36,9 @@ router.post("/", (req, res) => {
   };
 
   // Send request to axios
-  axios
+  await axios
     .post(endp, user, config)
     .then((response) => {
-
-      //console confirmation that we got a positive results
-      console.log(response.data);
-
       //loading the session into a variable
       const sessionObj = req.session;
 
@@ -51,20 +46,20 @@ router.post("/", (req, res) => {
       sessionObj.authen = response.data.user_id;
 
       // rendering home with the session id
-      if(sessionObj.authen){
+      if (sessionObj.authen) {
         sessionObj.username = response.data.username;
-
-        res.redirect("/allcards");
+        console.log(sessionObj.username);
+        res.redirect("/");
+      } else {
+        console.log("user not logged in");
+        validaccount = false;
+        res.redirect("/login");
       }
-      
-
     })
     .catch((err) => {
-      if (err) {
-        console.log("Username doesn't match");
-        validaccount = false;
-        res.render("login", { accountvalid: validaccount });
-      }
+      res
+        .status(401)
+        .send("Authentication failed. Please check your credentials.");
     });
 });
 

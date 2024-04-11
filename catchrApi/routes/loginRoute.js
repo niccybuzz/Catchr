@@ -8,13 +8,7 @@ router.post("/", async (req, res) => {
   let username = req.body.username;
   let password = req.body.password;
 
-  //get sql query for checking login details
-  fs.readFile("./SQLqueries/login.sql", "utf8", (err, data) => {
-    if (err) {
-      console.error("Error reading SQL file:", err);
-      return res.status(500).send("Internal Server Error");
-    }
-    let sqlQuery = data;
+    let sqlQuery = `SELECT * FROM user WHERE username = ? OR email_address = ?;`
 
     // Insert user into the database
     connection.query(sqlQuery, [username, username], async (err, results) => {
@@ -22,9 +16,11 @@ router.post("/", async (req, res) => {
             console.error('Error querying database:', err);
             return res.status(500).send('Internal Server Error');
           }
+          console.log(results[0]);
       
           if (results.length === 0) {
             // Username not found
+            console.log("user not found")
             return res.status(401).send('Invalid username or password');
           }
       
@@ -35,14 +31,16 @@ router.post("/", async (req, res) => {
       
           if (passwordMatch) {
             // Passwords match, authentication successful
+            
             res.json(results[0]);
             
           } else {
             // Passwords don't match
-            res.status(401).send('Invalid username or password');
+            console.log("password wrong")
+            res.status(401).send();
           }
     });
   });
-});
+
 
 module.exports = router;

@@ -31,7 +31,9 @@
             <label
               for="username"
               class="block text-xl font-medium text-gray-500"
-              >Username/Email</label
+              >Username/Email
+
+              </label
             >
             <input
               type="text"
@@ -63,11 +65,11 @@
               type="submit"
               class="py-4 px-8 bg-blue-600 text-white rounded-3xl text-center text-lg hover:bg-white hover:text-black hover:transition-colors duration-300"
             >
-              <a href="/login">Log In</a>
+              Log In
             </button>
           </div>
 
-          <% if (!accountvalid) { %>
+          <% if (!validaccount) { %>
            <p class="text-white">No account found. Please check your username/password and try again</p> 
           <% } %>
         </form>

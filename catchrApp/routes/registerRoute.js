@@ -49,7 +49,8 @@ router.post("/", (req, res) => {
   axios
     .post(endp, newUser, config)
     .then((response) => {
-      res.render("userCreated", { user: newUser.username });
+      req.session.enteredUsername = user;
+      res.render("userCreated", { user: user });
     })
     .catch((err) => {
       console.log(err.message);

@@ -11,7 +11,7 @@ document.addEventListener("DOMContentLoaded", function() {
   const title = document.getElementById("bigtitle");
   title.classList.add("opacity-100")
   setTimeout(()=> {
-    title.classList.add("mb-32", "scale-75"); 
+    title.classList.add("mb-24", "scale-75"); 
   }, 1000);
 });
 

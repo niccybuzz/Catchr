@@ -22,12 +22,12 @@
         </h1>
 
         <% if (user.authen) { %>
-          <p class="text-white">Welcome Back, <%= user.username %> </p>
+          <p class="text-white pb-10 mb-10 text-2xl bg-gray-700 bg-opacity-40 rounded-xl px-20 pt-10 text-center m flex items-center ">Welcome Back, <%= user.username %> </p>
        <% } %>
         
         <!-- Main container for buttons with transition properties -->
         <div
-          class="flex justify-evenly opacity-0 transition-opacity delay-700 duration-1000 text-lg md:text-xl lg:text-2xl font-mono"
+          class="flex justify-evenly opacity-0 transition-opacity delay-700 duration-1000 text-lg md:text-xl lg:text-2xl font-semibold"
           id="homebuttons"
         >
           <!-- Button 1 -->
