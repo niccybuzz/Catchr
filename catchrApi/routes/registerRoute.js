@@ -21,7 +21,7 @@ router.post("/", async (req, res) => {
     let sqlQuery = data;
 
     // Insert user into the database
-    connection.query(sqlQuery, (err, data) => {
+    connection.query(sqlQuery, [username, email, hashedPassword], (err, data) => {
       if (err) throw err;
       res.status(201).json({ message: "User registered successfully" });
     });

@@ -1,9 +1,12 @@
 const express = require("express");
 const router = express.Router();
 
-//base URL route
+// get login page
 router.get("/", (req, res) => {
-    res.render("home");
-  });
+  const sessionObj = req.session;
+  console.log(sessionObj);
+
+  res.render("home", { user: sessionObj });
+});
 
 module.exports = router;

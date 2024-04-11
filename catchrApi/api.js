@@ -17,6 +17,9 @@ app.use("/allcards", allcardsRoute);
 const registerRoute = require("./routes/registerRoute");
 app.use("/register", registerRoute);
 
+const loginRoute = require("./routes/loginRoute");
+app.use("/login", loginRoute);
+
 const server = app.listen(PORT, () => {
   console.log(`API started on port ${server.address().port}`);
 });

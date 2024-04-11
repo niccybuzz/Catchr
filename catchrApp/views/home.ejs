@@ -21,27 +21,41 @@
           Catchr
         </h1>
 
+        <% if (user.authen) { %>
+          <p class="text-white">Welcome Back, <%= user.username %> </p>
+       <% } %>
+        
         <!-- Main container for buttons with transition properties -->
         <div
-          class="flex justify-evenly opacity-0 transition-opacity delay-700 duration-1000 md:text-xl font-mono"
+          class="flex justify-evenly opacity-0 transition-opacity delay-700 duration-1000 text-lg md:text-xl lg:text-2xl font-mono"
           id="homebuttons"
         >
-        <!-- Button 1 -->
+          <!-- Button 1 -->
           <a
-            class="bg-white rounded-lg mx-6 px-6 py-4 text-center flex items-center justify-center"
+            class="bg-white border-2 border-black text-xs md:text-base lg:text-xl rounded-lg mx-6 px-8 py-4 text-center flex items-center justify-center"
             href="/register"
           >
             <button>Register</button>
           </a>
 
+          <!-- Button 1 -->
+          <a
+            class="bg-blue-400 border-2 border-black text-xs md:text-base lg:text-xl rounded-lg mx-6 px-12 py-4 text-center flex items-center justify-center"
+            href="/login"
+          >
+            <button>Log In</button>
+          </a>
+
           <!-- Button -->
           <a
-            class="bg-yellow-300 rounded-lg mx-6 px-6 py-4 text-center flex items-center justify-center "
+            class="bg-yellow-300 border-2 border-black text-xs md:text-base lg:text-xl rounded-lg mx-6 px-6 py-4 text-center flex items-center justify-center"
             href="/allcards"
           >
             <button>Browse Cards</button>
           </a>
         </div>
+
+        
       </div>
     </main>
 

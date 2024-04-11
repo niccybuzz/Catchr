@@ -8,22 +8,44 @@
   <body class="box-border h-full bg-pokeballs">
     <!-- Header Bar -->
     <%- include (`partials/nav.ejs`) %>
+
+    <h1 class="text-white text-center pt-12 text-xl font-semibold">Welcome, <%= user.username %> </h1>
     <!-- Main grid containing all cards -->
     <div
-      class="justify-center items-center h-full grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 p-10 overflow-scroll mx-32"
+      class="grid justify-center justify-items-center items-center gap-6 px-4 md:px-10 lg:px-16 pt-12 h-full grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 overflow-scroll opacity-0 transition-opacity duration-500"
       id="gridDiv"
     >
       <!-- Iterating through each pokemon (row in data) and creates a card object each -->
       <% cardData.forEach((card) => { %>
+
+      <!-- Wrapping the whole card a link -->
       <a
         href="#"
-        class="p-4 flex flex-col justify-center items-center hover:scale-105 transition-transform h-96 w-64"
+        class="p-4 flex flex-col justify-center items-center hover:scale-105 max-w-96 min-w-72" 
       >
+      
+        
+        <!-- Card image -->
         <img src="<%= card.image %>" />
-        <h2 class="text-white font-eightbit"><%= card.name %></h2>
+        <!-- Card name and card/set number -->
+        <h2 class="text-white text-xl font-mono"><%= card.name %></h2>
+        <p class="text-white text-sm font-mono">
+          <%=card.cardNumber%>/<%=card.numCards%>
+        </p>
+
+        <!-- Add to collection button -->
+
+          <button
+            class="rounded-full bg-red-500 hover:bg-white text-black h-10 w-10 p-2 m-2 border-2 transition-colors border-gray-300 duration-300 hover:border-red-500 text-center flex items-center justify-center relative "
+          >
+            <p class="text-2xl font-mono text-gray-700">+</p>
+          </button>
+
       </a>
       <% }) %>
     </div>
+
+    <script src="/functions/loadCards.js"></script>
   </body>
   <%- include (`partials/footer.ejs`) %>
 </html>

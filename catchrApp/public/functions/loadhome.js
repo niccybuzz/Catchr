@@ -3,7 +3,7 @@
 //Adding background opacity - duration defined in home.ejs
 document.addEventListener("DOMContentLoaded", function() {
   const overlay = document.getElementById("overlay");
-  overlay.classList.add("bg-opacity-60"); // Adjust the opacity level as needed
+  overlay.classList.add("bg-opacity-60"); 
 });
 
 // Reducing opacity from 0 to 100, then transitioning from large and centered to 75% size and slighly higher
