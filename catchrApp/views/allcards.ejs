@@ -9,7 +9,12 @@
     <!-- Header Bar -->
     <%- include (`partials/nav.ejs`) %>
 
-    <h1 class="text-white text-center pt-12 text-xl font-semibold">Welcome, <%= user.username %> </h1>
+    <% if (user.authen) { %>
+      <h1 class="text-white text-center pt-12 text-xl font-semibold">Welcome, <%= user.username %> </h1>
+    <%  } else { %>
+      <a href="/login" class="text-white">Log in to your account</a>
+    <% } %>
+    
     <!-- Main grid containing all cards -->
     <div
       class="grid justify-center items-center px-4 pt-12 lg:px-24 ws:px-72 h-full grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 ws:grid-cols-5 opacity-0 transition-opacity duration-500"
@@ -20,7 +25,7 @@
 
       <!-- Wrapping the whole card a link -->
       <a
-        href="#"
+        href="/details?id=<%=card.id%>"
         class="p-4 flex flex-col justify-center items-center hover:scale-105 max-w-96 min-w-72" 
       >
       

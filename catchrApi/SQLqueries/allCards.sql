@@ -1,4 +1,6 @@
+-- Active: 1706185248551@@127.0.0.1@3306@catchr
 SELECT
+    cards.card_id AS id,
     cards.card_name AS name,
     cards.card_image AS image,
     cards.card_number AS cardNumber,

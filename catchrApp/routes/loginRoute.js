@@ -11,7 +11,6 @@ router.get("/", (req, res) => {
   if (sessionObj.authen) {
     res.redirect("/allcards");
   } else {
-    console.log("couldnt get to allCards from login get route");
     res.render("login", { validaccount: validaccount });
   }
 });
@@ -48,7 +47,6 @@ router.post("/", async (req, res) => {
       // rendering home with the session id
       if (sessionObj.authen) {
         sessionObj.username = response.data.username;
-        console.log(sessionObj.username);
         res.redirect("/");
       } else {
         console.log("user not logged in");

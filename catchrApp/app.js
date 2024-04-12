@@ -37,12 +37,18 @@ const allcardsRoute = require("./routes/allcardsRoute.js");
 const registerRoute = require("./routes/registerRoute.js");
 const loginRoute = require("./routes/loginRoute.js");
 const logoutRoute = require("./routes/logoutRoute.js");
+const detailsRoute = require("./routes/detailsRoute.js");
+const newCollecRoute = require("./routes/newCollectRoute.js");
+const allCollecsRoute = require("./routes/allCollectionsRoute.js");
 
 app.use("/", homeRoute);
 app.use("/allcards", allcardsRoute);
 app.use("/register", registerRoute);
 app.use("/login", loginRoute);
 app.use("/logout", logoutRoute);
+app.use("/details", detailsRoute);
+app.use("/createcollection", newCollecRoute);
+app.use("/allcollections", allCollecsRoute);
 
 //exporting app to the server
 module.exports = app;

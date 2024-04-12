@@ -8,11 +8,22 @@
     <main
       class="bg-allpokemon bg-no-repeat bg-center bg-cover flex flex-col h-screen"
     >
+    
+
       <!-- Main Area -->
       <div
         id="overlay"
         class="flex-grow flex flex-col justify-center items-center bg-black bg-opacity-0 transition-all duration-1000"
       >
+
+      <nav class="h-12 flex justify-end">
+        <a href="/myaccount">
+          <button class="bg-gray-500 hover:bg-gray-900 text-white font-semibold py-2 px-4 rounded-lg shadow-md transition-colors duration-300 text-center flex items-center justify-center absolute right-5 top-5">
+            My Account
+          </button>
+        </a>
+      </nav>
+      
         <!-- Title -->
         <h1
           class="font-eightbit text-5xl md:text-xxxxl lg:xxxxxl text-white text-center opacity-0 mb-0 transition-all delay-500 duration-1000"
@@ -27,28 +38,33 @@
         
         <!-- Main container for buttons with transition properties -->
         <div
-          class="flex justify-evenly opacity-0 transition-opacity delay-700 duration-1000 text-lg md:text-xl lg:text-2xl font-semibold"
+          class="flex flex-col justify-center items-center space-y-6 md:space-y-0 md:flex-row md:space-x-4 opacity-0 transition-opacity delay-700 duration-1000 text-lg md:text-xl lg:text-2xl font-semibold"
           id="homebuttons"
         >
           <!-- Button 1 -->
           <a
-            class="bg-white border-2 border-black text-xs md:text-base lg:text-xl rounded-lg mx-6 px-8 py-4 text-center flex items-center justify-center"
-            href="/register"
-          >
-            <button>Register</button>
+          class="bg-red-600 hover:bg-red-700 text-white font-semibold py-2 px-4 min-w-40 rounded-lg shadow-md transition-colors duration-300 text-center flex items-center justify-center"
+            href="<%= user.authen ? '/allcollections' : '/login' %>">
+            
+            <button>
+              <%= user.authen ? "My Collections" : "Log In" %>
+            </button>
+          </a>
+     
+          <!-- Button 2 -->
+          <a
+            class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 min-w-40 rounded-lg shadow-md transition-colors duration-300 text-center flex items-center justify-center"
+            href="<%= user.authen ? '/createcollection' : '/register' %>"
+            
+            <button>
+              <%= user.authen ? "Create Collection" : "Register" %>
+            </button>
           </a>
 
-          <!-- Button 1 -->
-          <a
-            class="bg-blue-400 border-2 border-black text-xs md:text-base lg:text-xl rounded-lg mx-6 px-12 py-4 text-center flex items-center justify-center"
-            href="/login"
-          >
-            <button>Log In</button>
-          </a>
 
-          <!-- Button -->
+          <!-- Button 3 -->
           <a
-            class="bg-yellow-300 border-2 border-black text-xs md:text-base lg:text-xl rounded-lg mx-6 px-6 py-4 text-center flex items-center justify-center"
+            class="bg-yellow-600 hover:bg-yellow-700 text-white font-semibold py-2 min-w-40 px-4 rounded-lg shadow-md transition-colors duration-300 text-center flex items-center justify-center"
             href="/allcards"
           >
             <button>Browse Cards</button>

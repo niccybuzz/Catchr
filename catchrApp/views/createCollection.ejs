@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Card Details</title>
+    <%- include (`partials/header.ejs`) %>
+  </head>
+  <body class="box-border h-full bg-pokeballs">
+    <!-- Header Bar -->
+    <%- include (`partials/nav.ejs`) %> 
+    
+    <form action="/createcollection" method="POST">
+        <label for="collecName" class="border-gray-500 border-2">Name of Collection</label>
+        <input type="text" name="collecName" class="border-gray-500 border-2" required>
+        <button type="submit" class="border-gray-500 border-2">Create</button>
+    </form>
+    
+</body>
+</html>

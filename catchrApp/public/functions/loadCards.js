@@ -1,4 +1,4 @@
-document.addEventListener("DOMContentLoaded", function() {
+document.addEventListener("DOMContentLoaded", () => {
     const animatedGrid = document.getElementById("gridDiv");
     
     // Show the div

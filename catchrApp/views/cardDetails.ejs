@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Card Details</title>
+    <%- include (`partials/header.ejs`) %>
+  </head>
+  <body class="box-border h-full bg-pokeballs">
+    <!-- Header Bar -->
+    <%- include (`partials/nav.ejs`) %> <% if (user.authen) { %>
+    <h1 class="text-white text-center pt-12 text-xl font-semibold">
+      Welcome, <%= user.username %>
+    </h1>
+    <% } else { %>
+    <a href="/login" class="text-white">Log in to your account</a>
+    <% } %>
+
+    <!-- Main grid containing all cards -->
+    <div
+      class="flex justify-center items-center px-4 pt-12 lg:px-24 ws:px-72 h-full opacity-0 transition-opacity duration-500"
+      id="gridDiv"
+    >
+      <!-- Wrapping the whole card a link -->
+      <a
+        href="/details?id=<%=card.id%>"
+        class="p-4 flex flex-col justify-center items-center hover:scale-105 max-w-96 min-w-72"
+      >
+        <!-- Card image -->
+        <img src="<%= card.image %>" />
+        <!-- Card name and card/set number -->
+        <h2 class="text-white text-xl font-mono"><%= card.name %></h2>
+        <p class="text-white text-sm font-mono">
+          <%=card.cardNumber%>/<%=card.numCards%>
+        </p>
+
+        <!-- Add to collection button -->
+
+        <button
+          class="rounded-full bg-red-500 hover:bg-white text-black h-10 w-10 p-2 m-2 border-2 transition-colors border-gray-300 duration-300 hover:border-red-500 text-center flex items-center justify-center relative"
+        >
+          <p class="text-2xl font-mono text-gray-700">+</p>
+        </button>
+      </a>
+    </div>
+
+    <script src="/functions/loadCards.js"></script>
+  </body>
+  <%- include (`partials/footer.ejs`) %>
+</html>
