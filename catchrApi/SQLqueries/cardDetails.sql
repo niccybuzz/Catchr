@@ -73,5 +73,3 @@
     LEFT JOIN card_set ON cards.set_id = card_set.set_id
 
     WHERE cards.card_id = ?
-
-    
