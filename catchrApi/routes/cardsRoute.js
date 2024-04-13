@@ -1,7 +1,8 @@
 const express = require("express");
 const router = express.Router();
 const fs = require("fs");
-const connection = require("../db");
+//const connection = require("../db");
+const connection = require("../config/database");
 
 //GET to fetch a card, a single card, or a set of cards
 router.get("/", (req, res) => {

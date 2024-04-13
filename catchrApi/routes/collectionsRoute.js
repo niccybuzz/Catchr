@@ -1,48 +1,73 @@
 const express = require("express");
 const router = express.Router();
-const fs = require("fs");
-const connection = require("../db");
+const CollectionController = require("../controllers/collectionController");
 
-//GET request for all collections
-router.get("/", (req, res) => {
-  const userid = req.query.userid;
-
-  let sqlQuery = `SELECT * FROM collections`;
-  if (userid) {
-    sqlQuery += ` WHERE user_id = ${userid}`;
+router.get("/", async (req, res) => {
+  try {
+    const collections = await CollectionController.getAllCollections();
+    res.status(200).json({
+      message: "Collections retrieved Successfully",
+      collections: collections,
+    });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
   }
-
-  console.log(sqlQuery);
-
-  // Sending query to MySQL database
-  connection.query(sqlQuery, (err, data) => {
-    if (err) {
-      console.error("Error executing SQL query:", err);
-      return res.status(500).send("Internal Server Error");
-    }
-    // Responding with json data
-    res.status(200).json(data);
-  });
 });
 
-//GET request to create new used
-router.post("/", (req, res) => {
-  const userid = req.body.id;
-  const collecName = req.body.collecName;
-  const values = [userid, collecName];
+router.post("/", async (req, res) => {
+  const { collection_name, user_id } = req.body;
+  try {
+    const collection = await CollectionController.createCollection({
+      collection_name,
+      user_id,
+    });
+    res.status(201).json({
+      message: "Collection created Successfully ",
+      collection: collection,
+    });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
 
-  const sqlQuery = `INSERT INTO collections (user_id, collection_name) VALUES ( ? , ? )`
+router.get("/:id", async (req, res) => {
+  const collectionId = req.params.id;
+  try {
+    const collection = await CollectionController.getCollectionById(collectionId);
+    res.status(200).json({
+      message: "Collection found succesfully",
+      collection: collection,
+    });
+  } catch (err) {
+    res.status(404).json({ message: err.message });
+  }
+});
 
-  // Sending query to MySQL database
-  connection.query(sqlQuery, values, (err, data) => {
-    if (err) {
-      console.error("Error executing SQL query:", err);
-      return res.status(500).send("Internal Server Error");
-    }
-    // Responding with json data
-    console.log("Collection created");
-    res.status(201).json(data);
-  });
+router.put("/:id", async (req, res) => {
+  const collection_id = req.params.id;
+  const { collection_name } = req.body;
+  try {
+    const collection = await CollectionController.updateCollection(collection_id, collection_name);
+    res.status(200).json({
+      message: "Collection updated succesfully",
+      updatedCollection: collection,
+    });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
+router.delete("/:id", async (req, res) => {
+  const collection_id = req.params.id;
+  try {
+    const response = await CollectionController.deleteCollection(collection_id);
+    res.status(200).json({
+      message: "Collection deleted successfully",
+      deletedCollection: response,
+    });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
 });
 
 module.exports = router;
