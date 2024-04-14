@@ -12,13 +12,8 @@ router.post("/", async (req, res) => {
   // Encrypt password
   const hashedPassword = await bcrypt.hash(password, 10);
 
-  //get generate sql query
-  fs.readFile("./SQLqueries/createNewUser.sql", "utf8", (err, data) => {
-    if (err) {
-      console.error("Error reading SQL file:", err);
-      return res.status(500).send("Internal Server Error");
-    }
-    let sqlQuery = data;
+    let sqlQuery = `INSERT INTO
+    user ( username, email_address, password, user_type_id) VALUES ( ?, ?, ?, 1 );`
 
     // Insert user into the database
     connection.query(sqlQuery, [username, email, hashedPassword], (err, data) => {
@@ -26,6 +21,5 @@ router.post("/", async (req, res) => {
       res.status(201).json({ message: "User registered successfully" });
     });
   });
-});
 
 module.exports = router;

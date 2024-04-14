@@ -8,7 +8,7 @@ let validpassword = true;
 router.get("/", (req, res) => {
   const sessionObj = req.session;
   if (sessionObj.authen) {
-    res.redirect("allcards");
+    res.redirect("/cards");
   } else {
     res.render("register", { validpassword: validpassword , user:sessionObj});
   }
@@ -43,7 +43,7 @@ router.post("/", (req, res) => {
   };
 
   //defining endpoint (API)
-  let endp = `http://localhost:4000/register`;
+  let endp = `http://localhost:4000/api/register`;
 
   //Post it!
   axios

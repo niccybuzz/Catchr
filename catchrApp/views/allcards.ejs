@@ -17,7 +17,7 @@
     
     <!-- Main grid containing all cards -->
     <div
-      class="grid justify-center items-center px-4 pt-12 lg:px-24 ws:px-72 h-full grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 ws:grid-cols-5 opacity-0 transition-opacity duration-500"
+      class="grid justify-center items-center px-4 pt-12 lg:px-36 ws:px-96 h-full grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 ws:grid-cols-5  opacity-0 transition-opacity duration-500"
       id="gridDiv"
     >
       <!-- Iterating through each pokemon (row in data) and creates a card object each -->
@@ -25,7 +25,7 @@
 
       <!-- Wrapping the whole card a link -->
       <a
-        href="/details?id=<%=card.id%>"
+        href="/cards/<%= card.id %>"
         class="p-4 flex flex-col justify-center items-center hover:scale-105 max-w-96 min-w-72" 
       >
       
@@ -35,7 +35,7 @@
         <!-- Card name and card/set number -->
         <h2 class="text-white text-xl font-mono"><%= card.name %></h2>
         <p class="text-white text-sm font-mono">
-          <%=card.cardNumber%>/<%=card.numCards%>
+          <%=card.cardnumber%>/<%=card.numCards%>
         </p>
 
         <!-- Add to collection button -->

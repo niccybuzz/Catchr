@@ -1,4 +1,4 @@
-// Separate file for creating connection pool, needed to stop circular dependencies
+// Database connection. DB config found in .env file
 require("dotenv").config();
 const mysql = require("mysql2");
 

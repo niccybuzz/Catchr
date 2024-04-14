@@ -9,7 +9,7 @@ router.get("/", (req, res) => {
   const sessionObj = req.session;
   validaccount = true;
   if (sessionObj.authen) {
-    res.redirect("/allcards");
+    res.redirect("/cards");
   } else {
     res.render("login", { validaccount: validaccount });
   }
@@ -26,7 +26,7 @@ router.post("/", async (req, res) => {
     password: password,
   };
 
-  const endp = `http://localhost:4000/login`;
+  const endp = `http://localhost:4000/api/login`;
 
   const config = {
     headers: {
@@ -41,8 +41,14 @@ router.post("/", async (req, res) => {
       //loading the session into a variable
       const sessionObj = req.session;
 
+  
+
       //adding authenticator key to our new object
       sessionObj.authen = response.data.user_id;
+
+      console.log(response.data)
+      sessionObj.admin = response.data.user_type_description;
+      
 
       // rendering home with the session id
       if (sessionObj.authen) {

@@ -44,7 +44,7 @@
           <!-- Button 1 -->
           <a
           class="bg-red-600 hover:bg-red-700 text-white font-semibold py-2 px-4 min-w-40 rounded-lg shadow-md transition-colors duration-300 text-center flex items-center justify-center"
-            href="<%= user.authen ? '/allcollections' : '/login' %>">
+            href="<%= user.authen ? '/mycollections' : '/login' %>">
             
             <button>
               <%= user.authen ? "My Collections" : "Log In" %>
@@ -54,7 +54,7 @@
           <!-- Button 2 -->
           <a
             class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 min-w-40 rounded-lg shadow-md transition-colors duration-300 text-center flex items-center justify-center"
-            href="<%= user.authen ? '/createcollection' : '/register' %>"
+            href="<%= user.authen ? '/createcollection' : '/register' %>">
             
             <button>
               <%= user.authen ? "Create Collection" : "Register" %>
@@ -65,7 +65,7 @@
           <!-- Button 3 -->
           <a
             class="bg-yellow-600 hover:bg-yellow-700 text-white font-semibold py-2 min-w-40 px-4 rounded-lg shadow-md transition-colors duration-300 text-center flex items-center justify-center"
-            href="/allcards"
+            href="/cards"
           >
             <button>Browse Cards</button>
           </a>
