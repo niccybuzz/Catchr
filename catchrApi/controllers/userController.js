@@ -1,7 +1,8 @@
 // Controller to manage user operations for API
-const User = require("../models/User");
 const bcrypt = require("bcrypt");
-const { Op } = require("sequelize");
+const User = require("../models/User");
+const Collection = require("../models/Collection");
+const { DataTypes, Op } = require("sequelize");
 
 //Full list of users
 exports.getAllUsers = async (req, res) => {
@@ -11,6 +12,45 @@ exports.getAllUsers = async (req, res) => {
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Server Error" });
+  }
+};
+
+exports.getUserWithCollections = async (req, res) => {
+  try {
+    const users = await User.findAll({
+      include: {
+        model: Collection, // Include the Collection model
+      },
+    });
+    res.status(200).json({ users });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
+exports.getSingleUserWithCollections = async (userid) => {
+  try {
+    const user = await User.findByPk(userid, {
+      include: {
+        model: Collection, // Include the Collection model
+      },
+    });
+    return { user: user, statusCode: 200 };
+  } catch (err) {
+    throw new Error(`Error getting user: ${err.message}`);
+  }
+};
+
+exports.getUserById = async (userId) => {
+  try {
+    const foundUser = await User.findByPk(userId);
+    if (!foundUser) {
+      return { user: null, statusCode: 404, message: "User not found" }; // User not found
+    }
+    return { user: foundUser, statusCode: 200 }; // User found
+  } catch (err) {
+    throw new Error(`Error getting user: ${err.message}`);
   }
 };
 
@@ -24,9 +64,11 @@ exports.registerUser = async (username, email, password) => {
     });
 
     if (existingUser) {
-      throw new Error("Username or email already exists'");
+      return {
+        statusCode: 400,
+        message: "User already exists",
+      };
     }
-
     const hashedPassword = await bcrypt.hash(password, 10);
 
     const newUser = await User.create({
@@ -35,14 +77,20 @@ exports.registerUser = async (username, email, password) => {
       password: hashedPassword,
     });
 
-    return newUser;
+    return {
+      user: newUser,
+      statusCode: 200,
+      message: "User create successfully",
+    };
   } catch (error) {
-    throw new Error(`Error registering user: ${error.message}`);
+    return {
+      result: { message: "Unable to create user", statusCode: 500 },
+    };
   }
 };
 
 //Route for logging in.
-exports.loginUser = async (username, password, response) => {
+exports.loginUser = async (username, password) => {
   try {
     //First, find the user in the database
     const user = await User.findOne({
@@ -52,20 +100,80 @@ exports.loginUser = async (username, password, response) => {
     });
     //If not match, throw an error
     if (!user) {
-      throw new Error("Couldn't find any users with that email/username");
+      return {
+        statusCode: 400,
+        message: "User details not found",
+      };
     }
-
     //Otherwise, get the stored password and compare to entered password
     const hashedPassword = user.password;
 
     const passwordsMatch = await bcrypt.compare(password, hashedPassword);
     console.log(passwordsMatch);
     if (passwordsMatch) {
+      return {
+        statusCode: 200,
+        user: user,
+        message: "User logged in sucessfully",
+      };
       return user;
+    } else {
+      return {
+        statusCode: 400,
+        message: "Passwords dont match",
+      };
+    }
+  } catch (err) {
+    return {
+      statusCode: 500,
+      message: `${error.message}`,
+    };
+  }
+};
+
+exports.updateUser = async (userid, username, email, admin) => {
+  try {
+    const userToUpdate = await User.findByPk(userid);
+    if (!userToUpdate) {
+      return {
+        statusCode: 404,
+        message: "Can't find user",
+      };
+    }
+    await userToUpdate.update({
+      username: username,
+      email_address: email,
+      admin: admin,
+    });
+    await userToUpdate.reload();
+    return {
+      message: "User updated successfully",
+      user: userToUpdate,
+    };
+  } catch (error) {
+    throw new Error("Error updating user");
+  }
+};
+
+exports.updatePassword = async (user_id, oldpassword, newpassword) => {
+  try {
+    const userToUpdate = await User.findByPk(user_id);
+    if (!userToUpdate) {
+      throw new Error("Can't find that collection");
+    }
+    const hashedPassword = userToUpdate.password;
+
+    const passwordsMatch = await bcrypt.compare(oldpassword, hashedPassword);
+
+    if (passwordsMatch) {
+      const newHashedPassword = await bcrypt.hash(newpassword, 10);
+      await userToUpdate.update({ password: newHashedPassword });
+      await userToUpdate.reload();
+      return userToUpdate;
     } else {
       throw new Error("Passwords don't match");
     }
-  } catch (err) {
-    throw new Error(`Couldn't log in user: ${err.message}`);
+  } catch (error) {
+    throw new Error(`Error updating collection: ${error.message}`);
   }
 };

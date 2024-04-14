@@ -1,7 +1,23 @@
 const express = require("express");
-const router = express.Router();
 const CollectionController = require("../controllers/collectionController");
 
+const router = express.Router();
+
+//Get single collection by ID route
+router.get("/:id", async (req, res) => {
+  const collectionId = req.params.id;
+  try {
+    const collection = await CollectionController.getCollectionById(collectionId);
+    res.status(200).json({
+      message: "Collection found succesfully",
+      collection: collection,
+    });
+  } catch (err) {
+    res.status(404).json({ message: err.message });
+  }
+});
+
+//get all collections Route
 router.get("/", async (req, res) => {
   try {
     const collections = await CollectionController.getAllCollections();
@@ -14,6 +30,7 @@ router.get("/", async (req, res) => {
   }
 });
 
+//Create new collection
 router.post("/", async (req, res) => {
   const { collection_name, user_id } = req.body;
   try {
@@ -30,19 +47,7 @@ router.post("/", async (req, res) => {
   }
 });
 
-router.get("/:id", async (req, res) => {
-  const collectionId = req.params.id;
-  try {
-    const collection = await CollectionController.getCollectionById(collectionId);
-    res.status(200).json({
-      message: "Collection found succesfully",
-      collection: collection,
-    });
-  } catch (err) {
-    res.status(404).json({ message: err.message });
-  }
-});
-
+//Update collection by ID
 router.put("/:id", async (req, res) => {
   const collection_id = req.params.id;
   const { collection_name } = req.body;
@@ -57,6 +62,7 @@ router.put("/:id", async (req, res) => {
   }
 });
 
+//Delete a collection
 router.delete("/:id", async (req, res) => {
   const collection_id = req.params.id;
   try {

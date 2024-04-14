@@ -1,25 +1,8 @@
-// controllers/userController.js
-const { col } = require("sequelize");
-const Collection = require("../models/Collection");
+// A controller with a series of sequelize methods for querying card collections in a database
 
-exports.getAllCollections = async (req, res) => {
-  try {
-    const Collections = await Collection.findAll();
-    return Collections;
-  } catch (error) {
-    throw new Error(`Can't find any collections`);
-  }
-};
+const Collection = require("../models/Collection")
 
-exports.createCollection = async (collectionData) => {
-  try {
-    const newCollection = await Collection.create(collectionData);
-    return newCollection;
-  } catch (err) {
-    throw new Error(`Error creating collection: ${err.message}`);
-  }
-};
-
+//Get a singular specific collection
 exports.getCollectionById = async (collectionid, res) => {
   try {
     const foundCollection = await Collection.findByPk(collectionid);
@@ -32,6 +15,29 @@ exports.getCollectionById = async (collectionid, res) => {
   }
 };
 
+// get all collections
+exports.getAllCollections = async (req, res) => {
+  try {
+    console.log("Searching all connections")
+    const Collections = await Collection.findAll();
+    console.log(Collections)
+    return Collections;
+  } catch (error) {
+    throw new Error(`Can't find any collections`);
+  }
+};
+
+//create a new collection
+exports.createCollection = async (collectionData) => {
+  try {
+    const newCollection = await Collection.create(collectionData);
+    return newCollection;
+  } catch (err) {
+    throw new Error(`Error creating collection: ${err.message}`);
+  }
+};
+
+//update a current collection
 exports.updateCollection = async (collection_id, newData) => {
   try {
     const collectToUpdate = await Collection.findByPk(collection_id);
@@ -46,6 +52,7 @@ exports.updateCollection = async (collection_id, newData) => {
   }
 };
 
+//delete a collection
 exports.deleteCollection = async (collection_id) => {
   try {
     const collectToDelete = await Collection.findByPk(collection_id);

@@ -1,4 +1,4 @@
-const { DataTypes } = require("sequelize");
+const { DataTypes } = require('sequelize');
 const sequelize = require("../config/database");
 
 const Collection = sequelize.define(
@@ -26,15 +26,5 @@ const Collection = sequelize.define(
     tableName: "collections",
   }
 );
-
-Collection.sync()
-  .then(() => {
-    console.log("Collection synced");
-  })
-  .catch((err) => {
-    console.error("Error syncing collection:", err);
-  });
-
-  //Collection.belongsTo(User);
 
 module.exports = Collection;
