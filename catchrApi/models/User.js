@@ -23,8 +23,8 @@ const User = sequelize.define(
     },
     admin: {
       type: DataTypes.BOOLEAN,
-      allowNull: true,
-      default: false,
+      allowNull: false,
+      defaultValue: false,
     },
   },
   {

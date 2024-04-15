@@ -14,12 +14,16 @@ app.use(express.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
 // Importing routes
-const cardsRoute = require("./routes/cardsRoute");
-const collectionsRoute = require("./routes/collectionsRoute")
-const usersRoute = require("./routes/usersRoute")
-app.use("/api/cards", cardsRoute);
-app.use("/api/collections", collectionsRoute);
-app.use("/api/users", usersRoute);
+const cardsController = require("./controllers/cardsController");
+const collectionsController = require("./controllers/collectionsController")
+const usersController = require("./controllers/usersController")
+const abilityController = require("./controllers/abilityController")
+const setController = require("./controllers/setController")
+app.use("/api/cards", cardsController);
+app.use("/api/collections", collectionsController);
+app.use("/api/users", usersController);
+app.use("/api/abilities", abilityController);
+app.use("/api/sets", setController);
 
 sequelize.authenticate().then((response) => {
   console.log("Connected to db");

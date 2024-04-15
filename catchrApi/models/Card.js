@@ -13,6 +13,10 @@ const Card = sequelize.define(
       type: DataTypes.STRING,
       allowNull: false,
     },
+    card_set_number: {
+      type: DataTypes.INTEGER,
+      allowNull: true,
+    },
     hp: {
       type: DataTypes.INTEGER,
       allowNull: true,
