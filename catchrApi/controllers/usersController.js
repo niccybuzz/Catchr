@@ -1,15 +1,16 @@
 //A series of rountes for user related endpoints
 const express = require("express");
 const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
+const authenticateJWT = require("../auth/authenticatJWT");
 
 const User = require("../models/User");
-const { DataTypes, Op } = require("sequelize");
+const { Op } = require("sequelize");
 const router = express.Router();
 
 // Get a single user by ID
 router.get("/:userid", async (req, res) => {
   let userId = req.params.userid;
-
   try {
     const user = await User.findByPk(userId);
     if (user) {
@@ -25,6 +26,7 @@ router.get("/:userid", async (req, res) => {
 //get all users
 router.get("/", async (req, res) => {
   try {
+    //Optional sorting and filtering queries for username and email
     let { username, email, sortBy, sortOrder } = req.query;
     const whereClause = {};
     if (username) {
@@ -42,8 +44,9 @@ router.get("/", async (req, res) => {
     const users = await User.findAll({
       where: whereClause,
       order: orderClause,
+      attributes : ['user_id', 'username', 'email_address', 'admin']
     });
-
+    //return 200 if any results found, otherwise return 404
     if (users.length > 0) {
       res.status(200).json(users);
     } else {
@@ -60,6 +63,7 @@ router.post("/register", async (req, res) => {
   try {
     const { username, email, password } = req.body;
 
+    //First, checking if the user already exists in the database
     const existingUser = await User.findOne({
       where: {
         [Op.or]: [{ username: username }, { email_address: email }],
@@ -71,6 +75,7 @@ router.post("/register", async (req, res) => {
         message: "User already exists",
       });
     } else {
+      //if not, hash the password and store new user in the database and return a 201
       const hashedPassword = await bcrypt.hash(password, 10);
       const newUser = await User.create({
         username: username,
@@ -91,6 +96,7 @@ router.post("/register", async (req, res) => {
 //Login to an account
 router.post("/login", async (req, res) => {
   try {
+    //first, getting the username and password sent and finding that user
     const { username, password } = req.body;
     const user = await User.findOne({
       where: {
@@ -98,19 +104,40 @@ router.post("/login", async (req, res) => {
       },
     });
 
+    //if no user matches, sent 401
     if (!user) {
-      res.status(404).json({
+      res.status(401).json({
         message: "No user with those email address or username found",
       });
-    }
+    } else {
+      //otherwise, compare entered password against stored password
+      const hashedPassword = user.password;
+      const passwordsMatch = await bcrypt.compare(password, hashedPassword);
 
-    const hashedPassword = user.password;
-    const passwordsMatch = await bcrypt.compare(password, hashedPassword);
-    if (passwordsMatch) {
+      //if the passwords match, create a payload contaning userID and admin status
+      if (passwordsMatch) {
+        const payload = {
+          id: user.user_id,
+          admin: user.admin,
+        };
+        //sign the token with JWT using the payload created
+        const token = jwt.sign(payload, "pokemonKey", { expiresIn: "1h" });
+
+        //message to confirm admin status
+        let message = "User credentials all valid. Logged in as basic user.";
+        if (user.admin) {
+          message = "Credentials accepted. Logged in as admin";
+        }
         res.status(200).json({
-          message: "User credentials all valid",
-          user: { user },
+          message: message,
+          user: user,
+          token: token,
         });
+      } else {
+        res.status(401).json({
+          message: "Wrong password",
+        });
+      }
     }
   } catch (error) {
     res.status(500).json("Server error " + error.message);
@@ -118,78 +145,136 @@ router.post("/login", async (req, res) => {
 });
 
 // Update a single user
-router.put("/:userid", async (req, res) => {
+router.put("/updatedetails/:userid", authenticateJWT, async (req, res) => {
   try {
+    //retrieve the user id and fields to be changed from the params and body
     const userid = req.params.userid;
     const { new_username, new_email, admin } = req.body;
 
-    const userToUpdate = await await User.findByPk(userid);
-    if (!userToUpdate) {
-      res.status(404).json({
-        message: "No user with those email address or username found",
+    //first, authenticate whether the user is updating their own profile OR the user is an admin
+    if (req.user.id == userid || req.user.admin) {
+      // Making sure that the user has entered information to update in at least 1 field
+      if (new_username || new_email || admin) {
+        //find the user profile to update
+        const userToUpdate = await await User.findByPk(userid);
+        if (!userToUpdate) {
+          res.status(404).json({
+            message: "No user with those email address or username found",
+          });
+        } else {
+          //update the user's inputted data with Sequelize
+          await userToUpdate.update({
+            username: new_username,
+            email_address: new_email,
+            admin: admin,
+          });
+          //reload to see changes and send 200 status
+          await userToUpdate.reload();
+
+          res.status(200).json({
+            message: "User updated",
+            updatedUser: userToUpdate,
+          });
+        }
+      } else {
+        // catching the issue if no fields were entered
+        res.status(400).json({
+          message: "Please enter at least 1 field to update",
+        });
+      }
+    } else {
+      //catching if the user don't have access rights
+      res.status(401).json({
+        message: "You do not have access rights to modify this profile.",
       });
     }
-
-    await userToUpdate.update({
-      username: new_username,
-      email_address: new_email,
-      admin: admin,
-    });
-    await userToUpdate.reload();
-
-    res.status(200).json({
-      message: "User updated",
-      updatedUser: userToUpdate,
-    });
   } catch (err) {
+    // Any other errors
     res.status(500).json("Server error " + err.message);
   }
 });
 
-
-
-router.put("/changepassword/:userid", async (req, res) => {
+// Change a user's password, accessible by the user or an admin
+router.put("/changepassword/:userid", authenticateJWT, async (req, res) => {
   try {
     const userid = req.params.userid;
     const { oldpassword, newpassword } = req.body;
 
-    if (oldpassword && newpassword) {
-      const userToUpdate = await User.findByPk(userid);
+    //checking that the user has access rights
+    if (req.user.id == userid || req.user.admin) {
+      //making sure both fields have been filled in
+      if (oldpassword && newpassword) {
+        //find the user to update with sequelize
+        const userToUpdate = await User.findByPk(userid);
 
-      if (!userToUpdate) {
-        res.status(404).json({
-          message: "Can't find that user",
-        });
-      }
-  
-      const hashedPassword = userToUpdate.password;
-      const passwordsMatch = await bcrypt.compare(oldpassword, hashedPassword);
-  
-      if (passwordsMatch) {
-        const newHashedPassword = await bcrypt.hash(newpassword, 10);
-        await userToUpdate.update({ password: newHashedPassword });
-        await userToUpdate.reload();
-        res.status(200).json({
-          message: "Password changed succesfully",
-          updatedUser: userToUpdate,
-        });
+        if (!userToUpdate) {
+          res.status(404).json({
+            message: "Can't find that user",
+          });
+        }
+        //if user found, compare old password to the stored password
+        const hashedPassword = userToUpdate.password;
+        const passwordsMatch = await bcrypt.compare(
+          oldpassword,
+          hashedPassword
+        );
+
+        //if they match, update the database with new encrypted password
+        if (passwordsMatch) {
+          const newHashedPassword = await bcrypt.hash(newpassword, 10);
+          await userToUpdate.update({ password: newHashedPassword });
+          await userToUpdate.reload();
+          res.status(200).json({
+            message: "Password changed succesfully",
+            updatedUser: userToUpdate,
+          });
+        } else {
+          res.status(400).json({
+            message: "Old password incorrect",
+          });
+        }
       } else {
         res.status(400).json({
-          message: "Old password incorrect"
-        })
+          message: "Old and new password need to be entered",
+        });
       }
     } else {
-      res.status(400).json({
-        message: "Old and new password required for validation"
+      res.status(401).json({
+        message: "Not authorised to update this account"
       })
     }
-
-
   } catch (err) {
     res.status(500).json("Server error " + err.message);
   }
 });
 
+router.delete("/delete/:userid", authenticateJWT,  async (req, res) => {
+  try{
+    const userid = req.params.userid;
+    if (req.user.id == userid || req.user.admin){
+      const userToDelete = await User.findByPk(userid);
+      if (!userToDelete){
+        res.status(404).json({
+          message : "Can't find that user to delete"
+        })
+      } else {
+        await userToDelete.destroy();
+        res.status(200).json({
+          message: "User deleted succesfully",
+          user: userToDelete
+        })
+      }
+    } else {
+      res.status(401).json({
+        message: "Not authorised to delete this account"
+      })
+    }
+  } catch (err) {
+    res.status(500).json({
+      message: `Internal server error: ${err.message}`
+    })
+  }
 
+})
 
 module.exports = router;

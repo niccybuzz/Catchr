@@ -8,6 +8,7 @@ const bodyParser = require('body-parser');
 const sequelize = require("./config/database");
 const associations = require("./models/Associations")
 
+
 const app = express();
 
 app.use(express.urlencoded({ extended: true }));
