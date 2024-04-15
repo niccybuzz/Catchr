@@ -8,6 +8,7 @@ const sequelize = new Sequelize({
   username: "root",
   password: "",
   database: "catchr",
+  logging: false
 });
 
 
