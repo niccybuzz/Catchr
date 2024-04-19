@@ -1,13 +1,39 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<html>
+  <head>
     <%- include (`partials/header.ejs`) %>
-    <title>Card Details</title>
-</head>
-<body class="bg-pokeballs">
-    
-</body>
-<%- include (`partials/footer.ejs`) %>
+    <title>Browse All Cards</title>
+  </head>
+  <!-- Body -->
+  <body class="box-border h-full bg-pokeballs">
+    <!-- Header Bar -->
+    <%- include (`partials/nav.ejs`) %>
+    <!-- Main grid containing all cards -->
+    <div
+      class="flex flex-col md:flex-row justify-evenly items-center px-4 pt-12 lg:px-36 ws:px-96 h-full grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 ws:grid-cols-5 opacity-0 transition-opacity duration-500"
+      id="gridDiv"
+    >
+      <!-- Wrapping the whole card a link -->
+      <a
+        href="/details/<%= card.card_id %>"
+        class="p-4 flex flex-col justify-center items-center hover:scale-105 max-w-96 min-w-72"
+      >
+        <!-- Card image -->
+        <img src="<%= card.card_image %>" />
+        <!-- Card name and card/set number -->
+      </a>
+
+      <!-- Details table -->
+      <div class="bg-gray-700 m-2 w-full flex">
+        <div class="flex justify-between w-full">
+          <h1 class="text-2xl text-white m-4"><%=card.card_name%></h1>
+          <h2 class="text-white text-2xl m-4"><%=card.hp%> HP</h2>
+        </div>
+      </div>
+    </div>
+
+    <script src="/functions/loadCards.js"></script>
+    <%- include (`partials/footer.ejs`) %>
+  </body>
+<%- include (`partials/tailwindConfig.ejs`) %>  
 </html>

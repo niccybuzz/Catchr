@@ -2,7 +2,7 @@ const express = require("express");
 const Collection = require("../models/Collection");
 const User = require("../models/User");
 const Card = require("../models/Card");
-const authenticateJWT = require("../auth/authenticatJWT");
+const authenticateJWT = require("../auth/authenticateJWT");
 const { col } = require("sequelize");
 
 const router = express.Router();

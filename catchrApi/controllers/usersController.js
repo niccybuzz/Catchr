@@ -2,7 +2,7 @@
 const express = require("express");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
-const authenticateJWT = require("../auth/authenticatJWT");
+const authenticateJWT = require("../auth/authenticateJWT");
 
 const User = require("../models/User");
 const { Op } = require("sequelize");
@@ -44,7 +44,7 @@ router.get("/", async (req, res) => {
     const users = await User.findAll({
       where: whereClause,
       order: orderClause,
-      attributes : ['user_id', 'username', 'email_address', 'admin']
+      attributes: ["user_id", "username", "email_address", "admin"],
     });
     //return 200 if any results found, otherwise return 404
     if (users.length > 0) {
@@ -61,6 +61,7 @@ router.get("/", async (req, res) => {
 //Passwords encrypted here
 router.post("/register", async (req, res) => {
   try {
+    console.log("method triggered");
     const { username, email, password } = req.body;
 
     //First, checking if the user already exists in the database
@@ -106,11 +107,10 @@ router.post("/login", async (req, res) => {
 
     //if no user matches, sent 401
     if (!user) {
-      res.status(401).json({
-        message: "No user with those email address or username found",
-      });
+      res.status(404).json("No user with that username or email address found");
     } else {
       //otherwise, compare entered password against stored password
+      
       const hashedPassword = user.password;
       const passwordsMatch = await bcrypt.compare(password, hashedPassword);
 
@@ -134,9 +134,8 @@ router.post("/login", async (req, res) => {
           token: token,
         });
       } else {
-        res.status(401).json({
-          message: "Wrong password",
-        });
+        console.log("wrong password");
+        res.status(401).json("Incorrect password");
       }
     }
   } catch (error) {
@@ -145,23 +144,28 @@ router.post("/login", async (req, res) => {
 });
 
 // Update a single user
-router.put("/updatedetails/:userid", authenticateJWT, async (req, res) => {
+router.put("/updatedetails", authenticateJWT, async (req, res) => {
   try {
     //retrieve the user id and fields to be changed from the params and body
-    const userid = req.params.userid;
-    const { new_username, new_email, admin } = req.body;
+    const { new_username, new_email, admin, user_id, password } = req.body;
 
     //first, authenticate whether the user is updating their own profile OR the user is an admin
-    if (req.user.id == userid || req.user.admin) {
-      // Making sure that the user has entered information to update in at least 1 field
-      if (new_username || new_email || admin) {
-        //find the user profile to update
-        const userToUpdate = await await User.findByPk(userid);
-        if (!userToUpdate) {
-          res.status(404).json({
-            message: "No user with those email address or username found",
-          });
-        } else {
+
+    // Making sure that the user has entered information to update in at least 1 field
+    if (new_username || new_email || admin) {
+      //find the user profile to update
+      const userToUpdate = await User.findByPk(user_id);
+
+      if (!userToUpdate) {
+        res.status(404).json("No user with that user ID found");
+      } else {
+        // Check password
+        const storedPassword = userToUpdate.password;
+        console.log(storedPassword)
+        
+        const passwordsMatch = await bcrypt.compare(password, storedPassword);
+        if (passwordsMatch) {
+          console.log(passwordsMatch)
           //update the user's inputted data with Sequelize
           await userToUpdate.update({
             username: new_username,
@@ -175,17 +179,15 @@ router.put("/updatedetails/:userid", authenticateJWT, async (req, res) => {
             message: "User updated",
             updatedUser: userToUpdate,
           });
+        } else {
+          console.log("Wrong password")
+          res.status(400).json("Wrong Password");
         }
-      } else {
-        // catching the issue if no fields were entered
-        res.status(400).json({
-          message: "Please enter at least 1 field to update",
-        });
       }
     } else {
-      //catching if the user don't have access rights
-      res.status(401).json({
-        message: "You do not have access rights to modify this profile.",
+      // catching the issue if no fields were entered
+      res.status(400).json({
+        message: "Please enter at least 1 field to update",
       });
     }
   } catch (err) {
@@ -195,17 +197,17 @@ router.put("/updatedetails/:userid", authenticateJWT, async (req, res) => {
 });
 
 // Change a user's password, accessible by the user or an admin
-router.put("/changepassword/:userid", authenticateJWT, async (req, res) => {
+router.put("/changepassword", authenticateJWT, async (req, res) => {
   try {
-    const userid = req.params.userid;
-    const { oldpassword, newpassword } = req.body;
+   
+    const { oldpassword, newpassword, user_id } = req.body;
 
     //checking that the user has access rights
-    if (req.user.id == userid || req.user.admin) {
+   
       //making sure both fields have been filled in
       if (oldpassword && newpassword) {
         //find the user to update with sequelize
-        const userToUpdate = await User.findByPk(userid);
+        const userToUpdate = await User.findByPk(user_id);
 
         if (!userToUpdate) {
           res.status(404).json({
@@ -229,52 +231,47 @@ router.put("/changepassword/:userid", authenticateJWT, async (req, res) => {
             updatedUser: userToUpdate,
           });
         } else {
-          res.status(400).json({
-            message: "Old password incorrect",
-          });
+          res.status(400).json(
+            "Old password incorrect",
+          );
         }
       } else {
-        res.status(400).json({
-          message: "Old and new password need to be entered",
-        });
+        res.status(400).json(
+         "Old and new password need to be entered",
+        );
       }
-    } else {
-      res.status(401).json({
-        message: "Not authorised to update this account"
-      })
-    }
+   
   } catch (err) {
     res.status(500).json("Server error " + err.message);
   }
 });
 
-router.delete("/delete/:userid", authenticateJWT,  async (req, res) => {
-  try{
+router.delete("/delete/:userid", authenticateJWT, async (req, res) => {
+  try {
     const userid = req.params.userid;
-    if (req.user.id == userid || req.user.admin){
+    if (req.user.id == userid || req.user.admin) {
       const userToDelete = await User.findByPk(userid);
-      if (!userToDelete){
+      if (!userToDelete) {
         res.status(404).json({
-          message : "Can't find that user to delete"
-        })
+          message: "Can't find that user to delete",
+        });
       } else {
         await userToDelete.destroy();
         res.status(200).json({
           message: "User deleted succesfully",
-          user: userToDelete
-        })
+          user: userToDelete,
+        });
       }
     } else {
       res.status(401).json({
-        message: "Not authorised to delete this account"
-      })
+        message: "Not authorised to delete this account",
+      });
     }
   } catch (err) {
     res.status(500).json({
-      message: `Internal server error: ${err.message}`
-    })
+      message: `Internal server error: ${err.message}`,
+    });
   }
-
-})
+});
 
 module.exports = router;
