@@ -5,15 +5,9 @@
     <title>Browse All Cards</title>
   </head>
   <!-- Body -->
-  <body class="box-border h-full bg-pokeballs">
+  <body class="box-border h-full bg-magmalight font-roboto">
     <!-- Header Bar -->
     <%- include (`partials/nav.ejs`) %>
-
-    <% if (user.authen) { %>
-      <h1 class="text-white text-center pt-12 text-xl font-semibold">Welcome, <%= user.username %> </h1>
-    <%  } else { %>
-      <a href="/login" class="text-white">Log in to your account</a>
-    <% } %>
     
     <!-- Main grid containing all cards -->
     <div
@@ -21,21 +15,21 @@
       id="gridDiv"
     >
       <!-- Iterating through each pokemon (row in data) and creates a card object each -->
-      <% cardData.forEach((card) => { %>
+      <% cards.forEach((card) => { %>
 
       <!-- Wrapping the whole card a link -->
       <a
-        href="/cards/<%= card.id %>"
+        href="/cards/<%= card.card_id %>"
         class="p-4 flex flex-col justify-center items-center hover:scale-105 max-w-96 min-w-72" 
       >
       
         
         <!-- Card image -->
-        <img src="<%= card.image %>" />
+        <img src="<%= card.card_image %>" />
         <!-- Card name and card/set number -->
-        <h2 class="text-white text-xl font-mono"><%= card.name %></h2>
-        <p class="text-white text-sm font-mono">
-          <%=card.cardnumber%>/<%=card.numCards%>
+        <h2 class="text-white text-xl"><%= card.card_name %></h2>
+        <p class="text-white text-sm">
+          <%=card.card_set_number%>/<%=card.Set.no_of_cards%>
         </p>
 
         <!-- Add to collection button -->
@@ -51,6 +45,7 @@
     </div>
 
     <script src="/functions/loadCards.js"></script>
+    <%- include (`partials/footer.ejs`) %>
   </body>
-  <%- include (`partials/footer.ejs`) %>
+<%- include (`partials/tailwindConfig.ejs`) %>
 </html>

@@ -43,13 +43,12 @@ router.post("/", (req, res) => {
   };
 
   //defining endpoint (API)
-  let endp = `http://localhost:4000/api/register`;
+  let endp = `http://localhost:4000/api/users/register`;
 
   //Post it!
   axios
     .post(endp, newUser, config)
     .then((response) => {
-      req.session.enteredUsername = user;
       res.render("userCreated", { user: user });
     })
     .catch((err) => {

@@ -1,0 +1,75 @@
+<!-- Global nav container -->
+<% include (`header.ejs`) %>
+<nav
+  class="text-white font-semibold bg-magmadark flex justify-end items-center"
+>
+<!-- Main container for dropdown menu. Hidden at medium screens and above -->
+  <div class="absolute text-left right-2 top-2  w-1/3 flex justify-end">
+    <!-- The button which when clicked on will toggle "hidden" for the dropdown options below -->
+    <button
+      id="menu-button"
+      class="inline-flex justify-center w-1/3 max-w-10 rounded-md shadow-sm bg-magmayellow hover:bg-white transition-colors focus:outline-none focus:border-magmayellow focus:ring"
+    >
+      <img
+        class="w-full m-1"
+        src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/b2/Hamburger_icon.svg/1280px-Hamburger_icon.svg.png"
+      />
+    </button>
+
+    <!-- The actual dropdown menu options. When button above is clicked, dropdown toggle function will be triggered, showing or hiding these options -->
+    <div
+      id="dropdown-menu"
+      class="hidden absolute top-14 right-3 w-48 rounded-md shadow-lg bg-magmayellow ring-1 ring-black ring-opacity-5"
+    >
+      <div class="py-1" role="menu">
+        <a
+          href="<%= user.authen ? '/myaccount' : '/login' %>"
+          class="block bg-magmayellow px-4 py-2 text-md text-magmadark hover:bg-gray-100 hover:text-gray-900"
+          role="menuitem"
+          ><%= user.authen ? 'My Account' : 'Log In' %></a
+        >
+        <% if (!user.authen) { %>
+        <a
+          href="/register"
+          class="block bg-magmayellow px-4 py-2 text-md text-magmadark hover:bg-gray-100 hover:text-gray-900"
+          role="menuitem"
+          >Sign Up</a
+        >
+        <% } %>
+        <a
+          href="/cards"
+          class="block bg-magmayellow px-4 py-2 text-md text-magmadark hover:bg-gray-100 hover:text-gray-900"
+          role="menuitem"
+          >Browse Cards</a
+        >
+        <a
+          href="/collections"
+          class="block bg-magmayellow px-4 py-2 text-md text-magmadark hover:bg-gray-100 hover:text-gray-900"
+          role="menuitem"
+          >Browse Collections</a
+        >
+        <% if (user.authen) { %>
+        <a
+          href="/collections"
+          class="block bg-magmayellow px-4 py-2 text-md text-magmadark hover:bg-gray-100 hover:text-gray-900"
+          role="menuitem"
+          >Browse Collections</a
+        >
+        <% } %>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<script>
+    // Get a reference to the dropdown menu
+    const dropdownMenu = document.getElementById("dropdown-menu");
+  
+    // Get a reference to the menu button
+    const menuButton = document.getElementById("menu-button");
+  
+    // Toggle the visibility of the dropdown menu when the menu button is clicked
+    menuButton.addEventListener("click", function () {
+      dropdownMenu.classList.toggle("hidden");
+    });
+  </script>

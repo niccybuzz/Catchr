@@ -26,9 +26,17 @@ const Ability = sequelize.define(
       allowNull: true,
     },
     secondary_cost: {
-        type: DataTypes.INTEGER,
-        allowNull: true,
-      },
+      type: DataTypes.INTEGER,
+      allowNull: true,
+    },
+    primary_type: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    secondary_type: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
   },
   {
     tableName: "abilities",

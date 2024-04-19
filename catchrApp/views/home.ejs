@@ -4,79 +4,232 @@
     <%- include (`partials/header.ejs`) %>
     <title>Catchr</title>
   </head>
-  <body>
-    <main
-      class="bg-allpokemon bg-no-repeat bg-center bg-cover flex flex-col h-screen"
-    >
-    
-
-      <!-- Main Area -->
+  <body class="bg-allpokemon bg-no-repeat bg-center bg-cover font-roboto">
+    <main>
+      <!-- First section Main Area -->
       <div
         id="overlay"
-        class="flex-grow flex flex-col justify-center items-center bg-black bg-opacity-0 transition-all duration-1000"
+        class="flex flex-col justify-start bg-black p-12 pb-60 bg-opacity-0 transition-all duration-1000 relative"
       >
-
-      <nav class="h-12 flex justify-end">
-        <a href="/myaccount">
-          <button class="bg-gray-500 hover:bg-gray-900 text-white font-semibold py-2 px-4 rounded-lg shadow-md transition-colors duration-300 text-center flex items-center justify-center absolute right-5 top-5">
-            My Account
-          </button>
-        </a>
-      </nav>
       
+      <%- include(`partials/dropdown.ejs`) %>
+
         <!-- Title -->
         <h1
-          class="font-eightbit text-5xl md:text-xxxxl lg:xxxxxl text-white text-center opacity-0 mb-0 transition-all delay-500 duration-1000"
+          class="font-eightbit text-5xl md:text-xxxxl lg:xxxxxl text-white text-center opacity-0 mt-72 transition-all duration-1000"
           id="bigtitle"
         >
           Catchr
         </h1>
 
-        <% if (user.authen) { %>
-          <p class="text-white pb-10 mb-10 text-2xl bg-gray-700 bg-opacity-40 rounded-xl px-20 pt-10 text-center m flex items-center ">Welcome Back, <%= user.username %> </p>
-       <% } %>
-        
-        <!-- Main container for buttons with transition properties -->
         <div
-          class="flex flex-col justify-center items-center space-y-6 md:space-y-0 md:flex-row md:space-x-4 opacity-0 transition-opacity delay-700 duration-1000 text-lg md:text-xl lg:text-2xl font-semibold"
-          id="homebuttons"
+          id="subtitle"
+          class="opacity-0 transition-all delay-1000 duration-1000"
         >
-          <!-- Button 1 -->
-          <a
-          class="bg-red-600 hover:bg-red-700 text-white font-semibold py-2 px-4 min-w-40 rounded-lg shadow-md transition-colors duration-300 text-center flex items-center justify-center"
-            href="<%= user.authen ? '/mycollections' : '/login' %>">
-            
-            <button>
-              <%= user.authen ? "My Collections" : "Log In" %>
-            </button>
-          </a>
-     
-          <!-- Button 2 -->
-          <a
-            class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 min-w-40 rounded-lg shadow-md transition-colors duration-300 text-center flex items-center justify-center"
-            href="<%= user.authen ? '/createcollection' : '/register' %>">
-            
-            <button>
-              <%= user.authen ? "Create Collection" : "Register" %>
-            </button>
-          </a>
-
-
-          <!-- Button 3 -->
-          <a
-            class="bg-yellow-600 hover:bg-yellow-700 text-white font-semibold py-2 min-w-40 px-4 rounded-lg shadow-md transition-colors duration-300 text-center flex items-center justify-center"
-            href="/cards"
+          <h2
+            class="text-white py-2 rounded-lg text-lg md:text-3xl font-bold text-center m-12"
           >
-            <button>Browse Cards</button>
-          </a>
+            Your Pokémon Journey Starts Here
+          </h2>
         </div>
+        <!-- Buttons -->
+        <div class="flex justify-center opacity-0 transition-opacity delay-1000 duration-1000" id="buttonbox">
+          <a href="/cards" class="">
+            <button
+              class="bg-clawitzeryellow hover:bg-clawitzerdb text-blue-600 hover:text-white  rounded-md md:my-12 mx-4 py-2 px-4 md:px-4 text-center md:text-xl transition-colors font-bold"
+            >
+              Browse Cards
+            </button>
+          </a>
 
-        
+        </div>
       </div>
+
+      <!-- Second section -->
+      <div class="bg-ocean bg-cover bg-no-repeat">
+        <div class="bg-black bg-opacity-20 flex justify-center p-6">
+          <!-- container for image and text -->
+          <div
+            class="flex flex-col md:py-12 justify-evenly md:flex-row max-w-[1280px]"
+          >
+            <!-- Image div left side -->
+            <div
+              class="md:w-1/2 flex justify-evenly md:flex-row items-center py-6 px-3"
+            >
+              <img
+                class="w-52 md:w-64 lg:w-72 xl:w-96 max-w-96 mx-6"
+                src="/images/pokemonImages/lugia.png"
+              />
+            </div>
+            <!-- right side -->
+            <div class="md:w-1/2 p-4 md:p-8 flex items-center">
+              <!-- Text div -->
+              <div
+                class="md:m-8 p-6 flex flex-col justify-center items-center text-center bg-white bg-opacity-70 rounded-lg"
+              >
+                <h2
+                  class="text-blue-700 text-lg md:text-xl lg:text-2xl font-bold border-b border-white border-opacity-50 p-2"
+                >
+                  Explore the Pokémon universe at your fingertips
+                </h2>
+                <p class="text-md text-blue-700 p-2 text-md md:text-lg lg:text-xl">
+                  Explore the latest cards, immerse yourself in nostalgia, or
+                  find your new favourite Pokémon with our extensive card
+                  database.
+                </p>
+                <a href="/cards">
+                  <button
+                    class="bg-clawitzeryellow hover:bg-clawitzerdb text-blue-600 hover:text-white transition-colors rounded-md md:m-6 text-center md:text-xl font-bold py-2 px-10"
+                  >
+                    Browse Cards
+                  </button>
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Thirs section -->
+      <div class="bg-lava">
+        <div
+          class="h-full bg-black bg-opacity-60 py-6 w-full flex justify-center"
+        >
+          <!-- Main second content container -->
+          <div
+            class="flex flex-col-reverse xl:py-12 justify-evenly md:flex-row md:mr-10 md:ml-10 max-w-[1920px]"
+          >
+            <!-- left container -->
+            <div class="md:w-1/2 xl:w-1/3 p-8 flex justify-center items-center">
+              <!-- Text box -->
+              <div
+                class="md:m-8 p-6 max-w-96 flex flex-col justify-center items-center text-center bg-white bg-opacity-70 rounded-lg"
+              >
+                <h2
+                  class="text-red-600 font-bold text-md md:text-xl lg:text-2xl  border-b border-white border-opacity-50 p-2"
+                >
+                  Craft your ultimate Pokémon card collection, effortlessly.
+                </h2>
+                <p class="text-red-600 p-2 text-md md:text-lg lg:text-xl">
+                  Create collections, share them with your friends, and track
+                  your journey over time.
+                </p>
+                <a href="/createcollection">
+                  <button
+                    class="bg-clawitzeryellow hover:bg-clawitzerdb hover:text-white transition-colors rounded-md md:m-6 md:text-xl text-center text-red-600 font-bold py-2 px-10"
+                  >
+                    Start a Collection
+                  </button>
+                </a>
+              </div>
+            </div>
+
+            <!-- Rught container cards grid -->
+            <div
+              class="mx-4 mt-4 md:w-1/2 w-screen:w-2/3 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 ws:grid-cols-4 gap-6 justify-self-center justify-items-center font-bold place-items-center"
+            >
+              <!-- Charizard -->
+              <div class="hidden lg:block">
+                <img
+                  src="https://static.tcgcollector.com/content/images/3f/42/f1/3f42f174dfc7059a68843755abf9f70d08a730740f01a5a0d063f5b0aad23140.jpg"
+                />
+              </div>
+              <!-- Blastoise  -->
+              <div class="hidden lg:block">
+                <img
+                  src="https://static.tcgcollector.com/content/images/c6/71/66/c67166d1dec268dcd0504cf2d5c512be427c02ee60f64309e7f742ee06433342.jpg"
+                />
+              </div>
+              <!-- Venusaur -->
+              <div class="hidden lg:block">
+                <img
+                  src="https://static.tcgcollector.com/content/images/cb/8a/35/cb8a3526fef2c6138975c7ec2f85df7c705e7bb6885a49487aa5104eb8c6fe3c.jpg"
+                />
+              </div>
+              <!-- Gyarados -->
+              <div class="hidden ws:block">
+                <img
+                  src="https://static.tcgcollector.com/content/images/b2/bf/e5/b2bfe5c2582682246d792a6331b674c2f9c0d9eddb96eee99695a08dfb98bf37.jpg"
+                />
+              </div>
+              <!-- pikachu -->
+              <div class="hidden md:block lg:hidden">
+                <img
+                  src="https://static.tcgcollector.com/content/images/c5/90/33/c59033b94b1732ae744af453d0862d3ba56c8b30093a0cf63d0203575ee4b223.jpg"
+                />
+              </div>
+              <!-- raichu -->
+              <div class="hidden md:block lg:hidden">
+                <img
+                  src="https://static.tcgcollector.com/content/images/d2/47/99/d24799f1710c2652fd019a28af96d4ddef15ab31e365d31a682a49ee1cec01ab.jpg"
+                />
+              </div>
+
+              <!-- snorlax -->
+              <div class="md:hidden mx-4 max-w-72">
+                <img
+                  src="https://static.tcgcollector.com/content/images/e2/ef/77/e2ef778918b60c59823d3bf303d930d5c786431712c2a7ef6a079bb332ea0e71.jpg"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Fourth Section - Log In -->
+      <!-- Background div -->
+      <div class="bg-pokecity bg-cover bg-no-repeat">
+        <!-- Overlay div -->
+        <div class="flex justify-center bg-black bg-opacity-30">
+          <!-- Icon -->
+
+          <div class="hidden md:w-1/3 md:flex justify-center items-center">
+
+          </div>
+          <!-- Text Box -->
+          <div
+            class="lg:w-1/3 min-w-80 m-4 lg:m-8 py-4 md:my-16 p-4 xl:p-16 rounded-lg flex flex-col justify-center items-center"
+          >
+            <div class="py-8">
+              <!-- Header -->
+              <h2
+                class=" text-2xl lg:text-3xl text-center py-4 px-6 rounded-lg text-blue-600 font-bold bg-clawitzeryellow"
+              >
+                Ready to get started?
+              </h2>
+            </div>
+
+            <!-- Buttons -->
+            <div class="py-8 text-2xl flex justify-center">
+              <a href="/register" class="px-4">
+                <button
+                  class="bg-clawitzeryellow hover:bg-clawitzerdb transition-colors duration-500 rounded-md py-2 px-6 md:px-8 xl:px-10 text-center md:text-xl text-blue-600 hover:text-white font-bold shadow-md "
+                >
+                  Sign Up
+                </button>
+              </a>
+              <a href="/login" class="px-4">
+                <button
+                  class="bg-clawitzeryellow hover:bg-clawitzerdb transition-colors duration-500 rounded-md py-2 px-6 md:px-8 xl:px-10 text-center md:text-xl text-blue-600 hover:text-white font-bold shadow-md "
+                >
+                  Log In
+                </button>
+              </a>
+            </div>
+          </div>
+
+          <!-- Icon -->
+          <div class="hidden md:w-1/3 md:flex justify-center items-center">
+
+          </div>
+        </div>
+      </div>
+
+      <%- include (`partials/footer.ejs`) %>
     </main>
 
     <script src="/functions/loadhome.js"></script>
   </body>
   <!-- Scripts etc -->
-  <%- include (`partials/footer.ejs`) %>
+  <%- include (`partials/tailwindConfig.ejs`) %>
 </html>

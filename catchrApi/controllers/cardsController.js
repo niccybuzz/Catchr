@@ -4,6 +4,9 @@ const Category = require("../models/Category");
 const Type = require("../models/Type");
 const Set = require("../models/Set");
 const Ability = require("../models/Ability");
+const Illustrator = require("../models/Illustrator");
+const Fineprint = require("../models/Fineprint");
+const Rarity = require("../models/Rarity");
 const cacheChecker = require("../cache/cacheChecker");
 const cache = require("../cache/cache");
 
@@ -22,6 +25,7 @@ router.get("/", cacheChecker, async (req, res) => {
       sortOrder,
       page,
       limit,
+      rarity_id
     } = req.query;
 
     //setting default parameters for pagination if not passed by the user
@@ -45,6 +49,9 @@ router.get("/", cacheChecker, async (req, res) => {
     if (type_id) {
       whereClause.type_id = type_id;
     }
+    if (rarity_id) {
+      whereClause.rarity_id = rarity_id;
+    }
 
     let orderClause = [];
     if (sortBy && sortOrder) {
@@ -57,35 +64,8 @@ router.get("/", cacheChecker, async (req, res) => {
       limit: limit,
       where: whereClause,
       order: orderClause,
-      attributes: [
-        "card_id",
-        "card_name",
-        "card_set_number",
-        "hp",
-        "card_image",
-        "height_weight",
-      ],
-      // Joining tables for abilities, category, type, set etc
+      attributes: ["card_id", "card_name", "card_set_number", "card_image"],
       include: [
-        {
-          model: Ability,
-          attributes: [
-            "ability_name",
-            "ability_description",
-            "ability_damage",
-
-            "primary_cost",
-            "secondary_cost",
-          ],
-          include: [
-            {
-              model: Type,
-              as: "AbilityTypes", // Alias for primary type
-              attributes: ["type_description"],
-              through: { attributes: [] },
-            },
-          ],
-        },
         {
           model: Category,
           attributes: ["category_id", "category_description"],
@@ -97,6 +77,10 @@ router.get("/", cacheChecker, async (req, res) => {
         {
           model: Set,
           attributes: ["set_id", "set_name", "no_of_cards"],
+        },
+        {
+          model: Rarity,
+          attributes: ["rarity_id", "rarity_description"],
         },
       ],
     });
@@ -123,12 +107,9 @@ router.get("/", cacheChecker, async (req, res) => {
     req.lastRequestTimestamp = Date.now();
 
     //responding with all cards
-    res.json({
-      message: "All cards",
-      data: cache[cacheKey],
-    });
+    res.json(cache[cacheKey]);
   } catch (error) {
-    res.json(error);
+    res.json(error.message);
   }
 });
 
@@ -151,26 +132,11 @@ router.get("/:card_id", async (req, res) => {
           model: Ability,
           attributes: [
             "ability_name",
-            "ability_description",
-            "ability_damage",
-
-            "primary_cost",
-            "secondary_cost",
-          ],
-
-          attributes: [
-            "ability_name",
             "ability_damage",
             "primary_cost",
+            "primary_type",
             "secondary_cost",
-          ],
-          include: [
-            {
-              model: Type,
-              as: "AbilityTypes", // Alias for primary type
-              attributes: ["type_description"],
-              through: { attributes: [] },
-            },
+            "secondary_type",
           ],
         },
         {
@@ -185,12 +151,24 @@ router.get("/:card_id", async (req, res) => {
           model: Set,
           attributes: ["set_id", "set_name", "no_of_cards"],
         },
+        {
+          model: Rarity,
+          attributes: ["rarity_id", "rarity_description"],
+        },
+        {
+          model: Fineprint,
+          attributes: ["fineprint_text"],
+        },
+        {
+          model: Illustrator,
+          attributes: ["illustrator_name"],
+        },
       ],
     });
     if (card) {
-      res.status(200).json({ message: "Card found succesfully", card: card });
+      res.status(200).json(card);
     } else {
-      res.status(404).json({ message: "Can't find that card by id" });
+      res.status(404).json("Can't find that card by id");
     }
   } catch {
     res.status(500).json("Server error");
