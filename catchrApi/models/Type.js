@@ -13,6 +13,10 @@ const Type = sequelize.define(
       type: DataTypes.STRING,
       allowNull: false,
     },
+    type_icon: {
+      type: DataTypes.STRING,
+      allowNull: true
+    }
   },
   {
     tableName: "types",

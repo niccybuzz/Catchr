@@ -43,9 +43,17 @@
       </a>
       <% }) %>
     </div>
-
-    <script src="/functions/loadCards.js"></script>
+    <div>
+      <h3>Pages:</h3>
+      <% if (pagination.totalPages > 1) { %>
+          <% for (let i = 1; i <= pagination.totalPages; i++) { %>
+              <a href="/cards/?page=<%= i %>"><%= i %></a>
+          <% } %>
+      <% } %>
+  </div>
+    
     <%- include (`partials/footer.ejs`) %>
+    <script src="/functions/loadCards.js"></script>
   </body>
 <%- include (`partials/tailwindConfig.ejs`) %>
 </html>
