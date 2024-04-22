@@ -41,5 +41,12 @@ Series.hasMany(Set, {foreignKey : 'series_id'});
 Card.hasMany(Ability, { foreignKey: 'card_id' });
 Ability.belongsTo(Card, { foreignKey: 'card_id' });
 
+Ability.belongsTo(Type, { as: 'primary_type', foreignKey: 'primary_type_id' });
+Ability.belongsTo(Type, { as: 'secondary_type', foreignKey: 'secondary_type_id' });
+
+Card.belongsTo(Type, {as: 'weakness_type', foreignKey: 'weakness_type_id'})
+Card.belongsTo(Type, {as: 'resistance_type', foreignKey: 'resistance_type_id'})
+Card.belongsTo(Type, {as: 'retreat_type', foreignKey: 'retreat_type_id'})
+
 
 module.exports = { User, Collection, Set, Type, Category, Ability, Rarity };

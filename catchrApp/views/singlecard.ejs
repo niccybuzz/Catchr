@@ -20,14 +20,154 @@
       >
         <!-- Card image -->
         <img src="<%= card.card_image %>" />
-        <!-- Card name and card/set number -->
       </a>
 
       <!-- Details table -->
-      <div class="bg-gray-700 m-2 w-full flex">
+      <div class="bg-gray-700 m-2 w-full flex flex-col max-w-[560px]">
+        <!-- Row 1 -->
         <div class="flex justify-between w-full">
           <h1 class="text-2xl text-white m-4"><%=card.card_name%></h1>
-          <h2 class="text-white text-2xl m-4"><%=card.hp%> HP</h2>
+          <h2 class="text-white text-xl m-4"><%=card.hp%> HP</h2>
+        </div>
+        <!-- Row 2 -->
+        <div class="flex justify-between w-full">
+          <h3 class="text-lg text-white m-4">
+            <%=card.Category.category_description%>
+          </h3>
+          <h3 class="text-white text-lg m-4">
+            <%=card.Type.type_description%> Type
+          </h3>
+        </div>
+
+        <!-- Ability 1 -->
+        <% if (card.Abilities.length > 0) { %>
+        <!-- Full length flexbox -->
+        <div class="flex justify-between w-full items-center">
+          <!-- Left side container with ability name and cost -->
+          <div class="flex">
+            <div class="text-white flex justify-evenly items-center">
+              <!-- Symbols -->
+              <div class="flex justify-center items-center px-2">
+                <% for (let i = 0; i< card.ability1cost1; i++) { %>
+                <!-- Ability 1 primary type -->
+                <img class="h-10 py-2 px-1" src="<%= card.ability1icon1%>" />
+                <%} %>
+                <!-- Ability 1 secondary type-->
+                <% for (let i = 0; i< card.ability1cost2; i++) {%>
+                <img class="h-10 py-2 px-1" src="<%= card.ability1icon2%>" />
+                <%} %>
+              </div>
+              <!-- Ability 1 Name -->
+              <div class="text-lg"><%= card.Abilities[0].ability_name %></div>
+            </div>
+          </div>
+
+          <!-- Ability 1 damage -->
+          <div class="text-white text-lg px-2">
+            <%= card.Abilities[0].ability_damage %>
+          </div>
+        </div>
+
+        <p class="text-white text-sm px-2 pl-6 italic">
+          <%= card.Abilities[0].ability_description %>
+        </p>
+        <% } %>
+        <!-- Ability 2 -->
+        <% if (card.Abilities.length > 1) { %>
+        <!-- Full length flexbox -->
+        <div class="flex justify-between w-full items-center px-2">
+          <!-- Left side container with ability name and cost -->
+          <div class="flex">
+            <!-- Symbols div -->
+            <div class="text-white flex justify-evenly items-center">
+              <div class="flex justify-center items-center">
+                <!-- Ability Primary cost -->
+                <% for (let i = 0; i< card.ability2cost1; i++) { %>
+                <img class="h-10 py-2 px-1" src="<%= card.ability2icon1 %>" />
+                <%} %>
+
+                <!-- Ability 2 -->
+                <% for (let i = 0; i< card.ability2cost2; i++) {%>
+                <img class="h-10 py-2 px-1" src="<%= card.ability2icon2 %>" />
+                <%} %>
+              </div>
+
+              <!-- Ability name -->
+              <div class="text-lg"><%= card.Abilities[1].ability_name %></div>
+            </div>
+          </div>
+
+          <!-- Right side flexbox with ability damage -->
+          <div class="text-white text-lg px-2">
+            <%= card.Abilities[1].ability_damage %>
+          </div>
+        </div>
+        <!-- Ability 2 description -->
+        <p class="text-white text-sm px-2 pl-6 italic">
+          <%= card.Abilities[1].ability_description %>
+        </p>
+
+        <!-- Weakness -->
+        <% if (card.weakness_description) {%>
+        <div class="flex justify-between items-center text-white px-4">
+          <h3>Weakness:</h3>
+          <div class="flex items-center">
+            <img class="p-2 h-10" src="<%= card.weakness_icon %>" />
+            <p>x <%= card.weakness_amount %></p>
+          </div>
+        </div>
+        <% } %> <% if (card.resistance_description) {%>
+
+        <!-- Resistance -->
+        <div class="flex justify-between items-center text-white px-4">
+          <h3>Resistance:</h3>
+          <div class="flex items-center">
+            <img class="p-2 h-10" src="<%= card.resistance_icon %>" />
+            <p>x <%= card.resistance_amount %></p>
+          </div>
+        </div>
+        <%} %> <% } %> <% if (card.retreat_description) {%>
+        <div class="flex justify-between items-center text-white px-4">
+          <h3>Retreat Cost:</h3>
+          <div class="flex items-center">
+            <img class="p-2 h-10" src="<%= card.retreat_icon %>" />
+            <p>x <%= card.retreat_cost %></p>
+          </div>
+        </div>
+        <% } %>
+
+        <!-- Set -->
+        <div class="flex justify-between items-center text-white px-4 py-2">
+          <h3>Set:</h3>
+
+          <p><%= card.Set.set_name %></p>
+        </div>
+
+        <!-- Card number -->
+        <div class="flex justify-between items-center text-white px-4 py-2">
+          <h3>Card number:</h3>
+
+          <p><%= card.card_set_number %> / <%= card.Set.no_of_cards %></p>
+        </div>
+        <!-- Card number -->
+        <div class="flex justify-between items-center text-white px-4 py-2">
+          <h3>Rarity:</h3>
+          <div class="flex items-center">
+            <img class="p-2" src="<%= card.Rarity.rarity_icon %>" />
+            <p><%= card.Rarity.rarity_description %></p>
+          </div>
+        </div>
+
+        <!-- Height and Weight -->
+        <div class="flex justify-between items-center text-white px-4 py-2">
+          <h3 class="w-1/2">Height/Weight</h3>
+          <p class="text-sm text-end w-1/2 italic"><%= card.height_weight %></p>
+        </div>
+
+        <!-- Illustrator -->
+        <div class="flex justify-between items-center text-white px-4 py-2">
+          <h3 class="w-1/2">Illustrators</h3>
+          <p class="text-end w-1/2"><%= card.Illustrator.illustrator_name %></p>
         </div>
       </div>
     </div>
@@ -35,5 +175,5 @@
     <script src="/functions/loadCards.js"></script>
     <%- include (`partials/footer.ejs`) %>
   </body>
-<%- include (`partials/tailwindConfig.ejs`) %>  
+  <%- include (`partials/tailwindConfig.ejs`) %>
 </html>

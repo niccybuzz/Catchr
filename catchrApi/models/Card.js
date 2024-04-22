@@ -32,7 +32,31 @@ const Card = sequelize.define(
     card_description: {
         type: DataTypes.STRING,
         allowNull: true
-    }
+    },
+    weakness_type_id:{
+      type: DataTypes.INTEGER,
+      allowNull: true
+    },
+    weakness_amount:{
+      type: DataTypes.INTEGER,
+      allowNull: true
+    },
+    resistance_type_id:{
+      type: DataTypes.INTEGER,
+      allowNull: true
+    },
+    resistance_amount:{
+      type: DataTypes.INTEGER,
+      allowNull: true
+    },
+    retreat_type_id:{
+      type: DataTypes.INTEGER,
+      allowNull: true
+    },
+    retreat_cost:{
+      type: DataTypes.INTEGER,
+      allowNull: true
+    },
   },
   {
     tableName: "cards",

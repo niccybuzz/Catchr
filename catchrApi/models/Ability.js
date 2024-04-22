@@ -29,14 +29,26 @@ const Ability = sequelize.define(
       type: DataTypes.INTEGER,
       allowNull: true,
     },
-    primary_type: {
-      type: DataTypes.STRING,
+    primary_type_id: {
+      type: DataTypes.INTEGER,
       allowNull: true,
+      references: {
+        model: 'Type',
+        key: 'type_id'
+      }
     },
-    secondary_type: {
-      type: DataTypes.STRING,
+    secondary_type_id: {
+      type: DataTypes.INTEGER,
       allowNull: true,
+      references: {
+        model: 'Type',
+        key: 'type_id'
+      },
     },
+    pokemon_power: {
+      type: DataTypes.BOOLEAN,
+      allowNull: true,
+    }
   },
   {
     tableName: "abilities",

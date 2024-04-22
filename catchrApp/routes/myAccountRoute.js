@@ -25,11 +25,18 @@ router.post("/updatedetails", async (req, res) => {
         "Authorization": `Bearer ${token}`
       },
     };
-    const endp = `http://localhost:4000/api/users/updatedetails`;
+    const endp = `http://localhost:4000/api/users/details`;
     const results = await axios.put(endp, newDetails, config);
     if (results) {
+      let updatedDetails = results.data.updatedUser
+      sessionObj.user = updatedDetails.user;
+      sessionObj.authen = updatedDetails.user_id;
+      sessionObj.admin = updatedDetails.admin;
+      sessionObj.username = updatedDetails.username;
+      sessionObj.email = updatedDetails.email_address
       console.log("Details updated succesfully")
       res.render("updateDetails", {updated:true, user: sessionObj})
+      //res.render("updateDetails", {updated:true, user: sessionObj})
     }
   } catch (err) {
     console.log("Error updating details: " + err.data)
@@ -68,12 +75,13 @@ router.post("/changepassword", async (req, res) => {
     const endp = `http://localhost:4000/api/users/changepassword`;
     const results = await axios.put(endp, newPassword, config);
     if (results) {
+     
       console.log("Details updated succesfully")
       res.render("changepassword", {updated:true, user: sessionObj})
     }
   } catch (err) {
     console.log("Error updating details: " + err.data)
-    res.render("changepassword", {updated:false, user: req.session, message: "Password Updated Succesfully!"})
+    res.render("changepassword", {updated:false, user: req.session, message: "There was an issue changing your password"})
   }
 });
 

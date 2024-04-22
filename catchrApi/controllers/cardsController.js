@@ -16,6 +16,7 @@ const router = express.Router();
 router.get("/", cacheChecker, async (req, res) => {
   try {
     //filtering, sorting and pagination parameters
+  
     let {
       card_name,
       set_id,
@@ -27,6 +28,8 @@ router.get("/", cacheChecker, async (req, res) => {
       limit,
       rarity_id
     } = req.query;
+
+    limit = parseInt(limit)
 
     //setting default parameters for pagination if not passed by the user
     if (!page) {
@@ -126,6 +129,9 @@ router.get("/:card_id", async (req, res) => {
         "hp",
         "card_image",
         "height_weight",
+        "weakness_amount",
+        "resistance_amount",
+        "retreat_cost",
       ],
       include: [
         {
@@ -133,11 +139,26 @@ router.get("/:card_id", async (req, res) => {
           attributes: [
             "ability_name",
             "ability_damage",
+            "ability_description",
             "primary_cost",
-            "primary_type",
+            "primary_type_id",
             "secondary_cost",
-            "secondary_type",
+            "secondary_type_id",
+            "pokemon_power",
+
           ],
+          include: [
+            {
+              model: Type,
+              as: 'primary_type',
+              attributes: ["type_id", "type_description", "type_icon"],
+            },
+            {
+              model: Type,
+              as: 'secondary_type',
+              attributes: ["type_id", "type_description", "type_icon"],
+            }
+          ]
         },
         {
           model: Category,
@@ -145,7 +166,23 @@ router.get("/:card_id", async (req, res) => {
         },
         {
           model: Type,
-          attributes: ["type_id", "type_description"],
+          attributes: ["type_id", "type_description", "type_icon"],
+          
+        },
+        {
+          model: Type, as: 'weakness_type',
+          attributes: ["type_id", "type_description", "type_icon"],
+          
+        },
+        {
+          model: Type, as: 'resistance_type',
+          attributes: ["type_id", "type_description", "type_icon"],
+          
+        },
+        {
+          model: Type, as: 'retreat_type',
+          attributes: ["type_id", "type_description", "type_icon"],
+          
         },
         {
           model: Set,
@@ -153,7 +190,7 @@ router.get("/:card_id", async (req, res) => {
         },
         {
           model: Rarity,
-          attributes: ["rarity_id", "rarity_description"],
+          attributes: ["rarity_id", "rarity_description", "rarity_icon"],
         },
         {
           model: Fineprint,
@@ -170,8 +207,8 @@ router.get("/:card_id", async (req, res) => {
     } else {
       res.status(404).json("Can't find that card by id");
     }
-  } catch {
-    res.status(500).json("Server error");
+  } catch (err) {
+    res.status(500).json("Server error: " + err.message);
   }
 });
 

@@ -61,7 +61,6 @@ router.get("/", async (req, res) => {
 //Passwords encrypted here
 router.post("/register", async (req, res) => {
   try {
-    console.log("method triggered");
     const { username, email, password } = req.body;
 
     //First, checking if the user already exists in the database
@@ -144,7 +143,7 @@ router.post("/login", async (req, res) => {
 });
 
 // Update a single user
-router.put("/updatedetails", authenticateJWT, async (req, res) => {
+router.put("/details", authenticateJWT, async (req, res) => {
   try {
     //retrieve the user id and fields to be changed from the params and body
     const { new_username, new_email, admin, user_id, password } = req.body;
@@ -155,23 +154,29 @@ router.put("/updatedetails", authenticateJWT, async (req, res) => {
     if (new_username || new_email || admin) {
       //find the user profile to update
       const userToUpdate = await User.findByPk(user_id);
+      let updateClause = {};
+      if (new_username){
+        updateClause.username = new_username
+      } 
+      if (new_email){
+        updateClause.email_address = new_email;
+      }
+      if (admin){
+        updateClause.admin = admin
+      }
+      console.log(updateClause)
 
       if (!userToUpdate) {
         res.status(404).json("No user with that user ID found");
       } else {
         // Check password
         const storedPassword = userToUpdate.password;
-        console.log(storedPassword)
         
         const passwordsMatch = await bcrypt.compare(password, storedPassword);
         if (passwordsMatch) {
-          console.log(passwordsMatch)
           //update the user's inputted data with Sequelize
-          await userToUpdate.update({
-            username: new_username,
-            email_address: new_email,
-            admin: admin,
-          });
+          await userToUpdate.update(updateClause);
+          console.log("Success")
           //reload to see changes and send 200 status
           await userToUpdate.reload();
 
