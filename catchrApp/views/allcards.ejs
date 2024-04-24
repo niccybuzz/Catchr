@@ -5,55 +5,301 @@
     <title>Browse All Cards</title>
   </head>
   <!-- Body -->
-  <body class="box-border h-full bg-magmalight font-roboto">
+  <body class="box-border min-h-screen bg-canvas font-kanit flex flex-col">
     <!-- Header Bar -->
     <%- include (`partials/nav.ejs`) %>
-    
+
+    <!-- Contains search bar options -->
+    <div class="h-16 bg-canvas relative flex justify-center">
+      <!--  container for sort menu.-->
+      <div class="text-left top-2 left-6 flex justify-center items-center">
+        <!-- The button which when clicked on will toggle "hidden" for the dropdown options below -->
+
+        <button
+          id="sort-button"
+          class="relative inline-flex justify-center items-center text-lg px-2 py-1 text-canvas rounded-md shadow-sm bg-container hover:bg-button  transition-colors focus:outline-none focus:border-button focus:ring"
+        >
+        <img class="w-4 h-4 text-md hover:bg-gray-100 hover:text-canvas" src="https://cdn-icons-png.flaticon.com/512/2740/2740721.png">
+          <p class="px-2">Sort By</p>
+          <!-- Dropdown options -->
+          <div
+            id="sort-menu"
+            class="hidden absolute top-12 left-0 z-10 w-48 rounded-md shadow-lg bg-container text-canvas ring-1 ring-black ring-opacity-5"
+          >
+            <div class="py-1" role="menu">
+              <a
+                href=""
+                sort-id="card_name"
+                order-id="asc"
+                class="block px-4 py-2 text-md hover:bg-gray-100 hover:text-gray-900"
+                role="menuitem"
+                >Alphabetical (A-Z)</a
+              >
+              <a
+                href=""
+                sort-id="card_name"
+                order-id="desc"
+                class="block px-4 py-2 text-md hover:bg-gray-100 hover:text-gray-900"
+                role="menuitem"
+                >Alphabetical (Z-A)</a
+              >
+              <a
+                href=""
+                sort-id="rarity"
+                order-id="asc"
+                class="block px-4 py-2 text-md hover:bg-gray-100 hover:text-gray-900"
+                role="menuitem"
+                >Rarity (Asc)</a
+              >
+
+              <a
+                href=""
+                sort-id="rarity"
+                order-id="desc"
+                class="block px-4 py-2 text-md hover:bg-gray-100 hover:text-gray-900"
+                role="menuitem"
+                >Rarity (Desc)</a
+              >
+            </div>
+          </div>
+        </button>
+
+        <form class="flex" method="GET" action="/cards">
+          <input
+            class="m-2 h-8 min-w-48 max-w-96 rounded-md"
+            type="text"
+            name="card_name"
+            placeholder="<%= user.prevSearch ? user.prevSearch : ' Search'%>"
+          />
+          <button type="submit">
+            <img
+              class="w-6"
+              src="https://cdn-icons-png.freepik.com/256/711/711319.png?semt=ais_hybrid"
+            />
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <div class="h-16 flex md:mx-48 lg:mx-72 xl:mx-96">
+      <div class="w-1/3 h-full flex justify-center items-center relative">
+        <button
+          id="expansions-button"
+          class="px-2 relative border-b border-container border-opacity-20 text-container hover:bg-container hover:text-canvas transition-colors"
+        >
+          Expansions
+          <div
+            id="expansions-dropdown"
+            class="absolute hidden w-44 h-60 overflow-y-autohidden top-8 left-0 text-left bg-container rounded-md text-canvas flex-col"
+          >
+            <div role="menu">
+              <% sets.forEach((set) => { %>
+              <a
+                href="/"
+                data-set-id="<%= set.set_id %>"
+                class="block p-2 hover:bg-gray-100 hover:text-gray-900"
+                role="menuitem"
+                ><%= set.set_name %></a
+              >
+              <% }) %>
+            </div>
+          </div>
+        </button>
+      </div>
+
+      <div class="w-1/3 h-full flex justify-center items-center relative">
+        <button
+          id="rarities-button"
+          class="px-2 relative border-b border-container border-opacity-20 text-container hover:bg-container hover:text-canvas transition-colors"
+        >
+          Rarities
+          <div
+            id="rarities-dropdown"
+            class="hidden absolute w-44 h-60 overflow-y-auto top-8 left-0 text-left bg-button rounded-md text-container flex-col"
+          >
+            <div role="menu">
+              <% rarities.forEach((rarity) => { %>
+              <a
+                href=""
+                data-set-id="<%=rarity.rarity_id%>"
+                class="block bg-container text-canvas p-2 hover:bg-gray-100 hover:text-gray-900"
+                role="menuitem"
+                ><%= rarity.rarity_description %></a
+              >
+              <% }) %>
+            </div>
+          </div>
+        </button>
+      </div>
+      <div class="w-1/3 h-full flex justify-center items-center relative">
+        <button
+          id="types-button"
+          class="px-2 relative border-b border-container border-opacity-20 text-container hover:bg-container hover:text-canvas transition-colors"
+        >
+          Types
+          <div
+            id="types-dropdown"
+            class="hidden absolute w-44 h-60 overflow-y-auto top-8 right-0 md:left-0 text-left rounded-md text-container flex-col"
+          >
+            <div role="menu">
+              <% types.forEach((type) => { %>
+              <a
+                href=""
+                data-set-id="<%=type.type_id%>"
+                class="block bg-container text-canvas p-2 hover:bg-gray-100 hover:text-gray-900"
+                role="menuitem"
+                ><%= type.type_description %></a
+              >
+              <% }) %>
+            </div>
+          </div>
+        </button>
+      </div>
+    </div>
+
+    <% if (numFilters > 0) { %>
+    <div class="flex flex-wrap justify-start md:justify-center items-center">
+      <div>
+        <button
+          class="flex justify-center items-center text-sm px-2 py-1 mx-2 rounded-md shadow-sm bg-button"
+        >
+          Filters:
+        </button>
+      </div>
+      <% Object.entries(filters).forEach(([key, value]) => { %>
+      <button
+        class="flex justify-evenly items-center text-sm px-2 py-1 mx-2 my-2 rounded-md shadow-sm bg-button"
+      >
+        <p><%= `${key}: ${value.replace("_", " ")} ` %></p>
+      </button>
+      <% }) %>
+      <a class="mx-2 flex" href="/cards/clearsearch">
+        <button
+          class="flex justify-center items-center text-sm px-2 py-1 rounded-md shadow-sm bg-button hover:bg-container transition-colors focus:outline-none focus:border-button focus:ring"
+        >
+          <img
+            class="w-4 h-4 mr-2"
+            src="https://cdn-icons-png.flaticon.com/512/66/66847.png"
+          />
+          Clear Filters
+        </button>
+      </a>
+    </div>
+
+    <% } %> <% if (cards.length > 0) { %>
+
+    <p class="text-center text-3xl text-container py-8"><%=message %></p>
     <!-- Main grid containing all cards -->
     <div
-      class="grid justify-center items-center px-4 pt-12 lg:px-36 ws:px-96 h-full grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 ws:grid-cols-5  opacity-0 transition-opacity duration-500"
+      class="grid justify-center items-center gap-6 px-4 lg:px-36 ws:px-96 h-full grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 ws:grid-cols-5 opacity-0 transition-opacity duration-500 flex-1 overflow-y-auto"
       id="gridDiv"
     >
       <!-- Iterating through each pokemon (row in data) and creates a card object each -->
       <% cards.forEach((card) => { %>
 
-      <!-- Wrapping the whole card a link -->
-      <a
-        href="/cards/<%= card.card_id %>"
-        class="p-4 flex flex-col justify-center items-center hover:scale-105 max-w-96 min-w-72" 
+      <div
+        class="flex flex-col justify-center items-center bg-canvas bg-opacity-90 text-container rounded-lg"
       >
-      
-        
-        <!-- Card image -->
-        <img src="<%= card.card_image %>" />
-        <!-- Card name and card/set number -->
-        <h2 class="text-white text-xl"><%= card.card_name %></h2>
-        <p class="text-white text-sm">
-          <%=card.card_set_number%>/<%=card.Set.no_of_cards%>
-        </p>
+        <!-- Wrapping the whole card a link -->
+        <a
+          href="/cards/<%= card.card_id %>"
+          class="p-4 flex flex-col justify-center items-center hover:scale-105 max-w-96 min-w-72"
+        >
+          <!-- Card image -->
+          <img src="<%= card.card_image %>" />
+        </a>
 
-        <!-- Add to collection button -->
+        <!-- Container for brief card details and add button -->
+        <div class="flex justify-evenly items-center rounded-lg px-10">
+          <!-- Add to collection button -->
+          <a href="/cards/<%=card.card_id%>">
+            <button
+              class="rounded-full text-canvas m-4 bg-button hover:bg-white h-8 w-8 border-2 transition-colors border-container duration-300 hover:border-red-500 hover:text-black flex items-center justify-center text-xl text-center relative"
+            >
+              <img src="https://cdn.iconscout.com/icon/free/png-256/free-more-2653754-2202566.png">
+            </button>
+          </a>
 
-          <button
-            class="rounded-full bg-red-500 hover:bg-white text-black h-10 w-10 p-2 m-2 border-2 transition-colors border-gray-300 duration-300 hover:border-red-500 text-center flex items-center justify-center relative "
-          >
-            <p class="text-2xl font-mono text-gray-700">+</p>
-          </button>
+          <!-- Card name and card/set number -->
+          <div class="px-2 flex flex-col justify-center items-center">
+            <h2 class="text-xl pt-0"><%= card.card_name %></h2>
+            <p class="text-sm">
+              <%=card.card_set_number%>/<%=card.Set.no_of_cards%>
+            </p>
+          </div>
 
-      </a>
+          <!-- Add to collection button -->
+          <a href="/addtocollection/<%=card.card_id%>">
+            <button
+              class="rounded-full text-canvas m-4 bg-button hover:bg-white h-8 w-8 border-2 transition-colors border-container duration-300 hover:border-red-500 hover:text-black flex items-center justify-center text-xl text-center relative"
+            >
+              +
+            </button>
+          </a>
+        </div>
+      </div>
+
       <% }) %>
     </div>
-    <div>
-      <h3>Pages:</h3>
+    <% } else { %>
+    <div
+      class="flex-1 overflow-y-auto text-center text-2xl text-container py-6"
+    >
+      <%= message %>
+    </div>
+    <% } %>
+
+    <!-- Pagination stuff -->
+    <div class="flex flex-col justify-center text-center m-2">
       <% if (pagination.totalPages > 1) { %>
-          <% for (let i = 1; i <= pagination.totalPages; i++) { %>
-              <a href="/cards/?page=<%= i %>"><%= i %></a>
-          <% } %>
+      <h3>Page:</h3>
+      <div class="flex justify-center">
+        <% for (let i = 1; i <=pagination.totalPages; i++) { %>
+
+        <a
+          class="px-2 min-w-8 rounded-lg bg-black border border-white text-text text-xl text-center"
+          href="/cards/?page=<%= i %>&sortBy=<%=user.sortBy%>&orderBy=<%=user.orderBy%>"
+          ><%= i %></a
+        >
+
+        <% } %>
+      </div>
+
       <% } %>
-  </div>
-    
+    </div>
+
     <%- include (`partials/footer.ejs`) %>
     <script src="/functions/loadCards.js"></script>
+    <script src="/functions/cardFilters.js"></script>
   </body>
-<%- include (`partials/tailwindConfig.ejs`) %>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontSize: {
+            xxxxl: "5rem",
+            xxxxxl: "8rem",
+            xxxxs: "0.3rem",
+            xxxs: "0.5rem",
+            xxs: "0.6rem",
+          },
+          colors: {
+            container: "#ffeed5",
+            text: "#EEEEEE",
+            button: "#EEEEEE",
+            canvas: "#252525",
+          },
+
+          fontFamily: {
+            eightbit: ['"Press Start 2P"'],
+            kanit: ["Kanit", "Helvetica", "sans-serif"],
+          },
+
+          screens: {
+            ws: "2000px",
+          },
+        },
+      },
+    };
+  </script>
 </html>

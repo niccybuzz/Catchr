@@ -20,8 +20,8 @@ Card.belongsToMany(Collection, {through: CardCollection})
 Card.belongsTo(Set, {foreignKey : 'set_id'});
 Set.hasMany(Card, {foreignKey : 'set_id'});
 
-Card.belongsTo(Rarity);
-Rarity.hasMany(Card);
+Card.belongsTo(Rarity, {foreignKey: 'RarityRarityId'});
+Rarity.hasMany(Card, {foreignKey: 'RarityRarityId'});
 
 Card.belongsTo(Illustrator);
 Illustrator.hasMany(Card);

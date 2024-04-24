@@ -1,0 +1,6 @@
+<a
+href="<%= user.authen ? '/logout' : '/register' %>"
+class="py-1 px-4 mx-2 min-w-24 md:hidden lg:block hover:bg-button hover:text-canvas transition-colors rounded-lg text-center font-kanit"
+>
+<%= user.authen ? "Log Out" : "Sign Up" %>
+</a>

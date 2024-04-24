@@ -8,13 +8,10 @@ const Collection = sequelize.define(
       type: DataTypes.INTEGER,
       primaryKey: true,
       allowNull: true,
+      autoIncrement: true, 
     },
     user_id: {
       type: DataTypes.INTEGER,
-      allowNull: false,
-    },
-    collection_name: {
-      type: DataTypes.STRING,
       allowNull: false,
     },
     rating: {

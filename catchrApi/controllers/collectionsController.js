@@ -11,8 +11,14 @@ const router = express.Router();
 router.get("/:collectionid", async (req, res) => {
   try {
     const collectionId = req.params.collectionid;
-    const foundCollection = await Collection.findByPk(collectionId, {
-      attributes: ["collection_id", "collection_name", "user_id"],
+    console.log(collectionId)
+    const foundCollection = await Collection.findOne({
+      
+      where: {
+        user_id: collectionId
+      },
+      
+      attributes: ["collection_id", "user_id"],
       include: [
         {
           model: User,
@@ -24,17 +30,17 @@ router.get("/:collectionid", async (req, res) => {
         },
       ],
     });
+    console.log(foundCollection)
 
     if (!foundCollection) {
       res.status(404).json({ message: "Collection not found" });
     } else {
-      res.status(200).json({
-        message: "Collection found succesfully",
-        collection: foundCollection,
-      });
+      res.status(200).json(
+        foundCollection,
+      );
     }
   } catch (err) {
-    res.status(404).json({ message: err.message });
+    res.status(404).json(err);
   }
 });
 
