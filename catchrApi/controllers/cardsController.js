@@ -98,7 +98,7 @@ router.get("/", cacheChecker, async (req, res) => {
         },
         {
           model: Rarity,
-          attributes: ["rarity_id", "rarity_description"],
+          attributes: ["rarity_id", "rarity_description", "rarity_icon"],
         },
       ],
     });
@@ -151,6 +151,7 @@ router.get("/:card_id", async (req, res) => {
         "weakness_amount",
         "resistance_amount",
         "retreat_cost",
+        "card_description"
       ],
       include: [
         {

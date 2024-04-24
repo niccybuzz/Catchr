@@ -21,7 +21,11 @@
           </div>
       </div>
   </div>
-    <%} %>
+    <%} else { %>
+      <% cards.forEach((card) => { %>
+        <%= card.card_name %>
+      <%  }) %>
+    <% } %>
 
     <%- include (`partials/footer.ejs`) %>
   </body>

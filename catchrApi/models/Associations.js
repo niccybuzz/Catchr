@@ -9,13 +9,17 @@ const Illustrator = require("./Illustrator")
 const Fineprint = require("./Fineprint")
 const Type = require("./Type")
 const Ability = require("./Ability")
+const Comment = require("./Comment")
 const CardCollection = require("./many-to-many-files/CardCollection")
 
 User.hasOne(Collection, { foreignKey: 'user_id' });
 Collection.belongsTo(User, { foreignKey: 'user_id' });
 
-Collection.belongsToMany(Card, {through: CardCollection})
-Card.belongsToMany(Collection, {through: CardCollection})
+Collection.belongsToMany(Card, {through: CardCollection, unique: false})
+Card.belongsToMany(Collection, {through: CardCollection, unique: false})
+
+Comment.belongsTo(Collection)
+Collection.hasMany(Comment)
 
 Card.belongsTo(Set, {foreignKey : 'set_id'});
 Set.hasMany(Card, {foreignKey : 'set_id'});

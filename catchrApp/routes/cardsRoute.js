@@ -18,6 +18,7 @@ router.get("/:id", async (req, res) => {
     let sessionObj = req.session;
     let endp = `http://localhost:4000/api/cards/${id}`;
     const results = await axios.get(endp);
+    console.log(results.data);
     if (results) {
       let card = results.data;
       /**
@@ -33,6 +34,7 @@ router.get("/:id", async (req, res) => {
           card.ability1type1 = card.Abilities[0].primary_type.type_description;
           card.ability1cost1 = card.Abilities[0].primary_cost;
           card.ability1icon1 = card.Abilities[0].primary_type.type_icon;
+          console.log("yes");
           //Secondary ability cost
           if (card.Abilities[0].secondary_cost !== null) {
             card.ability1type2 =
@@ -41,28 +43,29 @@ router.get("/:id", async (req, res) => {
             card.ability1icon2 = card.Abilities[0].secondary_type.type_icon;
           }
         }
-        //Second ability
-        if (card.Abilities.length > 1) {
-          // Primary ability cost
-          if (card.Abilities[1].primary_cost !== null) {
-            card.ability2type1 =
-              card.Abilities[1].primary_type.type_description;
-            card.ability2cost1 = card.Abilities[1].primary_cost;
-            card.ability2icon1 = card.Abilities[1].primary_type.type_icon;
-            //Secondary ability cost
-            if (card.Abilities[1].secondary_cost !== null) {
-              card.ability2type2 =
-                card.Abilities[1].secondary_type.type_description;
-              card.ability2cost2 = card.Abilities[1].secondary_cost;
-              card.ability2icon2 = card.Abilities[1].secondary_type.type_icon;
-            }
+      }
+
+      //Second ability
+      if (card.Abilities.length > 1) {
+        // Primary ability cost
+        if (card.Abilities[1].primary_cost !== null) {
+          card.ability2type1 = card.Abilities[1].primary_type.type_description;
+          card.ability2cost1 = card.Abilities[1].primary_cost;
+          card.ability2icon1 = card.Abilities[1].primary_type.type_icon;
+          //Secondary ability cost
+          if (card.Abilities[1].secondary_cost !== null) {
+            card.ability2type2 =
+              card.Abilities[1].secondary_type.type_description;
+            card.ability2cost2 = card.Abilities[1].secondary_cost;
+            card.ability2icon2 = card.Abilities[1].secondary_type.type_icon;
           }
         }
       }
+
       /**
        * Each card may have a weakness, resistance, or retreat cost, each associated with up to 1 Type.
        */
-      if (card.weakness_amount > 0) {
+      if (card.weakness_amount !== null) {
         card.weakness_description = card.weakness_type.type_description;
         card.weakness_icon = card.weakness_type.type_icon;
       }
@@ -75,7 +78,11 @@ router.get("/:id", async (req, res) => {
         card.retreat_icon = card.retreat_type.type_icon;
       }
 
-      res.render("singleCard", { card: card, user: sessionObj });
+      res.render("singleCard", {
+        card: card,
+        user: sessionObj,
+        collection: "collection",
+      });
     }
   } catch (err) {
     res.redirect("/cards");
@@ -94,6 +101,7 @@ router.get("/", async (req, res) => {
     const set_id = req.query.set_id;
     const rarity_id = req.query.rarity_id;
     const type_id = req.query.type_id;
+    const user_id = req.session.authen;
 
     //Getting all of the sets, rarities and types to populate dropdown menus
     const rarities = await axios.get(
@@ -101,6 +109,14 @@ router.get("/", async (req, res) => {
     );
     const sets = await axios.get(`http://localhost:4000/api/others/sets`);
     const types = await axios.get(`http://localhost:4000/api/others/types`);
+
+    let mycollection = "placeholder"
+    if (user_id) {
+      const collection = await axios.get(
+        `http://localhost:4000/api/collections/${user_id}`
+      );
+      mycollection = collection.data
+    }
 
     // Finding the specific type/rarity/set name that the user searched for
     let filteredSet;
@@ -162,6 +178,7 @@ router.get("/", async (req, res) => {
       rarities: rarities.data,
       sets: sets.data,
       types: types.data,
+      collection: mycollection,
     });
   } catch (err) {
     console.log(err);

@@ -51,8 +51,6 @@ router.post("/changepassword", async (req, res) => {
     const userid = req.session.authen;
     const admin = req.session.admin
     const token = req.session.authToken
-
-    console.log(req.body)
     
     if (!newpassword === newpasswordConfirm){
       res.render("/changepassword", {message: "Passwords don't match. Please enter again"})

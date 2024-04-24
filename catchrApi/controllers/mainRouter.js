@@ -11,7 +11,7 @@ mainRouter.use("/api/cards", cardsController);
 mainRouter.use("/api/collections", collectionsController);
 mainRouter.use("/api/users", usersController);
 mainRouter.use("/api/others", otherController);
-mainRouter.use("/clearcache", clearCacheController);
+mainRouter.use("/api/clearcache", clearCacheController);
 
 
 module.exports = mainRouter;

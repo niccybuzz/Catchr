@@ -10,7 +10,7 @@
     <%- include (`partials/nav.ejs`) %>
     <!-- Main container with card and description containing all cards -->
     <div
-      class="flex flex-col md:flex-row justify-evenly items-center px-4 lg:px-36 ws:px-96 md:pt-16 pb-8 opacity-0 transition-opacity duration-500 overflow-y-auto flex-1"
+      class="flex flex-col md:flex-row justify-evenly items-center px-4 lg:px-36 ws:px-96 md:py-8 pb-8 opacity-0 transition-opacity duration-500 overflow-y-auto flex-1"
       id="gridDiv"
     >
       <!-- Wrapping the whole card a link -->
@@ -23,17 +23,28 @@
 
       <!-- Details table -->
       <div
-        class="bg-container rounded-md m-2 w-full flex flex-col max-w-[660px] text-text"
+        class="rounded-md m-2 w-full flex flex-col max-w-[660px] text-text bg-canvas"
       >
         <!-- Row 1 -->
         <div class="flex justify-between w-full">
-          <h1 class="text-2xl font-bold m-4 mb-0 border-b-2 border-gray-500 border-opacity-50"><%=card.card_name%></h1>
-          <h2 class="text-white text-xl m-4 mb-0"><%=card.hp%> HP</h2>
+          <h1
+            class="text-2xl font-bold m-4 mb-0 border-b-2 border-gray-500 border-opacity-50"
+          >
+            <%=card.card_name%>
+          </h1>
+
+          <% if (card.hp) { %>
+          <h2 class="text-xl m-4 mb-0"><%=card.hp%> HP</h2>
+          <% } %>
         </div>
+
         <!-- Row 2 -->
-        <div class="flex justify-between w-full">
-          <h3 class="text-lg m-4"><%=card.Category.category_description%></h3>
+        <div class="flex justify-between w-full my-2">
+          <h3 class="text-lg mx-4"><%=card.Category.category_description%></h3>
+
+          <% if (card.type_id) { %>
           <h3 class="text-lg m-4"><%=card.Type.type_description%> Type</h3>
+          <% } %>
         </div>
 
         <!-- Ability 1 -->
@@ -104,7 +115,10 @@
           <%= card.Abilities[1].ability_description %>
         </p>
 
+        <% } %>
+
         <div class="flex">
+          <% if (card.hp ) { %>
           <div class="w-1/2 border-r border-text border-opacity-30">
             <!-- Weakness -->
             <% if (card.weakness_description) {%>
@@ -116,7 +130,6 @@
               </div>
             </div>
             <% } %> <% if (card.resistance_description) {%>
-
             <!-- Resistance -->
             <div class="flex justify-between items-center px-4">
               <h3>Resistance:</h3>
@@ -125,7 +138,7 @@
                 <p>x <%= card.resistance_amount %></p>
               </div>
             </div>
-            <%} %> <% } %> <% if (card.retreat_description) {%>
+            <%} %> <% if (card.retreat_description) {%>
             <div class="flex justify-between items-center px-4">
               <h3>Retreat Cost:</h3>
               <div class="flex items-center">
@@ -135,7 +148,9 @@
             </div>
             <% } %>
           </div>
-          <div class="w-1/2">
+          <% } %>
+
+          <div class="w-full">
             <!-- Set -->
             <div class="flex justify-between items-center px-4 py-2">
               <h3>Set:</h3>
@@ -153,18 +168,31 @@
             <div class="flex justify-between items-center px-4 py-2">
               <h3>Rarity:</h3>
               <div class="flex items-center">
-                <img class="p-2" src="<%= card.Rarity.rarity_icon %>" />
+                <img
+                  class="p-2 filter invert"
+                  src="<%= card.Rarity.rarity_icon %>"
+                />
                 <p><%= card.Rarity.rarity_description %></p>
               </div>
             </div>
           </div>
         </div>
+        <!-- Description -->
+        <% if (card.card_description) { %>
+          <div class="flex justify-between">
+            <h3 class="m-4 w-1/2">Description</h3>
+            <p class="text-sm italic mx-6 my-2 text-end w-1/2"> <%= card.card_description %></p>
+          </div>
+          
+        <% } %>
 
         <!-- Height and Weight -->
+        <% if (card.height_weight) { %>
         <div class="flex justify-between items-center px-4 py-2">
           <h3 class="w-1/2">Height/Weight</h3>
           <p class="text-sm text-end w-1/2 italic"><%= card.height_weight %></p>
         </div>
+        <% } %>
 
         <!-- Illustrator -->
         <div class="flex justify-between items-center px-4 py-4">
@@ -175,10 +203,7 @@
     </div>
 
     <!-- Buttons -->
-    <div
-      class="flex justify-center mb-12 text-center text-drampalight"
-      id="buttonbox"
-    >
+    <div class="flex justify-center mb-12 text-center" id="buttonbox">
       <a href="/cards" class="">
         <button
           class="bg-button border-2 border-container hover:bg-clawitzerdb hover:text-white rounded-md mx-4 py-2 px-4 md:px-4 text-center md:text-xl transition-colors font-bold"
@@ -199,5 +224,5 @@
 
     <script src="/functions/loadCards.js"></script>
   </body>
-  <%- include (`partials/tailwindConfig.ejs`) %>
+  <%- include (`partials/tailwindDark.ejs`) %>
 </html>
