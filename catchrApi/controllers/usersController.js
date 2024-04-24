@@ -5,6 +5,7 @@ const jwt = require("jsonwebtoken");
 const authenticateJWT = require("../auth/authenticateJWT");
 
 const User = require("../models/User");
+const Collection = require("../models/Collection");
 const { Op } = require("sequelize");
 const router = express.Router();
 
@@ -82,6 +83,12 @@ router.post("/register", async (req, res) => {
         email_address: email,
         password: hashedPassword,
       });
+
+      console.log(newUser);
+      
+      const newCollection = await Collection.create({
+        user_id : newUser.user_id
+      })
 
       res.status(201).json({
         message: "User created successfully",

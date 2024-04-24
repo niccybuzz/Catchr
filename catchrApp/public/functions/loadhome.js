@@ -2,16 +2,6 @@
 
 //Adding background opacity - duration defined in home.ejs
 document.addEventListener("DOMContentLoaded", function() {
-  const overlay = document.getElementById("overlay");
-  overlay.classList.add("bg-opacity-60");
-  setTimeout(()=> {
-    overlay.classList.remove("pb-60");
-    overlay.classList.add("pb-32");
-  }, 1000); 
-});
-
-//Adding background opacity - duration defined in home.ejs
-document.addEventListener("DOMContentLoaded", function() {
   const subtitle = document.getElementById("subtitle");
   subtitle.classList.add("opacity-100")
 });

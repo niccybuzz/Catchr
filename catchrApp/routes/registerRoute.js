@@ -10,14 +10,16 @@ router.get("/", (req, res) => {
   if (sessionObj.authen) {
     res.redirect("/cards");
   } else {
-    res.render("register", { validpassword: validpassword , user:sessionObj});
+    res.render("register", {validpassword: validpassword, user: sessionObj, message: "" });
   }
 });
 
 // Posting new user to my API
-router.post("/", (req, res) => {
+router.post("/", async (req, res) => {
+  try{
+    let user = req.session;
   // Gettimg form data from request body
-  let user = req.body.username;
+  let username = req.body.username;
   let useremail = req.body.email;
   let passw = req.body.password;
   let passw_con = req.body.password_confirmation;
@@ -30,7 +32,7 @@ router.post("/", (req, res) => {
 
   //object to send to the API for the new user
   const newUser = {
-    username: user,
+    username: username,
     email: useremail,
     password: passw,
   };
@@ -46,14 +48,18 @@ router.post("/", (req, res) => {
   let endp = `http://localhost:4000/api/users/register`;
 
   //Post it!
-  axios
-    .post(endp, newUser, config)
-    .then((response) => {
-      res.render("userCreated", { user: user });
-    })
-    .catch((err) => {
-      console.log(err.message);
-    });
+  const result = await axios.post(endp, newUser, config);
+  
+    res.render("userCreated", { user: username});
+  } catch (err) {
+    if (err.response && err.response.status == 400)  {
+      res.render("register", {validpassword: validpassword, message: "An account with those credentials already exists.", user: req.session})
+    } else {
+      res.send("server error")
+    }
+  }
+
+  
 });
 
 module.exports = router;

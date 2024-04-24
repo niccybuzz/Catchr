@@ -1,4 +1,5 @@
 const express = require("express");
+const { Op } = require("sequelize");
 const Card = require("../models/Card");
 const Category = require("../models/Category");
 const Type = require("../models/Type");
@@ -16,7 +17,7 @@ const router = express.Router();
 router.get("/", cacheChecker, async (req, res) => {
   try {
     //filtering, sorting and pagination parameters
-  
+
     let {
       card_name,
       set_id,
@@ -26,10 +27,10 @@ router.get("/", cacheChecker, async (req, res) => {
       sortOrder,
       page,
       limit,
-      rarity_id
+      rarity_id,
     } = req.query;
 
-    limit = parseInt(limit)
+    limit = parseInt(limit);
 
     //setting default parameters for pagination if not passed by the user
     if (!page) {
@@ -41,7 +42,7 @@ router.get("/", cacheChecker, async (req, res) => {
     // creating filtering and sorting clauses
     const whereClause = {};
     if (card_name) {
-      whereClause.card_name = card_name;
+      whereClause.card_name = { [Op.like]: `%${card_name}%` };
     }
     if (set_id) {
       whereClause.set_id = set_id;
@@ -53,15 +54,29 @@ router.get("/", cacheChecker, async (req, res) => {
       whereClause.type_id = type_id;
     }
     if (rarity_id) {
-      whereClause.rarity_id = rarity_id;
+      whereClause.RarityRarityId = rarity_id;
     }
 
     let orderClause = [];
+
+    //if the user provides a sort method and order, send that. Otherwise, set to a default option
     if (sortBy && sortOrder) {
-      orderClause = [[sortBy, sortOrder]]; // e.g., [['createdAt', 'DESC']]
+      //Need to do this because rarity is a foreign key
+      if (sortBy === "rarity") {
+        orderClause = [[{ model: Rarity }, "rarity_id", sortOrder]];
+      } else {
+        orderClause = [[sortBy, sortOrder]];
+      }
+      // e.g., [['createdAt', 'DESC']]
+    } else {
+      orderClause = [["card_set_number", "asc"]];
     }
-    // Searching for the cards, with pagination limits, filtering and sorting options
-    // Including all my forein key tables for abiities, set, type, etc
+    /**
+     * Searching for the cards, with pagination limits, filtering and sorting options
+     * Including all my forein key tables for abiities, set, type, etc
+     * Offset starts at 0, and increases by limit (default 10) whenever a user goes to next page
+     * Sends the customised where and sort clauses, and includes all forgein keys
+     */
     let allCards = await Card.findAll({
       offset: (page - 1) * limit,
       limit: limit,
@@ -89,7 +104,9 @@ router.get("/", cacheChecker, async (req, res) => {
     });
 
     // Getting the total number of cards in the database to use for pagination
-    const totalCount = await Card.count();
+    let totalCount = await Card.count({
+      where: whereClause, 
+    });
     // and the number of total pages of cards depending on the limit set
     const totalPages = Math.ceil(totalCount / limit);
 
@@ -110,13 +127,15 @@ router.get("/", cacheChecker, async (req, res) => {
     req.lastRequestTimestamp = Date.now();
 
     //responding with all cards
-    res.json(cache[cacheKey]);
+    res.status(200).json(cache[cacheKey]);
   } catch (error) {
-    res.json(error.message);
+    res.status(500).json(error);
   }
 });
 
-// Get a single user by ID
+/**
+ * Get a single card by ID. returns a more detailed list of attributes and abilities
+ */ 
 router.get("/:card_id", async (req, res) => {
   let card_id = req.params.card_id;
 
@@ -145,20 +164,19 @@ router.get("/:card_id", async (req, res) => {
             "secondary_cost",
             "secondary_type_id",
             "pokemon_power",
-
           ],
           include: [
             {
               model: Type,
-              as: 'primary_type',
+              as: "primary_type",
               attributes: ["type_id", "type_description", "type_icon"],
             },
             {
               model: Type,
-              as: 'secondary_type',
+              as: "secondary_type",
               attributes: ["type_id", "type_description", "type_icon"],
-            }
-          ]
+            },
+          ],
         },
         {
           model: Category,
@@ -167,22 +185,21 @@ router.get("/:card_id", async (req, res) => {
         {
           model: Type,
           attributes: ["type_id", "type_description", "type_icon"],
-          
         },
         {
-          model: Type, as: 'weakness_type',
+          model: Type,
+          as: "weakness_type",
           attributes: ["type_id", "type_description", "type_icon"],
-          
         },
         {
-          model: Type, as: 'resistance_type',
+          model: Type,
+          as: "resistance_type",
           attributes: ["type_id", "type_description", "type_icon"],
-          
         },
         {
-          model: Type, as: 'retreat_type',
+          model: Type,
+          as: "retreat_type",
           attributes: ["type_id", "type_description", "type_icon"],
-          
         },
         {
           model: Set,
@@ -208,7 +225,7 @@ router.get("/:card_id", async (req, res) => {
       res.status(404).json("Can't find that card by id");
     }
   } catch (err) {
-    res.status(500).json("Server error: " + err.message);
+    res.status(500).json("Server error: " + err);
   }
 });
 

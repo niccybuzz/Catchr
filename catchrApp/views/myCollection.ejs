@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Card Details</title>
+    <%- include (`partials/header.ejs`) %>
+  </head>
+  <body class="box-border h-screen bg-canvas flex flex-col justify-between font-kanit text-container">
+    <!-- Header Bar -->
+    <%- include (`partials/nav.ejs`) %> 
+    <!-- Redirecting if collection is empty -->
+    <% if (collection.Cards.length == 0) { %>
+    <!-- Middle Section -->
+    <div class="flex-grow">
+      <div class="container mx-auto px-4 flex justify-center items-center h-full">
+          <div class="text-center">
+              <p class="text-2xl mb-4">Your collection is empty.</p>
+              <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/25.png" alt="Pikachu" class="w-48 mx-auto">
+              <p class="mt-4 text-xl">Why not <a href="/cards" class="text-blue-500">find some cards</a> to add?</p>
+          </div>
+      </div>
+  </div>
+    <%} %>
+
+    <%- include (`partials/footer.ejs`) %>
+  </body>
+  <%- include (`partials/tailwindConfig.ejs`) %>
+</html>

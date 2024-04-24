@@ -5,7 +5,7 @@
     <title>Register</title>
 
   </head>
-  <body class="box-border bg-pokeballs h-screen flex flex-col font-roboto">
+  <body class="box-border bg-canvas h-screen flex flex-col font-kanit">
     <div>
       <%- include (`partials/nav.ejs`) %>
     </div>
@@ -15,12 +15,18 @@
     <div class="flex justify-center items-center flex-1">
       <!-- Registration Box -->
       <div
-        class="flex flex-col justify-center items-center border-4 bg-magmadark border-red-900 p-8 m-8 rounded shadow-md h-fit w-10/12 md:w-1/2 lg:w-1/3 ws:w-1/6 ws:m-20"
+        class="flex flex-col justify-center items-center border-4 bg-container border-red-900 p-8 m-8 rounded shadow-md h-fit w-10/12 md:w-1/2 lg:w-1/3 ws:w-1/6 ws:m-20"
       >
         <!-- Header Line -->
         <h2 class="text-2xl font-bold mb-4 text-white text-center">
           User Registration
         </h2>
+        <% if (message) { %>
+          <p class="text-text bg-red-700 py-1 px-4 rounded-lg">
+            <%= message %>
+          </p>
+        <% } %>
+        
 
         <!-- Main form -->
         <form method="POST" action="/register" class="h-full flex flex-col justify-between w-5/6">
@@ -90,7 +96,7 @@
           <div class="h-1/6 m-4 flex justify-center">
             <button
               type="submit"
-              class="px-8 py-4 bg-magmayellow hover:bg-white text-magmadark rounded-3xl text-center text-2xl font-bold  hover:transition-colors duration-300"
+              class="px-8 py-4 bg-button hover:bg-white text-container rounded-3xl text-center text-2xl font-bold  hover:transition-colors duration-300"
             >
               Submit
             </button>

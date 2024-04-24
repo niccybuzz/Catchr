@@ -1,8 +1,6 @@
 <!-- Global nav container -->
 <% include (`header.ejs`) %>
-<nav
-  class="text-white font-semibold bg-magmadark flex justify-center items-center"
->
+<nav class="font-semibold flex justify-between items-center bg-canvas">
   <!-- Icon -->
   <div class="w-1/3 flex justify-start items-start">
     <a href="/" class="w-14 p-2">
@@ -12,17 +10,25 @@
 
   <!-- Header -->
   <div class="w-1/3 flex justify-center items-center">
-    <h1 class="h-full font-eightbit text-lg md:text-2xl lg:text-4xl p-2">
+    <h1
+      class="h-full font-eightbit text-container text-lg md:text-2xl lg:text-4xl p-2"
+    >
       Catchr
     </h1>
   </div>
 
   <!-- Main container for dropdown menu. Hidden at medium screens and above -->
-  <div class="relative text-left md:hidden w-1/3 flex justify-end p-4">
+  <div
+    class="relative w-1/3 text-left flex justify-end py-4 px-3 text-container"
+  >
+    <!-- buttons shwon on medium sizes and up -->
+    <div class="hidden md:flex justify-end items-center text-lg">
+      <%- include("loginbutton.ejs") %> <%- include("registerbutton.ejs") %>
+    </div>
     <!-- The button which when clicked on will toggle "hidden" for the dropdown options below -->
     <button
       id="menu-button"
-      class="inline-flex justify-center w-1/3 max-w-10 rounded-md shadow-sm bg-magmayellow hover:bg-white transition-colors focus:outline-none focus:border-magmayellow focus:ring"
+      class="inline-flex justify-center max-w-8 rounded-md shadow-sm bg-button transition-colors hover:ring-1 ring-container"
     >
       <img
         class="w-full m-1"
@@ -33,64 +39,46 @@
     <!-- The actual dropdown menu options. When button above is clicked, dropdown toggle function will be triggered, showing or hiding these options -->
     <div
       id="dropdown-menu"
-      class="hidden absolute top-14 right-3 w-48 rounded-md shadow-lg bg-magmayellow ring-1 ring-black ring-opacity-5"
+      class="hidden z-10 absolute top-16 right-3 w-48 rounded-md shadow-lg bg-button text-container"
     >
-      <div class="py-1" role="menu">
+      <div class="py-1 rounded-lg" role="menu">
         <a
           href="<%= user.authen ? '/myaccount' : '/login' %>"
-          class="block bg-magmayellow px-4 py-2 text-md text-magmadark hover:bg-gray-100 hover:text-gray-900"
+          class="block px-4 py-2 hover:bg-gray-100 hover:text-gray-900 "
           role="menuitem"
           ><%= user.authen ? 'My Account' : 'Log In' %></a
         >
         <% if (!user.authen) { %>
         <a
           href="/register"
-          class="block bg-magmayellow px-4 py-2 text-md text-magmadark hover:bg-gray-100 hover:text-gray-900"
+          class="block px-4 py-2 hover:bg-gray-100 hover:text-gray-900"
           role="menuitem"
           >Sign Up</a
         >
         <% } %>
         <a
           href="/cards"
-          class="block bg-magmayellow px-4 py-2 text-md text-magmadark hover:bg-gray-100 hover:text-gray-900"
+          class="block px-4 py-2 hover:bg-gray-100 hover:text-gray-900"
           role="menuitem"
           >Browse Cards</a
         >
         <a
           href="/collections"
-          class="block bg-magmayellow px-4 py-2 text-md text-magmadark hover:bg-gray-100 hover:text-gray-900"
+          class="block px-4 py-2 hover:bg-gray-100 hover:text-gray-900"
           role="menuitem"
           >Browse Collections</a
         >
         <% if (user.authen) { %>
         <a
-          href="/collections"
-          class="block bg-magmayellow px-4 py-2 text-md text-magmadark hover:bg-gray-100 hover:text-gray-900"
+          href="/logout"
+          class="block px-4 py-2 hover:bg-gray-100 hover:text-gray-900"
           role="menuitem"
-          >Browse Collections</a
+          >Log Out</a
         >
         <% } %>
       </div>
     </div>
-
-
   </div>
-      <!-- buttons shwon on medium sizes and up -->
-      <div class="w-1/3 hidden md:flex justify-end items-center text-xl">
-        <a
-          href="<%= user.authen ? '/myaccount' : '/login' %>"
-          class="py-1 px-4 mx-2 min-w-24 font-semibold md:hidden lg:block bg-magmayellow hover:bg-white transition-colors text-magmadark rounded-lg text-center"
-        >
-          <%= user.authen ? "My Account" : "Log In" %>
-        </a>
-  
-        <a
-          href="<%= user.authen ? '/logout' : '/register' %>"
-          class="py-1 px-4 mx-2 min-w-24 font-semibold md:hidden lg:block bg-magmayellow text-magmadark transition-colors hover:bg-white rounded-lg text-center"
-        >
-          <%= user.authen ? "Log Out" : "Sign Up" %>
-        </a>
-      </div>
 </nav>
 
 <script>

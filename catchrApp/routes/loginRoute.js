@@ -30,7 +30,6 @@ router.post("/", async (req, res) => {
     };
 
     const result = await axios.post(endp, userdetails, config);
-    console.log(result.data.message)
     
       const user = result.data.user;
       const authToken = result.data.token;
