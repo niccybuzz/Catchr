@@ -1,0 +1,43 @@
+<!-- Global nav container -->
+<% include (`header.ejs`) %>
+<nav class="flex justify-between items-center bg-canvas">
+  <!-- Icon -->
+  <div id="nav-icon" class="w-1/2 flex justify-start items-start filter invert">
+    <a href="/" class="w-10 m-2">
+      <img src="/images/siteIcons/pokeballIcon.png" class="h-full" />
+    </a>
+  </div>
+
+
+
+  <!-- Main container for dropdown menu. Hidden at medium screens and above -->
+  <div
+    class="relative w-1/2 text-left flex justify-end py-4 px-3 text-container"
+  >
+    <!-- The button which when clicked on will toggle "hidden" for the dropdown options below -->
+    <button
+      id="menu-button"
+      class="inline-flex justify-center max-w-8 rounded-md shadow-sm bg-button transition-colors hover:ring-1 ring-container"
+    >
+      <img
+        class="w-full m-1"
+        src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/b2/Hamburger_icon.svg/1280px-Hamburger_icon.svg.png"
+      />
+    </button>
+
+    <%- include("menuoptions.ejs") %>
+  </div>
+</nav>
+
+<script>
+  // Get a reference to the dropdown menu
+  const dropdownMenu = document.getElementById("dropdown-menu");
+
+  // Get a reference to the menu button
+  const menuButton = document.getElementById("menu-button");
+
+  // Toggle the visibility of the dropdown menu when the menu button is clicked
+  menuButton.addEventListener("click", function () {
+    dropdownMenu.classList.toggle("hidden");
+  });
+</script>

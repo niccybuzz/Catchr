@@ -11,7 +11,6 @@ const jwt = require('jsonwebtoken');
 
 const authenticateJWT = (req, res, next) => {
     let token = req.headers.authorization;
-    
     if (token) {
         //Splitting the token here to delineate "Bearer" from the token
         token = token.split(' ')[1];
@@ -19,7 +18,7 @@ const authenticateJWT = (req, res, next) => {
         //verify the token sent in the headers
         jwt.verify(token, 'pokemonKey', (err, decoded) => {
             if (err) {
-                return res.status(401).json({ message: 'Invalid token' });
+                return res.status(401).json('Invalid token');
             }
             console.log("Authenticated")
             // if validated, sets the user's ID and admin status into the req.user field which can now be used elsewhere until the token expires
@@ -28,7 +27,7 @@ const authenticateJWT = (req, res, next) => {
         });
     } else {
         console.log("Not Authenticated")
-        res.status(401).json({ message: 'Token is required' });
+        res.status(401).json('Token is required');
     }
 };
 

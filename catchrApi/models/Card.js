@@ -57,6 +57,10 @@ const Card = sequelize.define(
       type: DataTypes.INTEGER,
       allowNull: true
     },
+    release_date: {
+      type: DataTypes.DATE,
+      allowNull: true
+    }
   },
   {
     tableName: "cards",

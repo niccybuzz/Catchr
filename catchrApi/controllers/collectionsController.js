@@ -2,22 +2,152 @@ const express = require("express");
 const Collection = require("../models/Collection");
 const User = require("../models/User");
 const Card = require("../models/Card");
+const Category = require("../models/Category");
+const Type = require("../models/Type");
+const Set = require("../models/Set");
+const Rarity = require("../models/Rarity");
+const CardCollections = require("../models/many-to-many-files/CardCollection");
 const authenticateJWT = require("../auth/authenticateJWT");
-const { col } = require("sequelize");
 
 const router = express.Router();
 
-//Get single collection by ID
-router.get("/:collectionid", async (req, res) => {
+//Remove a card from a collection
+router.delete("/card", async (req, res) => {
   try {
-    const collectionId = req.params.collectionid;
-    console.log(collectionId)
+    //Getting the specific card and collection to be modified
+    const { card_id, collection_id } = req.body;
+    //Find the card
+    const cardToRemove = await Card.findByPk(card_id);
+
+    if (!cardToRemove) {
+      res.status(400).json("Cant find that card");
+    } else {
+      //Find the collection
+      const collectionToRemoveFrom = await Collection.findByPk(collection_id);
+      if (!collectionToRemoveFrom) {
+        res.status(400).json("Cant find that collection");
+      } else {
+        // check the user privileges
+
+        //Make sure that the card is actually in the collection. If it is, find the count
+        const isInThatCollection = await collectionToRemoveFrom.hasCard(
+          cardToRemove
+        );
+        if (isInThatCollection) {
+          const cardcollection = await CardCollections.findOne({
+            where: {
+              CardCardId: card_id,
+              CollectionCollectionId: collection_id,
+            },
+          });
+          const numInCollection = cardcollection.numInCollection;
+          if (numInCollection > 1) {
+            await cardcollection.update({
+              numInCollection: numInCollection - 1,
+            });
+            await cardcollection.reload();
+            res
+              .status(200)
+              .json(
+                "Card removed successfully. You now have " +
+                  cardcollection.numInCollection +
+                  " " +
+                  cardToRemove.card_name +
+                  "s in your collection."
+              );
+          } else {
+            await collectionToRemoveFrom.removeCard(cardToRemove);
+            await cardcollection.destroy();
+            res.status(200).json("Card removed successfully");
+          }
+          // Remove the card if all criteria are met
+        } else {
+          res.status(400).json({
+            message: "That card isn't in that collection",
+          });
+        }
+      }
+    }
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
+// Add a card to a collection
+router.post("/card", authenticateJWT, async (req, res) => {
+  try {
+    const { card_id, collection_id } = req.body;
+    const cardToAdd = await Card.findByPk(card_id);
+    
+    if (!cardToAdd) {
+      return res.status(404).json("Can't find that card");
+    } else {
+      console.log("triggered")
+      const collectionToAddTo = await Collection.findByPk(collection_id);
+      if (!collectionToAddTo) {
+        return res.status(404).json("Can't find that collection");
+      }
+      
+      // Verifiying the user has access to this collection
+      if (req.user.id == collectionToAddTo.user_id || req.user.admin) {
+        //checking if the card already exists in the collection. If so, incrementing the number rather than adding in duplicate data
+        const isDuplicate = await collectionToAddTo.hasCard(cardToAdd);
+        if (isDuplicate) {
+          const cardcollection = await CardCollections.findOne({
+            where: {
+              CardCardId: card_id,
+              CollectionCollectionId: collection_id,
+            },
+          });
+          let numInCollection = cardcollection.numInCollection;
+          await cardcollection.update({ numInCollection: numInCollection + 1 });
+          await cardcollection.reload();
+          
+          res
+            .status(200)
+            .json(
+              "Added another to the collection. You now have " +
+                cardcollection.numInCollection +
+                " " +
+                cardToAdd.card_name +
+                "s in your collection."
+            );
+        } else {
+          // Add the card to the collection
+          const cardAdded = await CardCollections.create({
+            CardCardId: card_id,
+            CollectionCollectionId: collection_id,
+          });
+          res
+            .status(200)
+            .json(
+              "Card added to collection successfully You now have " +
+                cardAdded.numInCollection +
+                " " +
+                cardToAdd.card_name +
+                "s in your collection."
+            );
+        }
+      } else {
+        return res
+          .status(401)
+          .json("Not authorised to add a card to this collection");
+      }
+    }
+  } catch (err) {
+    return res.status(500).json("Server error: " + err.message);
+  }
+});
+
+//Get single collection by ID
+router.get("/:userid", async (req, res) => {
+  try {
+    const userid = req.params.userid;
+
     const foundCollection = await Collection.findOne({
-      
       where: {
-        user_id: collectionId
+        user_id: userid,
       },
-      
       attributes: ["collection_id", "user_id"],
       include: [
         {
@@ -26,23 +156,53 @@ router.get("/:collectionid", async (req, res) => {
         },
         {
           model: Card,
-          attributes: ["card_name", "card_image"],
+          attributes: ["card_id", "card_name", "card_image"],
+          through: { where: {} }, // Include duplicates
+          include: [
+            {
+              model: Category,
+              attributes: ["category_id", "category_description"],
+            },
+            {
+              model: Type,
+              attributes: ["type_id", "type_description"],
+            },
+            {
+              model: Set,
+              attributes: ["set_id", "set_name", "no_of_cards"],
+            },
+            {
+              model: Rarity,
+              attributes: ["rarity_id", "rarity_description", "rarity_icon"],
+            },
+          ],
         },
       ],
     });
-    console.log(foundCollection)
 
     if (!foundCollection) {
-      res.status(404).json({ message: "Collection not found" });
+      res.status(404).json("Collection not found");
     } else {
-      res.status(200).json(
-        foundCollection,
-      );
+      const cards = foundCollection.Cards;
+      const stats = await getStats(cards);
+      res.status(200).json({
+        collection: foundCollection,
+        stats: stats
+      });
     }
   } catch (err) {
     res.status(404).json(err);
   }
 });
+
+async function getStats(cards) {
+  let uniqueCards = Object.keys(cards).length;
+  let totalCards = 0;
+  cards.forEach((card)=> {
+    totalCards += card.CardCollection.numInCollection;
+  })
+  return {uniqueCards, totalCards}
+}
 
 //get all collections Route, with optional sorting and filtering
 router.get("/", async (req, res) => {
@@ -63,23 +223,26 @@ router.get("/", async (req, res) => {
     const collections = await Collection.findAll({
       where: whereClause,
       order: orderClause,
+      include: [
+        {
+          model: User,
+          attributes: ["username"]
+        }
+      ]
     });
 
     if (collections.length > 0) {
-      res.status(200).json({
-        message: "Collections retrieved Successfully",
-        collections: collections,
-      });
+      res.status(200).json(collections);
     } else {
-      res.status(404).json({ message: "Can't find collections" });
+      res.status(404).json("Can't find collections");
     }
   } catch (err) {
-    res.status(500).json({ message: err.message });
+    res.status(500).json(err);
   }
 });
 
 //Update collection by collection ID
-router.put("/update/:id", authenticateJWT, async (req, res) => {
+router.put("/:id", authenticateJWT, async (req, res) => {
   try {
     //Getting collection ID from params and collection name from form input
     const collection_id = req.params.id;
@@ -111,8 +274,10 @@ router.put("/update/:id", authenticateJWT, async (req, res) => {
   }
 });
 
+
+
 //Delete a collection
-router.delete("/delete/:id", authenticateJWT, async (req, res) => {
+router.delete("/:id", authenticateJWT, async (req, res) => {
   try {
     //Find the collection specified in the params
     const collection_id = req.params.id;
@@ -137,140 +302,6 @@ router.delete("/delete/:id", authenticateJWT, async (req, res) => {
     }
   } catch (err) {
     res.status(500).json({ message: err.message });
-  }
-});
-
-//Create new collection
-router.post("/create", authenticateJWT, async (req, res) => {
-  try {
-    // Find the user to attach the collection to
-    const user_id = req.user.id;
-    const { collection_name } = req.body;
-    const user = await User.findByPk(user_id);
-    if (!user) {
-      res.status(404).json({
-        message: "Can't find that user",
-      });
-    } else {
-      const alreadyExists = await Collection.findAll({
-        where: { collection_name: collection_name, user_id: user_id },
-      });
-      if (alreadyExists.length > 0) {
-        res.status(400).json({
-          message: "Collection with that name already exists",
-        });
-      } else {
-        const newCollection = await Collection.create({
-          collection_name,
-          user_id,
-        });
-        res.status(201).json({
-          message: "Collection created Successfully ",
-          collection: newCollection,
-        });
-      }
-    }
-  } catch (err) {
-    res.status(500).json({ message: err.message });
-  }
-});
-
-//Remove a card from a collection
-router.delete("/addremove", authenticateJWT, async (req, res) => {
-  try {
-    //Getting the specific card and collection to be modified
-    const removecard = req.query.card_id;
-    const collection_id = req.query.collection_id;
-    //Find the card
-    const cardToRemove = await Card.findByPk(removecard);
-
-    if (!cardToRemove) {
-      res.status(400).json({
-        message: "Cant find that card",
-      });
-    } else {
-      //Find the collection
-      const collectionToRemoveFrom = await Collection.findByPk(collection_id);
-      if (!collectionToRemoveFrom) {
-        res.status(400).json({
-          message: "Cant find that collection",
-        });
-      } else {
-        //Make sure that the card is actually in the collection
-        const isInThatCollection = await collectionToRemoveFrom.hasCard(
-          cardToRemove
-        );
-        if (isInThatCollection) {
-          // If it is in that collection, check the user privileges
-          if (req.user.id == collectionToRemoveFrom.user_id || req.user.admin) {
-            // Remove the card if all criteria are met
-            await collectionToRemoveFrom.removeCard(cardToRemove);
-            res.status(200).json({
-              message: "Card removed successfully",
-              cardRemoved: cardToRemove,
-              collection: collectionToRemoveFrom,
-            });
-          } else {
-            res.status(401).json({
-              message: "Not authorised to remove a card from this collection",
-            });
-          }
-        } else {
-          res.status(400).json({
-            message: "That card isn't in that collection",
-          });
-        }
-      }
-    }
-  } catch (err) {
-    res.status(500).json({ message: err.message });
-  }
-});
-
-//Add a card to a collection
-router.post("/addremove", authenticateJWT, async (req, res) => {
-  try {
-    const card_id = req.query.card_id;
-    const collection_id = req.query.collection_id;
-
-    const cardToAdd = await Card.findByPk(card_id);
-
-    if (!cardToAdd) {
-      res.status(404).json({
-        message: "Can't find that card",
-      });
-    } else {
-      const collectionToAddTo = await Collection.findByPk(collection_id);
-      if (!collectionToAddTo) {
-        res.status(404).json({
-          message: "Can't find that collection",
-        });
-      } else {
-        const isDuplicate = await collectionToAddTo.hasCard(cardToAdd);
-        if (isDuplicate) {
-          res.status(400).json({
-            message: "That card is already in that collection",
-          });
-        } else {
-          if (req.user.id == collectionToAddTo.user_id || req.user.admin) {
-            await collectionToAddTo.addCard(cardToAdd);
-            res.status(200).json({
-              message: "Card added to collection successfully",
-              newEntry: cardToAdd,
-              collection: collectionToAddTo,
-            });
-          } else {
-            res.status(401).json({
-              message: "Not authorised to add a card to this collection"
-            })
-          }
-        }
-      }
-    }
-  } catch (err) {
-    res.status(500).json({
-      message: `Server error: ${err.message}`,
-    });
   }
 });
 
