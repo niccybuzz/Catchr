@@ -23,12 +23,11 @@ const authenticateJWT = (req, res, next) => {
             console.log("Authenticated")
             // if validated, sets the user's ID and admin status into the req.user field which can now be used elsewhere until the token expires
             req.user = decoded;
-            console.log(req.user)
             next();
         });
     } else {
         console.log("Not Authenticated")
-        res.status(401).json({ message: 'Token is required' });
+        res.status(401).json('Token is required');
     }
 };
 

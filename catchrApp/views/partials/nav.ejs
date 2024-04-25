@@ -2,9 +2,9 @@
 <% include (`header.ejs`) %>
 <nav class="flex justify-between items-center bg-canvas">
   <!-- Icon -->
-  <div class="w-1/3 flex justify-start items-start">
-    <a href="/" class="w-14 p-2">
-      <img src="/images/siteIcons/pokeballIcon.png" class="h-full" />
+  <div id="nav-icon" class="w-1/3 flex justify-start items-start filter invert">
+    <a href="/" class="w-10 m-2">
+      <img  src="/images/siteIcons/pokeballIcon.png" class="h-full" />
     </a>
   </div>
 
@@ -23,7 +23,24 @@
   >
     <!-- buttons shwon on medium sizes and up -->
     <div class="hidden md:flex justify-end items-center text-lg">
-      <%- include("loginbutton.ejs") %> <%- include("registerbutton.ejs") %>
+      <a
+        href="/cards"
+        class="py-1 px-4 mx-2 min-w-24 md:hidden lg:block hover:bg-button hover:text-canvas transition-colors rounded-lg text-center font-kanit"
+      >
+        Cards
+      </a>
+      <a
+        href="<%= user.authen ? '/mycollection' : '/login' %>"
+        class="py-1 px-4 mx-2 min-w-24 md:hidden lg:block hover:bg-button hover:text-canvas transition-colors rounded-lg text-center font-kanit"
+      >
+        <%= user.authen ? "My Collection" : "Log In" %>
+      </a>
+      <a
+        href="<%= user.authen ? '/logout' : '/register' %>"
+        class="py-1 px-4 mx-2 min-w-24 md:hidden lg:block hover:bg-button hover:text-canvas transition-colors rounded-lg text-center font-kanit"
+      >
+        <%= user.authen ? "Log Out" : "Sign Up" %>
+      </a>
     </div>
     <!-- The button which when clicked on will toggle "hidden" for the dropdown options below -->
     <button
@@ -36,48 +53,7 @@
       />
     </button>
 
-    <!-- The actual dropdown menu options. When button above is clicked, dropdown toggle function will be triggered, showing or hiding these options -->
-    <div
-      id="dropdown-menu"
-      class="hidden z-10 absolute top-16 right-3 w-48 rounded-md shadow-lg bg-button"
-    >
-      <div class="py-1 rounded-lg" role="menu">
-        <a
-          href="<%= user.authen ? '/myaccount' : '/login' %>"
-          class="block px-4 py-2 hover:bg-gray-100 hover:text-gray-900 "
-          role="menuitem"
-          ><%= user.authen ? 'My Account' : 'Log In' %></a
-        >
-        <% if (!user.authen) { %>
-        <a
-          href="/register"
-          class="block px-4 py-2 hover:bg-gray-100 hover:text-gray-900"
-          role="menuitem"
-          >Sign Up</a
-        >
-        <% } %>
-        <a
-          href="/cards"
-          class="block px-4 py-2 hover:bg-gray-100 hover:text-gray-900"
-          role="menuitem"
-          >Browse Cards</a
-        >
-        <a
-          href="/collections"
-          class="block px-4 py-2 hover:bg-gray-100 hover:text-gray-900"
-          role="menuitem"
-          >Browse Collections</a
-        >
-        <% if (user.authen) { %>
-        <a
-          href="/logout"
-          class="block px-4 py-2 hover:bg-gray-100 hover:text-gray-900"
-          role="menuitem"
-          >Log Out</a
-        >
-        <% } %>
-      </div>
-    </div>
+    <%- include("menuoptions.ejs") %>
   </div>
 </nav>
 
@@ -93,3 +69,5 @@
     dropdownMenu.classList.toggle("hidden");
   });
 </script>
+
+

@@ -4,19 +4,23 @@
     <%- include (`partials/header.ejs`) %>
     <title>Catchr</title>
   </head>
-  <body class="bg-canvas bg-no-repeat bg-center bg-cover font-kanit text-container">
+  <body
+    class="bg-canvas bg-no-repeat bg-center bg-cover font-kanit text-container"
+  >
     <main>
+      <%- include(`partials/navReduced.ejs`) %>
       <!-- First section Main Area -->
       <div
         id="overlay"
         class="flex flex-col justify-start bg-black p-12 pb-4 bg-opacity-0 transition-all duration-1000 relative"
       >
-      
-      <%- include(`partials/dropdown.ejs`) %>
+        
+          
+        
 
         <!-- Title -->
         <h1
-          class="font-eightbit text-5xl md:text-xxxxl lg:xxxxxl  text-center opacity-0 mt-72 transition-all duration-1000"
+          class="font-eightbit text-5xl md:text-xxxxl lg:xxxxxl text-center opacity-0 mt-72 transition-all duration-1000"
           id="bigtitle"
         >
           Catchr
@@ -33,7 +37,10 @@
           </h2>
         </div>
         <!-- Buttons -->
-        <div class="flex justify-center opacity-0 transition-opacity delay-1000 duration-1000" id="buttonbox">
+        <div
+          class="flex justify-center opacity-0 transition-opacity delay-1000 duration-1000"
+          id="buttonbox"
+        >
           <a href="/cards" class="">
             <button
               class="bg-button hover:bg-button text-container hover:text-container rounded-md md:my-12 mx-4 py-2 px-4 md:px-4 text-center md:text-xl transition-colors font-bold"
@@ -41,7 +48,6 @@
               Browse Cards
             </button>
           </a>
-
         </div>
       </div>
 
@@ -72,7 +78,9 @@
                 >
                   Explore the Pokémon universe at your fingertips
                 </h2>
-                <p class="text-md text-container-700 p-2 text-md md:text-lg lg:text-xl">
+                <p
+                  class="text-md text-container-700 p-2 text-md md:text-lg lg:text-xl"
+                >
                   Explore the latest cards, immerse yourself in nostalgia, or
                   find your new favourite Pokémon with our extensive card
                   database.
@@ -92,9 +100,7 @@
 
       <!-- Thirs section -->
       <div class="bg-canvas">
-        <div
-          class="h-full py-6 w-full flex justify-center text-container"
-        >
+        <div class="h-full py-6 w-full flex justify-center text-container">
           <!-- Main second content container -->
           <div
             class="flex flex-col-reverse xl:py-12 justify-evenly md:flex-row md:mr-10 md:ml-10 max-w-[1920px]"
@@ -106,7 +112,7 @@
                 class="md:m-8 p-6 max-w-96 flex flex-col justify-center items-center text-center bg-white rounded-lg"
               >
                 <h2
-                  class="container font-bold text-md md:text-xl lg:text-2xl  border-b border-white border-opacity-50 p-2"
+                  class="container font-bold text-md md:text-xl lg:text-2xl border-b border-white border-opacity-50 p-2"
                 >
                   Craft your ultimate Pokémon card collection, effortlessly.
                 </h2>
@@ -183,42 +189,39 @@
         <div class="flex justify-center">
           <!-- Icon -->
 
-          <div class="hidden md:w-1/3 md:flex justify-center items-center">
-
-          </div>
+          <div
+            class="hidden md:w-1/3 md:flex justify-center items-center"
+          ></div>
           <!-- Text Box -->
           <div
             class="lg:w-1/3 min-w-80 m-4 lg:m-8 py-4 md:my-16 p-4 xl:p-16 rounded-lg flex flex-col justify-center items-center"
           >
-            
-              <!-- Header -->
-              <h2
-                class=" text-2xl lg:text-3xl text-center py-4 px-6 my-6 rounded-lg text-container font-bold bg-button"
-              >
-                Ready to get started?
-              </h2>
-          
-           
-              <!-- Header -->
-              <h2
-                class="text-lg lg:text-xl text-center px-6 py-4 my-6  rounded-lg text-container font-bold bg-button"
-              >
-                Sign up for a free account now.
-              </h2>
-            
+            <!-- Header -->
+            <h2
+              class="text-2xl lg:text-3xl text-center py-4 px-6 my-6 rounded-lg text-container font-bold bg-button"
+            >
+              Ready to get started?
+            </h2>
+
+            <!-- Header -->
+            <h2
+              class="text-lg lg:text-xl text-center px-6 py-4 my-6 rounded-lg text-container font-bold bg-button"
+            >
+              Sign up for a free account now.
+            </h2>
 
             <!-- Buttons -->
             <div class="py-6 text-2xl flex justify-center">
               <a href="/register" class="px-4">
                 <button
-                  class="bg-button hover:bg-button transition-colors duration-500 rounded-md py-2 px-6 md:px-8 xl:px-10 text-center md:text-xl text-container hover:text-container font-bold shadow-md "
+                  class="bg-button hover:bg-button transition-colors duration-500 rounded-md py-2 px-6 md:px-8 xl:px-10 text-center md:text-xl text-container hover:text-container font-bold shadow-md"
                 >
                   Sign Up
                 </button>
               </a>
               <a href="/login" class="px-4">
                 <button
-                  class="bg-button hover:bg-button transition-colors duration-500 rounded-md py-2 px-6 md:px-8 xl:px-10 text-center md:text-xl text-container hover:text-container font-bold shadow-md "
+                  class="bg-button hover:bg-button transition-colors duration-500 rounded-md py-2 px-6 md:px-8 xl:px-10 text-center md:text-xl text-container hover:text-container font-bold shadow-md"
                 >
                   Log In
                 </button>
@@ -227,9 +230,9 @@
           </div>
 
           <!-- Icon -->
-          <div class="hidden md:w-1/3 md:flex justify-center items-center">
-
-          </div>
+          <div
+            class="hidden md:w-1/3 md:flex justify-center items-center"
+          ></div>
         </div>
       </div>
 

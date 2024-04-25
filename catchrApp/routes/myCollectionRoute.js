@@ -6,10 +6,10 @@ const redirectLogin = require("../middleware/redirectLogin");
 router.get("/add", async (req, res) => {
   try {
     const { collection, card } = req.query;
-    console.log(collection)
-    console.log(card)
     const token = req.session.authToken
-    const endp = `http://localhost:4000/api/collections/addremove`;
+    const endp = `http://localhost:4000/api/collections/card`;
+    console.log(card)
+    console.log(collection)
     const body = {
       card_id: card,
       collection_id: collection,
@@ -24,26 +24,44 @@ router.get("/add", async (req, res) => {
 
     const results = await axios.post(endp, body, config);
 
-    res.status(200).json("Card added successfully")
+    res.status(200).json(results.data)
   } catch (err) {
-    if (err.response && err.response.status == 400) {
-      alert("Card already in collection")
-    } else {
-      res.status(500).json(err)
-    }
+    console.log(err.data);
+  }
+});
+
+router.get("/remove", async (req, res) => {
+  try {
+    const { collection, card } = req.query;
+
+    const token = req.session.authToken
+    const endp = `http://localhost:4000/api/collections/card`;
+    const body = {
+      card_id: card,
+      collection_id: collection,
+    };
+    // Setting configuration to allow app to parse url data
+    const config = {
+      headers: {
+        "Authorization": `Bearer ${token}`
+      },
+    };
+    const results = await axios.delete(endp, { data: body, ...config });
+    res.status(200).json(results.data)
+  } catch (err) {
+    res.redirect("/mycollection")
   }
 });
 
 router.get("/", redirectLogin, async (req, res) => {
   const user_id = req.session.authen;
-
   let endp = `http://localhost:4000/api/collections/${user_id}`;
 
   await axios
     .get(endp) // Pass id as a query parameter
     .then((response) => {
-      let collection = response.data;
-      let cards = response.data.Cards
+      let collection = response.data.collection;
+      let cards = response.data.collection.Cards
       res.render("myCollection", {
         collection: collection,
         cards: cards,

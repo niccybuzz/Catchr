@@ -115,7 +115,7 @@ router.get("/", async (req, res) => {
       const collection = await axios.get(
         `http://localhost:4000/api/collections/${user_id}`
       );
-      mycollection = collection.data
+      mycollection = collection.data.collection
     }
 
     // Finding the specific type/rarity/set name that the user searched for
