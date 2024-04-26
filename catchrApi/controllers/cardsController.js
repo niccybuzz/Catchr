@@ -17,7 +17,6 @@ const router = express.Router();
 router.get("/", cacheChecker, async (req, res) => {
   try {
     //filtering, sorting and pagination parameters
-
     let {
       card_name,
       set_id,

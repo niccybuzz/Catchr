@@ -82,7 +82,6 @@ router.post("/card", authenticateJWT, async (req, res) => {
     if (!cardToAdd) {
       return res.status(404).json("Can't find that card");
     } else {
-      console.log("triggered")
       const collectionToAddTo = await Collection.findByPk(collection_id);
       if (!collectionToAddTo) {
         return res.status(404).json("Can't find that collection");
@@ -148,7 +147,7 @@ router.get("/:userid", async (req, res) => {
       where: {
         user_id: userid,
       },
-      attributes: ["collection_id", "user_id"],
+      attributes: ["collection_id", "user_id", "rating"],
       include: [
         {
           model: User,
@@ -198,10 +197,15 @@ router.get("/:userid", async (req, res) => {
 async function getStats(cards) {
   let uniqueCards = Object.keys(cards).length;
   let totalCards = 0;
+  let shinies = 0;
+
   cards.forEach((card)=> {
     totalCards += card.CardCollection.numInCollection;
+    if (card.Rarity.rarity_id > 4){
+      shinies++
+    }
   })
-  return {uniqueCards, totalCards}
+  return {uniqueCards, totalCards, shinies}
 }
 
 //get all collections Route, with optional sorting and filtering
