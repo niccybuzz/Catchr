@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const axios = require("axios");
+const redirectLogin = require("../middleware/redirectLogin")
 
 /**
  * Posts a comment on a collection
@@ -28,7 +29,7 @@ router.post("/comment/:collectionid", async (req, res) => {
     };
 
     const results = await axios.post(endp, postComment, config);
-    res.redirect("/collections");
+    res.redirect(`/collections/${collection_id}`);
   } catch (err) {
     res.status(500).json("Server error: " + err);
   }
@@ -49,55 +50,6 @@ router.delete("/comment/delete/:id", async (req, res) => {
 });
 
 /**
- * Gets a single collection belonging to a user
- * returns the collection details, the cards inside, and the collection status
- * If a user searches for their own user id, redirects to the main collections page
- */
-router.get("/:userid", async (req, res) => {
-  try {
-    const sessionObj = req.session;
-    const user_id = req.params.userid;
-    const endp = `http://localhost:4000/api/collections/${user_id}`;
-    const results = await axios.get(endp);
-    const collection = results.data.collection;
-    const cards = collection.Cards;
-    const stats = results.data.stats;
-
-    // Getting a list of all collections on the site
-    const allCollecResults = await axios.get(
-      `http://localhost:4000/api/collections`
-    );
-    const collections = allCollecResults.data;
-
-    const collection_id = collection.collection_id;
-    let comments = null;
-    try {
-      const commentsResults = await axios.get(
-        `http://localhost:4000/api/comments/collection/${collection_id}`
-      );
-      comments = commentsResults.data;
-    } catch (err) {
-      comments = null;
-    }
-
-    if (sessionObj.authen == user_id) {
-      res.redirect("/collections/mycollection");
-    } else {
-      res.render("singlecollection", {
-        collection: collection,
-        user: req.session,
-        cards: cards,
-        stats: stats,
-        comments: comments,
-        collections: collections
-      });
-    }
-  } catch (err) {
-    res.send(err.response.data);
-  }
-});
-
-/**
  * Takes user to the collections dashboard
  * Retrieves the users collection (with all cards and status),
  * a list of other user's collections, and all comments on user's collection.
@@ -105,41 +57,36 @@ router.get("/:userid", async (req, res) => {
 router.get("/mycollection", async (req, res) => {
   try {
     const user_id = req.session.authen;
-
-    // Getting a list of all collections on the site
-    const allCollecResults = await axios.get(
-      `http://localhost:4000/api/collections`
-    );
-    const collections = allCollecResults.data;
-
     // Declaring these as null so that i can still pass empty to the browser if user isn't logged in
     let mystats,
       mycollection,
       cards,
       myComments = null;
     if (user_id) {
-      //Getting my collection details, cards and stats
-      const myCollecResults = await axios.get(
-        `http://localhost:4000/api/collections/${user_id}`
-      );
-      mycollection = myCollecResults.data.collection;
-      mystats = myCollecResults.data.stats;
-      cards = mycollection.Cards;
-
-      // Getting all comments on my collection
-      const mycollection_id = mycollection.collection_id;
       try {
-        const commentsResults = await axios.get(
-          `http://localhost:4000/api/comments/collection/${mycollection_id}?user_id=${user_id}`
+        //Getting my collection details, cards and stats
+        const myCollecResults = await axios.get(
+          `http://localhost:4000/api/collections/user/${user_id}`
         );
-        myComments = commentsResults.data;
-        myComments = await markMyComments(myComments, user_id);
+        mycollection = myCollecResults.data.collection;
+        mystats = myCollecResults.data.stats;
+        cards = mycollection.Cards;
+        const mycollection_id = mycollection.collection_id;
+        // Getting all comments on my collection, if any
+        try {
+          const commentsResults = await axios.get(
+            `http://localhost:4000/api/comments/collection/${mycollection_id}`
+          );
+          myComments = commentsResults.data;
+          myComments = await markMyComments(myComments, user_id);
+        } catch (err) {
+          myComments = null;
+        }
       } catch (err) {
-        myComments = null;
+        mycollection, mystats, (cards = null);
       }
     }
-    res.render("collections", {
-      collections: collections,
+    res.render("MyCollection", {
       user: req.session,
       collection: mycollection,
       stats: mystats,
@@ -153,9 +100,132 @@ router.get("/mycollection", async (req, res) => {
   }
 });
 
+router.get("/topcollections", async (req, res) => {
+  try {
+    let sortBy = req.query.sortBy || "numLikes" ;
+    let sortOrder = req.query.sortOrder || "desc";
+    const allCollectionsData = await axios.get(
+      `http://localhost:4000/api/collections/?sortBy=${sortBy}&sortOrder=${sortOrder}`
+    );
+    const collections = allCollectionsData.data;
+    res.render("topcollections", {
+      collections: collections,
+      user: req.session,
+    });
+  } catch (err) {
+    res.send(err);
+  }
+});
+
+router.get("/like/:collection_id", async (req, res) => {
+  try {
+    const user_id = req.session.authen;
+    const token = req.session.authToken;
+    const collection_id = req.params.collection_id;
+    const endp = `http://localhost:4000/api/likes`
+    console.log(user_id)
+    console.log(token)
+    console.log(collection_id)
+  
+    const like = {
+      user_id: user_id,
+      collection_id: collection_id
+    }
+    const config = {
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+        Authorization: `Bearer ${token}`,
+      },
+    };
+    const results = await axios.post(endp, like, config)
+    console.log(results.data)
+    res.redirect(`/collections/${collection_id}`);
+  } catch (err) {
+    console.log(err)
+    res.redirect("/login")
+  }
+});
+
+router.get("/unlike/:collection_id", redirectLogin, async (req, res) => {
+  try {
+    const user_id = req.session.authen;
+    const token = req.session.authToken;
+    const collection_id = req.params.collection_id;
+    const endp = `http://localhost:4000/api/likes?user_id=${user_id}&collection_id=${collection_id}`
+
+    const config = {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    };
+    const results = await axios.delete(endp, config)
+    console.log(results.data)
+    res.redirect(`/collections/${collection_id}`);
+  } catch (err) {
+    res.send(err);
+  }
+});
+
+/**
+ * Gets a single collection belonging to a user
+ * returns the collection details, the cards inside, and the collection status
+ * If a user searches for their own user id, redirects to the main collections page
+ */
+router.get("/:collection_id", async (req, res) => {
+  try {
+    const sessionObj = req.session;
+    const user_id = sessionObj.authen;
+
+    const collection_id = req.params.collection_id;
+    const endp = `http://localhost:4000/api/collections/${collection_id}`;
+    const results = await axios.get(endp);
+    const collection = results.data.collection;
+    const cards = collection.Cards;
+    const stats = results.data.stats;
+
+    // Getting all comments on my collection, if any and marking user's own ones
+    let comments = null;
+    try {
+      const commentsResults = await axios.get(
+        `http://localhost:4000/api/comments/collection/${collection_id}`
+      );
+      comments = commentsResults.data;
+      comments = await markMyComments(comments, user_id);
+    } catch (err) {
+      comments = null;
+    }
+
+    if (user_id == collection.User.user_id) {
+      console.log("That's my collection");
+      res.redirect("/collections/mycollection");
+    } else {
+      let collectionLiked = false;
+      try{
+        const checkLiked = await axios.get(`http://localhost:4000/api/likes/singlelike/?user_id=${user_id}&collection_id=${collection_id}`)
+        console.log("Collection liked")
+        collectionLiked = true;
+      } catch (err) {
+        console.log("Collection not liked")
+        collectionLiked = false
+      }
+      
+      res.render("userCollection", {
+        collection: collection,
+        user: req.session,
+        cards: cards,
+        stats: stats,
+        comments: comments,
+        liked: collectionLiked
+      });
+    }
+  } catch (err) {
+    res.send(err);
+  }
+});
+
 /**
  * Function for marking all the comments posted by the user, allowing them to delete their comments
- * @returns
+ * @returns marked comments
  */
 async function markMyComments(comments, user_id) {
   comments.forEach((comment) => {

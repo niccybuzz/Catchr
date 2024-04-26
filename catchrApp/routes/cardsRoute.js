@@ -113,7 +113,7 @@ router.get("/", async (req, res) => {
     let mycollection = "placeholder"
     if (user_id) {
       const collection = await axios.get(
-        `http://localhost:4000/api/collections/${user_id}`
+        `http://localhost:4000/api/collections/user/${user_id}`
       );
       mycollection = collection.data.collection
     }

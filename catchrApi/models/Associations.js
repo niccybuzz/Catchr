@@ -10,7 +10,8 @@ const Fineprint = require("./Fineprint")
 const Type = require("./Type")
 const Ability = require("./Ability")
 const Comment = require("./Comment")
-const CardCollection = require("./many-to-many-files/CardCollection")
+const Like = require("./Like")
+const CardCollection = require("./many-to-many-files/CardCollection");
 
 User.hasOne(Collection, { foreignKey: 'user_id' });
 Collection.belongsTo(User, { foreignKey: 'user_id' });
@@ -20,6 +21,9 @@ Card.belongsToMany(Collection, {through: CardCollection})
 
 Comment.belongsTo(Collection, {foreignKey: 'collection_id'})
 Collection.hasMany(Comment, {foreignKey: 'collection_id'})
+
+Like.belongsTo(Collection, {foreignKey: 'collection_id'});
+Collection.hasMany(Like, {foreignKey: 'collection_id'});
 
 Comment.belongsTo(User, {foreignKey: 'user_id'});
 User.hasMany(Comment, {foreignKey: 'user_id'});

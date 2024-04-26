@@ -139,15 +139,66 @@ router.post("/card", authenticateJWT, async (req, res) => {
 });
 
 //Get single collection by ID
-router.get("/:userid", async (req, res) => {
+router.get("/user/:user_id", async (req, res) => {
   try {
-    const userid = req.params.userid;
-
+    const user_id = req.params.user_id;
     const foundCollection = await Collection.findOne({
       where: {
-        user_id: userid,
+        user_id: user_id
       },
-      attributes: ["collection_id", "user_id", "rating"],
+      attributes: ["collection_id", "user_id", "rating", "numLikes"],
+      include: [
+        {
+          model: User,
+          attributes: ["username", "user_id"],
+        },
+        {
+          model: Card,
+          attributes: ["card_id", "card_name", "card_image"],
+          through: { where: {} }, // Include duplicates
+          include: [
+            {
+              model: Category,
+              attributes: ["category_id", "category_description"],
+            },
+            {
+              model: Type,
+              attributes: ["type_id", "type_description"],
+            },
+            {
+              model: Set,
+              attributes: ["set_id", "set_name", "no_of_cards"],
+            },
+            {
+              model: Rarity,
+              attributes: ["rarity_id", "rarity_description", "rarity_icon"],
+            },
+          ],
+        },
+      ],
+    });
+
+    if (!foundCollection) {
+      res.status(404).json("Collection not found");
+    } else {
+      const cards = foundCollection.Cards;
+      const stats = await getStats(cards);
+      res.status(200).json({
+        collection: foundCollection,
+        stats: stats
+      });
+    }
+  } catch (err) {
+    res.status(404).json(err);
+  }
+});
+
+//Get single collection by ID
+router.get("/:collection_id", async (req, res) => {
+  try {
+    const collectionid = req.params.collection_id;
+    const foundCollection = await Collection.findByPk(collectionid, {
+      attributes: ["collection_id", "user_id", "rating", "numLikes"],
       include: [
         {
           model: User,
@@ -211,13 +262,10 @@ async function getStats(cards) {
 //get all collections Route, with optional sorting and filtering
 router.get("/", async (req, res) => {
   try {
-    let { user_id, sortBy, sortOrder } = req.query;
+    let { sortBy, sortOrder } = req.query;
     const whereClause = {};
 
-    //option to sort by user id
-    if (user_id) {
-      whereClause.user_id = user_id;
-    }
+
     //option to add ordering
     let orderClause = [];
     if (sortBy && sortOrder) {

@@ -18,6 +18,11 @@ const Collection = sequelize.define(
       type: DataTypes.DOUBLE,
       allowNull: true,
     },
+    numLikes: {
+      type: DataTypes.INTEGER,
+      allowNull: true,
+      defaultValue: 0
+    }
   },
   {
     tableName: "collections",

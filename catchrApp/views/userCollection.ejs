@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <%- include (`partials/header.ejs`) %>
+    <title><%=collection.User.username%>'s Collection></title>
+  </head>
+  <body class="box-border bg-canvas flex flex-col font-kanit min-h-screen">
+    <%- include (`partials/nav.ejs`) %>
+
+    <!-- Full screen size flexbox -->
+    <div class="flex flex-col flex-1 pt-6 p-2 md:pt-0 text-container h-full">
+      
+      <div class="flex items-center justify-center">
+        <h2 class="text-center self-center m-10 text-3xl font-bold bg-container px-4 py-2 rounded-lg text-canvas max-w-[660px]">
+          <%=collection.User.username%>'s Collection
+        </h2>
+
+        <% if (liked) { %>
+          <a href="/collections/unlike/<%=collection.collection_id%>">
+            <img class="w-10 h-10" src="/images/siteIcons/likeFull.png">
+          </a>
+        <% } else { %>
+          <a href="/collections/like/<%=collection.collection_id%>">
+            <img class="w-10 h-10" src="/images/siteIcons/likeEmpty.png">
+          </a>
+        <% } %>
+
+      </div>
+      <!-- User Collection -->
+      <div class="flex flex-col w-full justify-center">
+
+        <!-- Message if collection is empty -->
+        <% if (collection.Cards.length == 0) { %>
+        
+          <div
+            class="container self-center flex justify-center items-center text-center h-full"
+          >
+            <p class="text-2xl mb-4">
+              <%=collection.User.username%>'s collection is empty.
+            </p>
+
+           
+          </div>
+        
+
+        <%} else { %>
+
+        <!--Showing collection statistics -->
+        <%- include ("partials/statsBar.ejs") %>
+
+        <!-- Box for cards/comments buttons -->
+        <div class="flex justify-start px-4 lg:px-36 ws:px-96">
+          <!-- Cards button -->
+          <button
+            id="cards-button"
+            class="px-2 m-4 relative border-b border-container border-opacity-20 text-container bg-canvas hover:bg-container hover:text-canvas rounded-md transition-colors"
+          >
+            Cards
+          </button>
+
+          <!-- Comments button -->
+          <button
+            id="comments-button"
+            class="px-2 m-4 relative border-b border-container border-opacity-20 text-container bg-canvas hover:bg-container hover:text-canvas rounded-md transition-colors"
+          >
+            Show Comments
+          </button>
+        </div>
+
+        <!-- Container for cards and buttons -->
+        <div class="flex w-full justify-center items-start">
+          <!-- Grid for cards -->
+          <div
+            class="grid lg:grid justify-center items-center gap-6 px-4 lg:px-12 ws:px-96 h-full grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 lg:w-full"
+            id="gridDiv"
+          >
+            <!-- Iterating through each pokemon (row in data) and creates a card object each -->
+            <% cards.forEach((card) => { %>
+
+            <div
+              class="flex flex-col justify-center items-center bg-canvas text-black text-container rounded-lg"
+            >
+              <%- include ("partials/card/cardLink.ejs", {card: card}) %>
+
+              <%- include ("partials/card/cardInfoBox.ejs", {card: card}) %>
+
+
+            </div>
+            <% }) %>
+          </div>
+
+          <!-- Box for comments -->
+          <div
+            id="comments-div"
+            class="flex-col w-full items-center lg:w-1/4 lg:mr-32 hidden"
+          >
+            <div
+              class="w-full flex flex-col justify-start text-center items-center"
+            >
+              <h1 class="text-2xl m-6">Comments</h1>
+
+              <% if (!user.authen) { %>
+              <p><a href="/login">Sign in</a> to post a comment</p>
+              <% } else { %>
+              <form
+                action="/collections/comment/<%=collection.collection_id%>"
+                method="POST"
+                class="w-full flex flex-col justify-center items-center"
+              >
+                <h2 class="my-4">Leave a comment</h2>
+                <div class="flex">
+                  <input
+                    type="text"
+                    name="comment"
+                    class="rounded-md border border-container border-opacity-45"
+                    placeholder=" Comment"
+                  />
+                  <button
+                    class="bg-button text-canvas px-2 py-1 mx-2 rounded-lg"
+                  >
+                    Submit
+                  </button>
+                </div>
+              </form>
+              <% } %> 
+              
+              <!-- If not comments, show message -->
+              <% if (!comments) { %>
+              <p class="m-6 flex-1 py-20">No Comments</p>
+              <% } else { %>
+              <div class="flex flex-col w-96">
+                <% comments.forEach((comment) => { %>
+                <div class="flex items-center justify-between">
+                  <div class="flex flex-col p-4">
+                    <h4 class="italic font-bold">
+                      <%= comment.User.username%> says:
+                    </h4>
+
+                    <p><%= comment.comment_body %></p>
+                  </div>
+
+                  <!-- Adding a "delete comment" box if the comment belongs to user -->
+                  <% if (comment.isMine) { %>
+                  <a class="deletebutton" comment=" <%= comment.comment_id %> ">
+                    <button
+                      class="bg-button rounded-lg text-xs px-2 py-1 h-8 w-16"
+                    >
+                      Delete
+                    </button>
+                  </a>
+                  <% } %>
+                </div>
+                <%}) %>
+              </div>
+              <% } %>
+            </div>
+          </div>
+        </div>
+
+        <%} %>
+      </div>
+    </div>
+
+    <!-- Popup dialogue -->
+    <div
+      id="popup"
+      class="fixed text-canvas text-center max-w-72 z-20 top-1/4 md:top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-container p-6 flex justify-center items-center shadow-lg rounded-lg"
+      style="display: none"
+    >
+      <p id="popupMessage" class="text-lg mb-4"></p>
+      <button
+        id="closePopup"
+        class="bg-canvas text-container font-bold py-2 px-4 rounded"
+      >
+        Close
+      </button>
+    </div>
+
+    <%- include (`partials/footer.ejs`) %>
+
+    <script src="/functions/addRemoveCards.js"></script>
+    <script src="/functions/commentsButtonsToggle.js"></script>
+    <script src="/functions/addRemoveComments.js"></script>
+  </body>
+  <!-- Scripts etc -->
+  <%- include (`partials/tailwindDark.ejs`) %>
+</html>

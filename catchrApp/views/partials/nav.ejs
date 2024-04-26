@@ -30,10 +30,10 @@
         Cards
       </a>
       <a
-        href="<%= user.authen ? '/collections' : '/login' %>"
+        href="<%= user.authen ? '/collections/mycollection' : '/login' %>"
         class="px-2 mx-2 min-w-24 md:hidden xl:block hover:bg-button hover:text-canvas transition-colors rounded-lg text-center font-kanit"
       >
-        <%= user.authen ? "Collections" : "Log In" %>
+        <%= user.authen ? "My Collection" : "Log In" %>
       </a>
       <a
         href="<%= user.authen ? '/logout' : '/register' %>"

@@ -1,21 +1,21 @@
-<div id="stats" class="grid grid-cols-2 md:grid-cols-4 w-full max-w-[660px] justify-center self-center items-center text-canvas">
-    <h2 class="text-xl text-center p-4 font-bold bg-button rounded m-2">
-      Total Cards: <%= stats.totalCards %>
-    </h2>
-    <h2 class="text-xl text-center p-4 font-bold bg-button rounded m-2">
-      Unique Cards: <%= stats.uniqueCards %>
-    </h2>
-    <h2 class="text-xl text-center p-4 font-bold bg-button rounded m-2">
-      Shiny Cards: <%= stats.shinies %>
-    </h2>
-    <% if (collection.rating) { %>
-    <h2 class="text-xl text-center p-4 font-bold bg-button rounded m-2">
-      Average Rating: <%= mycollection.rating %>
-    </h2>
-    <% } else { %>
-    <h2 class="text-lg text-center p-4 font-bold bg-button rounded m-2">
-      No ratings yet!
-    </h2>
-  
-    <%} %>
-  </div>
+<div
+  id="stats"
+  class="grid grid-cols-2 md:grid-cols-4 w-full max-w-[660px] justify-center self-center items-center text-canvas"
+>
+  <h2 class="text-xl text-center p-4 font-bold bg-button rounded m-2">
+    Total Cards: <%= stats.totalCards %>
+  </h2>
+  <h2 class="text-xl text-center p-4 font-bold bg-button rounded m-2">
+    Unique Cards: <%= stats.uniqueCards %>
+  </h2>
+  <h2 class="text-xl text-center p-4 font-bold bg-button rounded m-2">
+    Shiny Cards: <%= stats.shinies %>
+  </h2>
+
+  <h2
+    class="text-xl flex flex-col items-center text-center p-4 font-bold bg-button rounded m-2"
+  >
+    <p>Likes:</p>
+    <p><%= collection.numLikes %></p>
+  </h2>
+</div>
