@@ -256,21 +256,17 @@
 
           <div
             id="popup"
-            class="fixed text-canvas max-w-96 z-20 top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-container p-6 flex justify-center items-center shadow-lg rounded-lg"
+            class="fixed text-canvas max-w-72 text-center z-20 top-1/4 md:top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-container p-6 flex justify-center items-center shadow-lg rounded-lg"
             style="display: none"
           >
-            <p id="popupMessage" class="text-lg mb-4 text-center"></p>
-            <div class="text-center">
-              <!-- Added text-center class here -->
-              <button
-                id="closePopup"
-                class="bg-canvas text-container font-bold py-2 px-4 rounded"
-              >
-                Close
-              </button>
-            </div>
+            <p id="popupMessage" class="text-lg mb-4"></p>
+            <button
+              id="closePopup"
+              class="bg-canvas text-container font-bold py-2 px-4 rounded"
+            >
+              Close
+            </button>
           </div>
-
           <% } else { %>
           <a href="/login">
             <button
@@ -296,13 +292,12 @@
     <!-- Pagination stuff -->
     <div class="flex flex-col justify-center text-center m-2">
       <% if (pagination.totalPages > 1) { %>
-      <h3>Page:</h3>
-      <div class="flex justify-center">
+      <h3 class="text-container m-2">Page:</h3>
+      <div class="flex justify-center" id="pageContainer">
         <% for (let i = 1; i <=pagination.totalPages; i++) { %>
 
-        <a
-          class="px-2 min-w-8 rounded-lg bg-black border border-white text-text text-xl text-center"
-          href="/cards/?page=<%= i %>&sortBy=<%=user.sortBy%>&orderBy=<%=user.orderBy%>"
+        <a pageNum="<%= i %>" href=""
+          class="px-2 mx-2 min-w-8 rounded-lg bg-container text-text border border-white text-text text-xl text-center"
           ><%= i %></a
         >
 
@@ -316,39 +311,7 @@
     <script src="/functions/loadCards.js"></script>
     <script src="/functions/cardFilters.js"></script>
     <script src="/functions/swapcolours.js"></script>
-    <script>
-      window.addEventListener("load", () => {
-        const addButtons = document.querySelectorAll(".addToCollection");
-
-        addButtons.forEach((button) => {
-          button.addEventListener("click", async function () {
-            try {
-              const selectedCard = this.getAttribute("card");
-              const selectedCollection = this.getAttribute("collection");
-              const response = await fetch(
-                `/mycollection/add/?collection=${selectedCollection}&card=${selectedCard}`
-              );
-              const data = await response.json();
-              if (response.ok) {
-                document.getElementById("popupMessage").textContent = data;
-                document.getElementById("popup").style.display = "block";
-              } else {
-                alert(data);
-              }
-            } catch (error) {
-              console.error("Error:", error);
-            }
-          });
-        });
-
-        document
-          .getElementById("closePopup")
-          .addEventListener("click", function () {
-            document.getElementById("popup").style.display = "none";
-          });
-      });
-    </script>
-    
+    <script src="/functions/addRemoveCards.js"></script>
   </body>
   <%- include (`partials/tailwindDark.ejs`) %>
 </html>

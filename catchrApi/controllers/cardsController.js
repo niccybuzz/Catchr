@@ -17,7 +17,6 @@ const router = express.Router();
 router.get("/", cacheChecker, async (req, res) => {
   try {
     //filtering, sorting and pagination parameters
-
     let {
       card_name,
       set_id,
@@ -30,6 +29,7 @@ router.get("/", cacheChecker, async (req, res) => {
       rarity_id,
     } = req.query;
 
+    //Have to do this or it bugs out for some reason
     limit = parseInt(limit);
 
     //setting default parameters for pagination if not passed by the user
@@ -37,7 +37,7 @@ router.get("/", cacheChecker, async (req, res) => {
       page = 1;
     }
     if (!limit) {
-      limit = 10;
+      limit = 12;
     }
     // creating filtering and sorting clauses
     const whereClause = {};

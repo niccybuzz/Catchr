@@ -4,6 +4,7 @@ const expansionsMenu = document.getElementById("expansions-dropdown");
 const raritiesMenu = document.getElementById("rarities-dropdown");
 const typesMenu = document.getElementById("types-dropdown");
 
+
 // Get references to the menu buttons
 const sortButton = document.getElementById("sort-button");
 const expansionsButton = document.getElementById("expansions-button");
@@ -36,11 +37,14 @@ typesButton.addEventListener("click", function () {
   sortMenu.classList.add("hidden");
 });
 
+
 // Getting all of the links in the rows of each dropdown menu
 const expansionLinks = document.querySelectorAll("#expansions-dropdown a");
 const typeLinks = document.querySelectorAll("#types-dropdown a");
 const rarityLinks = document.querySelectorAll("#rarities-dropdown a");
 const sortLinks = document.querySelectorAll("#sort-menu a");
+
+const pageLinks = document.querySelectorAll("#pageContainer a")
 
 //Adding event listeners for each link in the expansions menu
 expansionLinks.forEach((link) => {
@@ -142,3 +146,21 @@ sortLinks.forEach((link) => {
     });
   });
   
+pageLinks.forEach((link) => {
+  link.addEventListener("click", function (event) {
+    event.preventDefault(); 
+    const selectedPage = this.getAttribute("pageNum")
+    const currentUrl = window.location.href
+    let newUrl;
+    if (currentUrl.includes("page=")) {
+      newUrl = currentUrl.replace(/page=\w+/, `page=${selectedPage}`)
+    } else {
+      if (currentUrl.includes("?")) {
+        newUrl = currentUrl + `&page=${selectedPage}`
+      } else {
+        newUrl = currentUrl + `?page=${selectedPage}`
+      }
+    }
+    window.location.href = newUrl
+  })
+})
