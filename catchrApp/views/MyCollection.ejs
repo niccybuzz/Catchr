@@ -9,7 +9,14 @@
 
     <!-- Full screen size flexbox -->
     <div class="flex flex-col flex-1 pt-6 p-2 md:pt-0 text-container h-full">
-      <%- include ("partials/myCollectTopCollecsButtons.ejs") %>
+      
+      <div class="flex items-center justify-center">
+        <h2
+          class="text-center self-center m-10 text-3xl font-bold bg-container px-4 py-2 rounded-lg text-canvas max-w-[660px]"
+        >
+          My Collection
+        </h2>
+      </div>
 
       <!-- My Collection -->
       <div id="my-collection" class="flex flex-col w-full">
@@ -178,5 +185,5 @@
     <script src="/functions/addRemoveComments.js"></script>
   </body>
   <!-- Scripts etc -->
-  <%- include (`partials/tailwindConfig.ejs`) %>
+  <%- include (`partials/tailwindDark.ejs`) %>
 </html>

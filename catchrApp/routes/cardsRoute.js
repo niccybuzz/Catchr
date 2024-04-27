@@ -2,11 +2,10 @@ const express = require("express");
 const router = express.Router();
 const axios = require("axios");
 
-let filters = {};
-
 //Clears all filters and sort methods
 router.get("/clearsearch", (req, res) => {
-  req.session.prevSearch = null;
+  req.session.sortBy = null;
+  req.session.orderBy = null;
   filters = {};
   res.redirect("/cards");
 });
@@ -96,12 +95,22 @@ router.get("/", async (req, res) => {
     const sortBy = req.query.sortBy;
     const orderBy = req.query.orderBy;
     const page = parseInt(req.query.page) || 1;
-    const limit = parseInt(req.query.limit) || 10;
+    const limit = parseInt(req.query.limit) || 12;
     const card_name = req.query.card_name;
     const set_id = req.query.set_id;
     const rarity_id = req.query.rarity_id;
     const type_id = req.query.type_id;
     const user_id = req.session.authen;
+
+    //Holding on to the sortby and orderby
+    const sessionObj = req.session;
+    if (sortBy) {
+      req.session.sortBy = sortBy;
+    } else {
+    }
+    if (orderBy) {
+      req.session.orderBy = orderBy;
+    }
 
     //Getting all of the sets, rarities and types to populate dropdown menus
     const rarities = await axios.get(
@@ -110,18 +119,19 @@ router.get("/", async (req, res) => {
     const sets = await axios.get(`http://localhost:4000/api/others/sets`);
     const types = await axios.get(`http://localhost:4000/api/others/types`);
 
-    let mycollection = "placeholder"
+    let mycollection = "placeholder";
     if (user_id) {
       const collection = await axios.get(
         `http://localhost:4000/api/collections/user/${user_id}`
       );
-      mycollection = collection.data.collection
+      mycollection = collection.data.collection;
     }
 
     // Finding the specific type/rarity/set name that the user searched for
     let filteredSet;
     let filteredRarity;
     let filteredType;
+
     sets.data.forEach((set) => {
       if (set.set_id == set_id) {
         filteredSet = set;
@@ -137,11 +147,6 @@ router.get("/", async (req, res) => {
         filteredType = type;
       }
     });
-
-    //Holding on to the sortby and orderby
-    const sessionObj = req.session;
-    sessionObj.sortBy = sortBy;
-    sessionObj.orderBy = orderBy;
 
     //Calling getcards with any query parameters. Returns pagination and filters selected
     const result = await getCards(
@@ -181,7 +186,7 @@ router.get("/", async (req, res) => {
       collection: mycollection,
     });
   } catch (err) {
-    console.log(err);
+    console.log(err.response);
     res.redirect("/");
   }
 });
@@ -199,6 +204,7 @@ async function getCards(
 ) {
   let endp = `http://localhost:4000/api/cards?page=${page}&limit=${limit}`;
 
+  let filters = {};
   /**
    * For each query parameter passed into the method, it concatenates the base query with additional parameters
    * Then, it adds a new field in the "filters" object, which is used to create 'applied filter' divs in allCards
@@ -223,7 +229,10 @@ async function getCards(
     endp += `&sortBy=${sortBy}`;
     endp += `&sortOrder=${orderBy}`;
 
-    //Just capitalising and cleaning up the names
+    /**
+     * This part is basically clearning up the names so that they can be added to "filters" object 
+     * and then displayed on the website as tags
+     **/
     if (sortBy == "rarity") {
       sortBy = "Rarity";
     } else if (sortBy == "card_name") {

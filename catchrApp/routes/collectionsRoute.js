@@ -40,12 +40,13 @@ router.delete("/comment/delete/:id", async (req, res) => {
     const sessionObj = req.session;
     const token = sessionObj.authToken;
     const comment_id = req.params.id;
-    console.log(comment_id);
+    
     const endp = `http://localhost:4000/api/comments/${comment_id}`;
     const result = await axios.delete(endp);
     res.status(200).json("Comment deleted");
   } catch (err) {
-    console.log(err.response.data);
+    console.log(err);
+    res.redirect("/cards")
   }
 });
 
@@ -159,7 +160,7 @@ router.get("/unlike/:collection_id", redirectLogin, async (req, res) => {
       },
     };
     const results = await axios.delete(endp, config)
-    console.log(results.data)
+  
     res.redirect(`/collections/${collection_id}`);
   } catch (err) {
     res.send(err);
@@ -196,16 +197,16 @@ router.get("/:collection_id", async (req, res) => {
     }
 
     if (user_id == collection.User.user_id) {
-      console.log("That's my collection");
+    
       res.redirect("/collections/mycollection");
     } else {
       let collectionLiked = false;
       try{
         const checkLiked = await axios.get(`http://localhost:4000/api/likes/singlelike/?user_id=${user_id}&collection_id=${collection_id}`)
-        console.log("Collection liked")
+        
         collectionLiked = true;
       } catch (err) {
-        console.log("Collection not liked")
+        
         collectionLiked = false
       }
       
@@ -231,7 +232,7 @@ async function markMyComments(comments, user_id) {
   comments.forEach((comment) => {
     if (comment.user_id == user_id) {
       comment.isMine = true;
-      console.log(comment);
+      
     }
   });
   return comments;

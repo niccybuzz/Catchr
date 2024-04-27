@@ -9,39 +9,35 @@
 
     <!-- Full screen size flexbox -->
     <div class="flex flex-col flex-1 pt-6 p-2 md:pt-0 text-container h-full">
-      
       <div class="flex items-center justify-center">
-        <h2 class="text-center self-center m-10 text-3xl font-bold bg-container px-4 py-2 rounded-lg text-canvas max-w-[660px]">
+        <h2
+          class="text-center self-center m-10 text-3xl font-bold bg-container px-4 py-2 rounded-lg text-canvas max-w-[660px]"
+        >
           <%=collection.User.username%>'s Collection
         </h2>
 
         <% if (liked) { %>
-          <a href="/collections/unlike/<%=collection.collection_id%>">
-            <img class="w-10 h-10" src="/images/siteIcons/likeFull.png">
-          </a>
+        <a href="/collections/unlike/<%=collection.collection_id%>">
+          <img class="w-10 h-10" src="/images/siteIcons/likeFull.png" />
+        </a>
         <% } else { %>
-          <a href="/collections/like/<%=collection.collection_id%>">
-            <img class="w-10 h-10" src="/images/siteIcons/likeEmpty.png">
-          </a>
+        <a href="/collections/like/<%=collection.collection_id%>">
+          <img class="w-10 h-10" src="/images/siteIcons/likeEmpty.png" />
+        </a>
         <% } %>
-
       </div>
       <!-- User Collection -->
       <div class="flex flex-col w-full justify-center">
-
         <!-- Message if collection is empty -->
         <% if (collection.Cards.length == 0) { %>
-        
-          <div
-            class="container self-center flex justify-center items-center text-center h-full"
-          >
-            <p class="text-2xl mb-4">
-              <%=collection.User.username%>'s collection is empty.
-            </p>
 
-           
-          </div>
-        
+        <div
+          class="container self-center flex justify-center items-center text-center h-full"
+        >
+          <p class="text-2xl mb-4">
+            <%=collection.User.username%>'s collection is empty.
+          </p>
+        </div>
 
         <%} else { %>
 
@@ -71,7 +67,7 @@
         <div class="flex w-full justify-center items-start">
           <!-- Grid for cards -->
           <div
-            class="grid lg:grid justify-center items-center gap-6 px-4 lg:px-12 ws:px-96 h-full grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 lg:w-full"
+            class="grid lg:grid justify-center items-center gap-6 px-4 lg:px-12 ws:px-96 h-full grid-cols-1 md:grid-cols-2 lg:grid-cols-3 lg:w-full"
             id="gridDiv"
           >
             <!-- Iterating through each pokemon (row in data) and creates a card object each -->
@@ -82,9 +78,23 @@
             >
               <%- include ("partials/card/cardLink.ejs", {card: card}) %>
 
-              <%- include ("partials/card/cardInfoBox.ejs", {card: card}) %>
+              <!-- Container for brief card details and add button -->
+              <div class="flex justify-evenly items-center rounded-lg">
+                <!-- Card name and card/set number -->
+                <div
+                  class="px-2 flex flex-col justify-center items-center text-center"
+                >
+                  <h2 class="text-lg mx-4"><%= card.card_name %></h2>
 
+                  <p class="italic mb-2"><%=card.Rarity.rarity_description%></p>
 
+                  <p
+                    class="text-sm italic bg-container rounded-lg text-canvas px-2 py-1"
+                  >
+                    <%=card.CardCollection.numInCollection%> in collection
+                  </p>
+                </div>
+              </div>
             </div>
             <% }) %>
           </div>
@@ -92,7 +102,7 @@
           <!-- Box for comments -->
           <div
             id="comments-div"
-            class="flex-col w-full items-center lg:w-1/4 lg:mr-32 hidden"
+            class="flex-col w-full items-center lg:w-1/4 lg:mr-32"
           >
             <div
               class="w-full flex flex-col justify-start text-center items-center"
@@ -122,8 +132,8 @@
                   </button>
                 </div>
               </form>
-              <% } %> 
-              
+              <% } %>
+
               <!-- If not comments, show message -->
               <% if (!comments) { %>
               <p class="m-6 flex-1 py-20">No Comments</p>
