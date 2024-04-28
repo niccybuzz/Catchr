@@ -43,7 +43,6 @@ const expansionLinks = document.querySelectorAll("#expansions-dropdown a");
 const typeLinks = document.querySelectorAll("#types-dropdown a");
 const rarityLinks = document.querySelectorAll("#rarities-dropdown a");
 const sortLinks = document.querySelectorAll("#sort-menu a");
-
 const pageLinks = document.querySelectorAll("#pageContainer a")
 
 //Adding event listeners for each link in the expansions menu

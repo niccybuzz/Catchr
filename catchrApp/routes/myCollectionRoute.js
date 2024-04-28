@@ -29,7 +29,8 @@ router.get("/add", async (req, res) => {
 
     res.status(200).json(results.data);
   } catch (err) {
-    console.log(err.data);
+    console.log(err.response.data);
+    res.send(err.response.data) 
   }
 });
 

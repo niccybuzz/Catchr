@@ -8,16 +8,15 @@
   <body class="box-border h-screen bg-canvas">
     <!-- Header Bar -->
     <%- include (`partials/nav.ejs`) %>
-    <!-- Main container with card and description containing all cards -->
+    <!-- Main container with card and description -->
     <div
       class="flex flex-col md:flex-row justify-evenly items-center px-4 lg:px-36 ws:px-96 md:py-8 pb-8 opacity-0 transition-opacity duration-500 overflow-y-auto flex-1"
       id="gridDiv"
     >
-      <!-- Wrapping the whole card a link -->
+      <!-- Card Image -->
       <div
         class="m-4 flex flex-col justify-center items-center hover:scale-105 max-w-96 min-w-72"
       >
-        <!-- Card image -->
         <img src="<%= card.card_image %>" />
       </div>
 

@@ -29,7 +29,10 @@ router.post("/comment/:collectionid", async (req, res) => {
     };
 
     const results = await axios.post(endp, postComment, config);
-    res.redirect(`/collections/${collection_id}`);
+    const owner_id = results.data.owner_id
+    console.log(results.data)
+    
+    res.redirect(`/collections/${owner_id}`);
   } catch (err) {
     res.status(500).json("Server error: " + err);
   }
@@ -101,32 +104,34 @@ router.get("/mycollection", async (req, res) => {
   }
 });
 
+//Gets a list of top 10 user collections by likes
 router.get("/topcollections", async (req, res) => {
   try {
     let sortBy = req.query.sortBy || "numLikes" ;
     let sortOrder = req.query.sortOrder || "desc";
-    const allCollectionsData = await axios.get(
-      `http://localhost:4000/api/collections/?sortBy=${sortBy}&sortOrder=${sortOrder}`
+    let page = req.query.page;
+    const topCollectionsData = await axios.get(
+      `http://localhost:4000/api/collections/?sortBy=${sortBy}&sortOrder=${sortOrder}&page=${page}`
     );
-    const collections = allCollectionsData.data;
-    res.render("topcollections", {
+    const collections = topCollectionsData.data.collections;
+    let pagination = topCollectionsData.data.paginations
+    res.render("allCollections", {
       collections: collections,
       user: req.session,
+      pagination: pagination
     });
   } catch (err) {
-    res.send(err);
+    res.send(err.response.data);
   }
 });
 
+// "Likes" a collection
 router.get("/like/:collection_id", async (req, res) => {
   try {
     const user_id = req.session.authen;
     const token = req.session.authToken;
     const collection_id = req.params.collection_id;
     const endp = `http://localhost:4000/api/likes`
-    console.log(user_id)
-    console.log(token)
-    console.log(collection_id)
   
     const like = {
       user_id: user_id,
@@ -139,14 +144,15 @@ router.get("/like/:collection_id", async (req, res) => {
       },
     };
     const results = await axios.post(endp, like, config)
-    console.log(results.data)
-    res.redirect(`/collections/${collection_id}`);
+    const owner_id = results.data.collection.user_id
+    res.redirect(`/collections/${owner_id}`);
   } catch (err) {
     console.log(err)
     res.redirect("/login")
   }
 });
 
+// "Unlikes" a collection
 router.get("/unlike/:collection_id", redirectLogin, async (req, res) => {
   try {
     const user_id = req.session.authen;
@@ -160,8 +166,8 @@ router.get("/unlike/:collection_id", redirectLogin, async (req, res) => {
       },
     };
     const results = await axios.delete(endp, config)
-  
-    res.redirect(`/collections/${collection_id}`);
+    const owner_id = results.data.collection.user_id
+    res.redirect(`/collections/${owner_id}`);
   } catch (err) {
     res.send(err);
   }
@@ -169,18 +175,19 @@ router.get("/unlike/:collection_id", redirectLogin, async (req, res) => {
 
 /**
  * Gets a single collection belonging to a user
- * returns the collection details, the cards inside, and the collection status
+ * returns the collection details, the cards inside, and the collection stats
  * If a user searches for their own user id, redirects to the main collections page
  */
-router.get("/:collection_id", async (req, res) => {
+router.get("/:owner_id", async (req, res) => {
   try {
     const sessionObj = req.session;
     const user_id = sessionObj.authen;
 
-    const collection_id = req.params.collection_id;
-    const endp = `http://localhost:4000/api/collections/${collection_id}`;
+    const owner_id = req.params.owner_id;
+    const endp = `http://localhost:4000/api/collections/user/${owner_id}`;
     const results = await axios.get(endp);
     const collection = results.data.collection;
+    const collection_id = collection.collection_id;
     const cards = collection.Cards;
     const stats = results.data.stats;
 

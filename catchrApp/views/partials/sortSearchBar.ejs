@@ -1,0 +1,74 @@
+    <!-- Contains search bar options -->
+    <div class="h-16 bg-canvas relative flex justify-center">
+        <!--  container for sort menu.-->
+        <div class="text-left top-2 left-6 flex justify-center items-center">
+  
+          <!-- The button which when clicked on will toggle "hidden" for the dropdown options below -->
+          <button
+            id="sort-button"
+            class="relative inline-flex justify-center items-center text-md px-2 py-1 mx-2 text-canvas rounded-md shadow-sm bg-button hover:bg-container transition-colors focus:outline-none focus:border-button focus:ring"
+          >
+            <img
+              class="w-4 h-4 text-md hover:bg-gray-100 hover:text-canvas"
+              src="https://cdn-icons-png.flaticon.com/512/2740/2740721.png"
+            />
+            <p class="px-2">Sort By</p>
+            <!-- Dropdown options -->
+            <div
+              id="sort-menu"
+              class="hidden absolute top-12 left-0 z-10 w-48 rounded-md shadow-lg bg-container text-canvas ring-1 ring-black ring-opacity-5"
+            >
+              <div role="menu">
+                <a
+                  href=""
+                  sort-id="card_name"
+                  order-id="asc"
+                  class="block px-4 py-2 text-md hover:bg-button rounded-lg hover:text-gray-900"
+                  role="menuitem"
+                  >Alphabetical (A-Z)</a
+                >
+                <a
+                  href=""
+                  sort-id="card_name"
+                  order-id="desc"
+                  class="block px-4 py-2 text-md hover:bg-button hover:text-gray-900"
+                  role="menuitem"
+                  >Alphabetical (Z-A)</a
+                >
+                <a
+                  href=""
+                  sort-id="rarity"
+                  order-id="asc"
+                  class="block px-4 py-2 text-md hover:bg-button hover:text-gray-900"
+                  role="menuitem"
+                  >Rarity (Asc)</a
+                >
+  
+                <a
+                  href=""
+                  sort-id="rarity"
+                  order-id="desc"
+                  class="block px-4 py-2 text-md hover:bg-button hover:text-gray-900"
+                  role="menuitem"
+                  >Rarity (Desc)</a
+                >
+              </div>
+            </div>
+          </button>
+  
+          <form class="flex" method="GET" action="/cards">
+            <input
+              class="m-2 h-8 w-48 lg:w-96 flex-grow max-w-96 rounded-md"
+              type="text"
+              name="card_name"
+              placeholder="Search%>"
+            />
+            <button type="submit">
+              <img
+                class="w-6 filter invert"
+                src="https://cdn-icons-png.freepik.com/256/711/711319.png?semt=ais_hybrid"
+              />
+            </button>
+          </form>
+        </div>
+      </div>

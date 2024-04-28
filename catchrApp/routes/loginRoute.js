@@ -2,7 +2,6 @@ const express = require("express");
 const router = express.Router();
 const axios = require("axios");
 const redirectCards = require("../middleware/redirectCards");
-const bcrypt = require("bcrypt")
 
 // get login page
 router.get("/", redirectCards, (req, res) => {

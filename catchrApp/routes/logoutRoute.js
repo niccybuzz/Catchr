@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 
-// get login page
+// Logs a user out
 router.get("/", (req, res) => {
   req.session.destroy();
   res.redirect("/");

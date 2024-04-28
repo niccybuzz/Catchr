@@ -107,7 +107,14 @@ router.post("/", async (req, res) => {
       collection_id: collection_id,
       comment_body: comment_body,
     });
-    res.status(200).json(newComment);
+    const collectionOwner = await Collection.findByPk(collection_id)
+    console.log(collectionOwner)
+    owner_id = collectionOwner.user_id
+    res.status(200).json( {
+      newComment: newComment,
+      owner_id: owner_id
+   
+    } );
   } catch (err) {
     res.status(500).json("Error posting comment: " + err);
   }

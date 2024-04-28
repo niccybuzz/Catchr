@@ -42,6 +42,7 @@ router.post("/", async (req, res) => {
       user_id: user_id,
       collection_id: collection_id,
     });
+    console.log(newLike)
     const collection = await Collection.findOne({
       where: {
         collection_id: collection_id,

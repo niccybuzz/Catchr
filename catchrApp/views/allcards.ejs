@@ -9,90 +9,17 @@
     <!-- Header Bar -->
     <%- include (`partials/nav.ejs`) %>
 
-    <!-- Contains search bar options -->
-    <div class="h-16 bg-canvas relative flex justify-center">
-      <!--  container for sort menu.-->
-      <div class="text-left top-2 left-6 flex justify-center items-center">
-        <!-- The button which when clicked on will toggle "hidden" for the dropdown options below -->
-
-        <button
-          id="sort-button"
-          class="relative inline-flex justify-center items-center text-md px-2 py-1 mx-2 text-canvas rounded-md shadow-sm bg-container hover:bg-button transition-colors focus:outline-none focus:border-button focus:ring"
-        >
-          <img
-            class="w-4 h-4 text-md hover:bg-gray-100 hover:text-canvas"
-            src="https://cdn-icons-png.flaticon.com/512/2740/2740721.png"
-          />
-          <p class="px-2">Sort By</p>
-          <!-- Dropdown options -->
-          <div
-            id="sort-menu"
-            class="hidden absolute top-12 left-0 z-10 w-48 rounded-md shadow-lg bg-container text-canvas ring-1 ring-black ring-opacity-5"
-          >
-            <div class="py-1" role="menu">
-              <a
-                href=""
-                sort-id="card_name"
-                order-id="asc"
-                class="block px-4 py-2 text-md hover:bg-gray-100 hover:text-gray-900"
-                role="menuitem"
-                >Alphabetical (A-Z)</a
-              >
-              <a
-                href=""
-                sort-id="card_name"
-                order-id="desc"
-                class="block px-4 py-2 text-md hover:bg-gray-100 hover:text-gray-900"
-                role="menuitem"
-                >Alphabetical (Z-A)</a
-              >
-              <a
-                href=""
-                sort-id="rarity"
-                order-id="asc"
-                class="block px-4 py-2 text-md hover:bg-gray-100 hover:text-gray-900"
-                role="menuitem"
-                >Rarity (Asc)</a
-              >
-
-              <a
-                href=""
-                sort-id="rarity"
-                order-id="desc"
-                class="block px-4 py-2 text-md hover:bg-gray-100 hover:text-gray-900"
-                role="menuitem"
-                >Rarity (Desc)</a
-              >
-            </div>
-          </div>
-        </button>
-
-        <form class="flex" method="GET" action="/cards">
-          <input
-            class="m-2 h-8 w-48 lg:w-96 flex-grow max-w-96 rounded-md"
-            type="text"
-            name="card_name"
-            placeholder="Search%>"
-          />
-          <button type="submit">
-            <img
-              class="w-6 filter invert"
-              src="https://cdn-icons-png.freepik.com/256/711/711319.png?semt=ais_hybrid"
-            />
-          </button>
-        </form>
-      </div>
-    </div>
+    <%- include("partials/sortSearchBar.ejs") %>
 
     <!-- Main flex box for filter section -->
-    <div class="h-16 flex justify-center">
+    <div class="h-16 flex justify-center lg:text-lg">
       <!-- Expansions dropdown -->
       <div
         class="w-1/3 xl:ml-72 h-full flex justify-center items-center relative"
       >
         <button
           id="expansions-button"
-          class="px-2 relative border-b border-container border-opacity-20 text-container hover:bg-container hover:text-canvas transition-colors"
+          class="px-2 relative border-b border-container border-opacity-20 text-container rounded-md hover:bg-button hover:text-canvas transition-colors"
         >
           Expansions
           <div
@@ -104,7 +31,7 @@
               <a
                 href="/"
                 data-set-id="<%= set.set_id %>"
-                class="block p-2 hover:bg-gray-100 hover:text-gray-900"
+                class="block p-2 hover:bg-button hover:text-gray-900"
                 role="menuitem"
                 ><%= set.set_name %></a
               >
@@ -118,7 +45,7 @@
       <div class="w-1/3 h-full flex justify-center items-center relative">
         <button
           id="rarities-button"
-          class="px-2 relative border-b border-container border-opacity-20 text-container hover:bg-container hover:text-canvas transition-colors"
+          class="px-2 relative border-b border-container border-opacity-20 text-container rounded-md hover:bg-button hover:text-canvas transition-colors"
         >
           Rarities
           <div
@@ -130,7 +57,7 @@
               <a
                 href=""
                 data-set-id="<%=rarity.rarity_id%>"
-                class="block bg-container text-canvas p-2 hover:bg-gray-100 hover:text-gray-900"
+                class="block bg-container text-canvas p-2 hover:bg-button hover:text-gray-900"
                 role="menuitem"
                 ><%= rarity.rarity_description %></a
               >
@@ -146,7 +73,7 @@
       >
         <button
           id="types-button"
-          class="px-2 relative border-b border-container border-opacity-20 text-container hover:bg-container hover:text-canvas transition-colors"
+          class="px-2 relative border-b border-container border-opacity-20 text-container rounded-md hover:bg-button hover:text-canvas transition-colors"
         >
           Types
           <div
@@ -158,7 +85,7 @@
               <a
                 href=""
                 data-set-id="<%=type.type_id%>"
-                class="block bg-container text-canvas p-2 hover:bg-gray-100 hover:text-gray-900"
+                class="block bg-container text-canvas p-2 hover:bg-button hover:text-gray-900"
                 role="menuitem"
                 ><%= type.type_description %></a
               >
@@ -169,39 +96,42 @@
       </div>
     </div>
 
+    <!-- Little boxes for each filter -->
     <% if (numFilters > 0) { %>
     <div class="flex flex-wrap justify-start md:justify-center items-center">
       <div>
         <button
-          class="flex justify-center items-center text-sm px-2 py-1 mx-2 rounded-md shadow-sm bg-button"
+          class="flex justify-center items-center text-sm lg:text-lg px-2 py-1 mx-2 rounded-md shadow-sm bg-container"
         >
           Filters:
         </button>
       </div>
       <% Object.entries(filters).forEach(([key, value]) => { %>
       <button
-        class="flex justify-evenly items-center text-sm px-2 py-1 mx-2 my-2 rounded-md shadow-sm bg-button"
+        class="flex justify-evenly items-center text-sm lg:text-lg px-2 py-1 mx-2 my-2 rounded-md shadow-sm bg-button"
       >
-        <p><%= `${key}: ${value.replace("_", " ")} ` %></p>
+        <p><%= `${key}: ${value} ` %></p>
       </button>
       <% }) %>
       <a class="mx-2 flex" href="/cards/clearsearch">
         <button
-          class="flex justify-center items-center text-sm px-2 py-1 rounded-md shadow-sm bg-button hover:bg-container transition-colors focus:outline-none focus:border-button focus:ring"
+          class="flex justify-center items-center font-bold text-sm lg:text-lg px-2 py-1 rounded-md shadow-sm bg-button hover:bg-container transition-colors focus:outline-none focus:border-button focus:ring"
         >
           <img
             class="w-4 h-4 mr-2"
             src="https://cdn-icons-png.flaticon.com/512/66/66847.png"
           />
-          Clear Filters
+          Clear
         </button>
       </a>
     </div>
 
-    <% } %> <% if (cards.length > 0) { %>
-
+    <% } %> 
+    
+    <!-- Main grid containing all cards, if any -->
+    <% if (cards.length > 0) { %>
     <p class="text-center text-3xl text-container py-8"><%=message %></p>
-    <!-- Main grid containing all cards -->
+    
     <div
       class="grid justify-center items-center gap-6 px-4 lg:px-36 ws:px-96 h-full grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 ws:grid-cols-5 opacity-0 transition-opacity duration-500 flex-1 overflow-y-auto"
       id="gridDiv"
@@ -281,6 +211,8 @@
 
       <% }) %>
     </div>
+
+    <!-- No cards message -->
     <% } else { %>
     <div
       class="flex-1 overflow-y-auto text-center text-2xl text-container py-6"
@@ -289,23 +221,7 @@
     </div>
     <% } %>
 
-    <!-- Pagination stuff -->
-    <div class="flex flex-col justify-center text-center m-2">
-      <% if (pagination.totalPages > 1) { %>
-      <h3 class="text-container m-2">Page:</h3>
-      <div class="flex justify-center" id="pageContainer">
-        <% for (let i = 1; i <=pagination.totalPages; i++) { %>
-
-        <a pageNum="<%= i %>" href=""
-          class="px-2 mx-2 min-w-8 rounded-lg bg-container text-text border border-white text-text text-xl text-center"
-          ><%= i %></a
-        >
-
-        <% } %>
-      </div>
-
-      <% } %>
-    </div>
+    <%- include (`partials/pagebuttons.ejs`) %>
 
     <%- include (`partials/footer.ejs`) %>
     <script src="/functions/loadCards.js"></script>

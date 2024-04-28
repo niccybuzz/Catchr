@@ -46,6 +46,8 @@ Category.hasMany(Card);
 Card.belongsTo(Type,{foreignKey : 'type_id'});
 Type.hasMany(Card,{foreignKey : 'type_id'})
 
+Card.belongsTo(Card, { as: 'evolves_from', foreignKey: 'evolves_from_id' });
+
 Set.belongsTo(Series, {foreignKey : 'series_id'});
 Series.hasMany(Set, {foreignKey : 'series_id'});
 

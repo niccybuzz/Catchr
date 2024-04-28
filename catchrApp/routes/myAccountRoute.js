@@ -3,7 +3,7 @@ const router = express.Router();
 const axios = require("axios");
 const redirectLogin = require("../middleware/redirectLogin");
 
-
+// Allows a user to update their username or email
 router.post("/updatedetails", async (req, res) => {
   try {
     let sessionObj = req.session;
@@ -62,8 +62,6 @@ router.post("/changepassword", async (req, res) => {
       user_id : userid
     }
 
-    console.log(newPassword)
-
     const config = {
       headers: {
         "Content-Type": "application/x-www-form-urlencoded",
@@ -83,6 +81,7 @@ router.post("/changepassword", async (req, res) => {
   }
 });
 
+//Loads the page for changing password
 router.get("/changepassword", redirectLogin, async (req, res) => {
   try {
     let user = req.session;
@@ -93,6 +92,7 @@ router.get("/changepassword", redirectLogin, async (req, res) => {
   }
 });
 
+//Loads the page for updating username and email
 router.get("/updatedetails", redirectLogin, async (req, res) => {
   try {
     let user = req.session;
@@ -103,13 +103,16 @@ router.get("/updatedetails", redirectLogin, async (req, res) => {
   }
 });
 
+// Loads my account page
 router.get("/", redirectLogin, async (req, res) => {
   try {
     let user = req.session;
     console.log(user);
 
     res.render("myaccount", { user: user });
-  } catch (err) {}
+  } catch (err) {
+    res.redirect("/")
+  }
 });
 
 

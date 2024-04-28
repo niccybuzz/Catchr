@@ -4,7 +4,8 @@ const cardsDiv = document.getElementById("gridDiv");
 const commentsDiv = document.getElementById("comments-div");
 
 commentsButton.addEventListener("click", function () {
-  commentsDiv.classList.toggle("hidden");
+  commentsDiv.classList.add("hidden");
+  commentsDiv.classList.toggle("lg:flex");
 
   cardsDiv.classList.toggle("hidden")
   cardsDiv.classList.toggle("xl:grid-cols-4")
