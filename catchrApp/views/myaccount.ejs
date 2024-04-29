@@ -4,9 +4,7 @@
     <%- include (`partials/header.ejs`) %>
     <title>Login</title>
   </head>
-  <body
-    class="box-border bg-canvas h-screen flex flex-col font-kanit"
-  >
+  <body class="box-border bg-canvas h-screen flex flex-col font-kanit">
     <%- include (`partials/nav.ejs`) %>
 
     <!-- Full screen size flexbox -->
@@ -24,15 +22,14 @@
 
         <!-- Username box -->
         <div
-          class="border-2 border-gray-600 border-opacity-50 rounded-lg p-4 text-text text-sm md:text-lg lg:text-xl text-center bg-magmalight w-full m-2 flex justify-between"
+          class="text-center items-center flex justify-between min-w-[200px] max-w-[350px] w-full m-2 p-2 md:p-4 text-text text-sm md:text-lg lg:text-xl border-2 border-gray-600 border-opacity-50 rounded-lg"
         >
           <p>Username:</p>
           <p><%= user.username %></p>
         </div>
         <!-- Email box -->
         <div
-          
-          class="border-2 border-gray-600 border-opacity-50 bg-magmalight rounded-lg p-4 text-text text-sm md:text-lg lg:text-xl text-center w-full m-2 flex justify-between"
+          class="text-center items-center flex justify-between min-w-[200px] max-w-[350px] w-full m-2 p-2 md:p-4 text-text text-sm md:text-lg lg:text-xl border-2 border-gray-600 border-opacity-50 rounded-lg"
         >
           <p>Email Address:</p>
           <p><%= user.email %></p>
@@ -41,9 +38,9 @@
         <div
           class="text-container text-sm md:text-base lg:text-lg text-center w-full m-2 flex flex-col md:flex-row justify-between md:justify-evenly"
         >
-          <a href="/myaccount/updatedetails" class="">
+          <a href="/myaccount/updatedetails">
             <button
-              class="bg-button w-full hover:bg-white transition-colors duration-500 rounded-lg py-2 px-2 my-2 font-bold"
+              class="bg-button min-w-[200px] max-w-[350px] w-full hover:bg-white transition-colors duration-500 rounded-lg py-2 px-2 my-2 font-bold"
             >
               Update Personal Details
             </button>
@@ -52,17 +49,50 @@
         <div
           class="text-container text-sm md:text-base lg:text-lg text-center w-full m-2 flex flex-col md:flex-row justify-between md:justify-evenly"
         >
-          <a href="/myaccount/changepassword" class="">
+          <a href="/myaccount/changepassword">
             <button
-              class="bg-button w-full hover:bg-white transition-colors duration-500 rounded-lg py-2 my-2 px-8 font-bold"
+              class="bg-button min-w-[200px] max-w-[350px] w-full hover:bg-white transition-colors duration-500 rounded-lg py-2 my-2 px-8 font-bold"
             >
               Change password
             </button>
           </a>
         </div>
+        <div
+          class="text-container text-sm md:text-base lg:text-lg text-center w-full m-2 flex flex-col md:flex-row justify-between md:justify-evenly"
+        >
+          <a href="/myaccount/mycomments">
+            <button
+              class="bg-button min-w-[200px] max-w-[350px] w-full hover:bg-white transition-colors duration-500 rounded-lg py-2 my-2 px-8 font-bold"
+            >
+              My Comments
+            </button>
+          </a>
+        </div>
+        <div
+          class="text-container text-sm md:text-base lg:text-lg text-center w-full m-2 flex flex-col md:flex-row justify-between md:justify-evenly"
+        >
+          <a href="/myaccount/mylikes">
+            <button
+              class="bg-button min-w-[200px] max-w-[350px] w-full hover:bg-white transition-colors duration-500 rounded-lg py-2 my-2 px-8 font-bold"
+            >
+              Liked Collections
+            </button>
+          </a>
+        </div>
+        <div
+          class="text-container text-sm md:text-base lg:text-lg text-center w-full m-2 flex flex-col md:flex-row justify-between md:justify-evenly"
+        >
+          <a href="" id="deleteAccount">
+            <button
+              class="bg-red-600 min-w-[200px] max-w-[350px] w-full text-white hover:bg-white hover:text-black transition-colors duration-500 rounded-lg py-2 my-2 px-8 font-bold"
+            >
+              Delete Account
+            </button>
+          </a>
+        </div>
       </div>
     </div>
-
+    <script src="/functions/deleteAccount.js"></script>
     <%- include (`partials/footer.ejs`) %>
   </body>
   <!-- Scripts etc -->

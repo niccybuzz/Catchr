@@ -116,7 +116,6 @@ typeLinks.forEach((link) => {
         newUrl = currentUrl + `?type_id=${selectedType}`;
       }
     }
-
     window.location.href = newUrl;
   });
 });

@@ -30,14 +30,14 @@ router.post("/comment/:collectionid", async (req, res) => {
 
     const results = await axios.post(endp, postComment, config);
     const owner_id = results.data.owner_id
-    console.log(results.data)
-    
+
     res.redirect(`/collections/${owner_id}`);
   } catch (err) {
-    res.status(500).json("Server error: " + err);
+    res.render("error", {error: err, user: req.session})
   }
 });
 
+//Route for deleting a specific comment
 router.delete("/comment/delete/:id", async (req, res) => {
   try {
     const sessionObj = req.session;
@@ -49,7 +49,7 @@ router.delete("/comment/delete/:id", async (req, res) => {
     res.status(200).json("Comment deleted");
   } catch (err) {
     console.log(err);
-    res.redirect("/cards")
+    res.render("error", {error: err, user: req.session})
   }
 });
 
@@ -98,9 +98,9 @@ router.get("/mycollection", async (req, res) => {
       comments: myComments,
     });
   } catch (err) {
-    if (err.status == 404) {
-    }
-    res.send(err.response.data);
+    console.log(err.response.data)
+    console.log(err)
+    res.render("error", {error: err, user: req.session})
   }
 });
 
@@ -121,7 +121,9 @@ router.get("/topcollections", async (req, res) => {
       pagination: pagination
     });
   } catch (err) {
-    res.send(err.response.data);
+    console.log(err.response.data);
+    console.log(err);
+    res.render("error", {error: err, user: req.session})
   }
 });
 
@@ -140,7 +142,7 @@ router.get("/like/:collection_id", async (req, res) => {
     const config = {
       headers: {
         "Content-Type": "application/x-www-form-urlencoded",
-        Authorization: `Bearer ${token}`,
+        "Authorization": `Bearer ${token}`,
       },
     };
     const results = await axios.post(endp, like, config)
@@ -148,7 +150,7 @@ router.get("/like/:collection_id", async (req, res) => {
     res.redirect(`/collections/${owner_id}`);
   } catch (err) {
     console.log(err)
-    res.redirect("/login")
+    res.render("error", {error: err, user: req.session})
   }
 });
 
@@ -169,7 +171,7 @@ router.get("/unlike/:collection_id", redirectLogin, async (req, res) => {
     const owner_id = results.data.collection.user_id
     res.redirect(`/collections/${owner_id}`);
   } catch (err) {
-    res.send(err);
+    res.render("error", {error: err, user: req.session})
   }
 });
 
@@ -210,10 +212,8 @@ router.get("/:owner_id", async (req, res) => {
       let collectionLiked = false;
       try{
         const checkLiked = await axios.get(`http://localhost:4000/api/likes/singlelike/?user_id=${user_id}&collection_id=${collection_id}`)
-        
         collectionLiked = true;
       } catch (err) {
-        
         collectionLiked = false
       }
       
@@ -227,7 +227,8 @@ router.get("/:owner_id", async (req, res) => {
       });
     }
   } catch (err) {
-    res.send(err);
+    console.log(err.response.data)
+    res.render("error", {error: err, user: req.session})
   }
 });
 
@@ -239,7 +240,6 @@ async function markMyComments(comments, user_id) {
   comments.forEach((comment) => {
     if (comment.user_id == user_id) {
       comment.isMine = true;
-      
     }
   });
   return comments;

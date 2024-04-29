@@ -15,12 +15,12 @@ router.get("/:userid", async (req, res) => {
   try {
     const user = await User.findByPk(userId);
     if (user) {
-      res.status(200).json({ message: "User found succesfully", user: user });
+      res.status(200).json(user);
     } else {
-      res.status(404).json({ message: "Can't find that user by id" });
+      res.status(404).json("Can't find that user by id");
     }
-  } catch {
-    res.status(500).json("Server error");
+  } catch (err) {
+    res.status(500).json(err);
   }
 });
 
@@ -85,10 +85,10 @@ router.post("/register", async (req, res) => {
       });
 
       console.log(newUser);
-      
+
       const newCollection = await Collection.create({
-        user_id : newUser.user_id
-      })
+        user_id: newUser.user_id,
+      });
 
       res.status(201).json({
         message: "User created successfully",
@@ -116,7 +116,7 @@ router.post("/login", async (req, res) => {
       res.status(404).json("No user with that username or email address found");
     } else {
       //otherwise, compare entered password against stored password
-      
+
       const hashedPassword = user.password;
       const passwordsMatch = await bcrypt.compare(password, hashedPassword);
 
@@ -153,8 +153,8 @@ router.post("/login", async (req, res) => {
 router.put("/details", authenticateJWT, async (req, res) => {
   try {
     //retrieve the user id and fields to be changed from the params and body
-    const { new_username, new_email, admin, user_id, password } = req.body;
-
+    const { new_username, new_email, admin, password } = req.body;
+    const user_id = req.user.id
     //first, authenticate whether the user is updating their own profile OR the user is an admin
 
     // Making sure that the user has entered information to update in at least 1 field
@@ -162,28 +162,28 @@ router.put("/details", authenticateJWT, async (req, res) => {
       //find the user profile to update
       const userToUpdate = await User.findByPk(user_id);
       let updateClause = {};
-      if (new_username){
-        updateClause.username = new_username
-      } 
-      if (new_email){
+      if (new_username) {
+        updateClause.username = new_username;
+      }
+      if (new_email) {
         updateClause.email_address = new_email;
       }
-      if (admin){
-        updateClause.admin = admin
+      if (admin) {
+        updateClause.admin = admin;
       }
-      console.log(updateClause)
+      console.log(updateClause);
 
       if (!userToUpdate) {
         res.status(404).json("No user with that user ID found");
       } else {
         // Check password
         const storedPassword = userToUpdate.password;
-        
+
         const passwordsMatch = await bcrypt.compare(password, storedPassword);
         if (passwordsMatch) {
           //update the user's inputted data with Sequelize
           await userToUpdate.update(updateClause);
-          console.log("Success")
+          console.log("Success");
           //reload to see changes and send 200 status
           await userToUpdate.reload();
 
@@ -192,7 +192,7 @@ router.put("/details", authenticateJWT, async (req, res) => {
             updatedUser: userToUpdate,
           });
         } else {
-          console.log("Wrong password")
+          console.log("Wrong password");
           res.status(400).json("Wrong Password");
         }
       }
@@ -209,50 +209,38 @@ router.put("/details", authenticateJWT, async (req, res) => {
 });
 
 // Change a user's password, accessible by the user or an admin
-router.put("/changepassword", authenticateJWT, async (req, res) => {
+router.put("/password", authenticateJWT, async (req, res) => {
   try {
-   
     const { oldpassword, newpassword, user_id } = req.body;
 
     //checking that the user has access rights
-   
-      //making sure both fields have been filled in
-      if (oldpassword && newpassword) {
-        //find the user to update with sequelize
-        const userToUpdate = await User.findByPk(user_id);
 
-        if (!userToUpdate) {
-          res.status(404).json({
-            message: "Can't find that user",
-          });
-        }
-        //if user found, compare old password to the stored password
-        const hashedPassword = userToUpdate.password;
-        const passwordsMatch = await bcrypt.compare(
-          oldpassword,
-          hashedPassword
-        );
+    //making sure both fields have been filled in
+    if (oldpassword && newpassword) {
+      //find the user to update with sequelize
+      const userToUpdate = await User.findByPk(user_id);
 
-        //if they match, update the database with new encrypted password
-        if (passwordsMatch) {
-          const newHashedPassword = await bcrypt.hash(newpassword, 10);
-          await userToUpdate.update({ password: newHashedPassword });
-          await userToUpdate.reload();
-          res.status(200).json({
-            message: "Password changed succesfully",
-            updatedUser: userToUpdate,
-          });
-        } else {
-          res.status(400).json(
-            "Old password incorrect",
-          );
-        }
-      } else {
-        res.status(400).json(
-         "Old and new password need to be entered",
-        );
+      if (!userToUpdate) {
+        res.status(404).json({
+          message: "Can't find that user",
+        });
       }
-   
+      //if user found, compare old password to the stored password
+      const hashedPassword = userToUpdate.password;
+      const passwordsMatch = await bcrypt.compare(oldpassword, hashedPassword);
+
+      //if they match, update the database with new encrypted password
+      if (passwordsMatch) {
+        const newHashedPassword = await bcrypt.hash(newpassword, 10);
+        await userToUpdate.update({ password: newHashedPassword });
+        await userToUpdate.reload();
+        res.status(200).json(userToUpdate);
+      } else {
+        res.status(400).json("Old password incorrect");
+      }
+    } else {
+      res.status(400).json("Old and new password need to be entered");
+    }
   } catch (err) {
     res.status(500).json("Server error " + err.message);
   }
@@ -264,15 +252,10 @@ router.delete("/delete/:userid", authenticateJWT, async (req, res) => {
     if (req.user.id == userid || req.user.admin) {
       const userToDelete = await User.findByPk(userid);
       if (!userToDelete) {
-        res.status(404).json({
-          message: "Can't find that user to delete",
-        });
+        res.status(404).json("Can't find that user to delete");
       } else {
         await userToDelete.destroy();
-        res.status(200).json({
-          message: "User deleted succesfully",
-          user: userToDelete,
-        });
+        res.status(200).json("Account deleted succesfully");
       }
     } else {
       res.status(401).json({

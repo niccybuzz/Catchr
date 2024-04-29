@@ -7,4 +7,6 @@ router.get("/", (req, res) => {
   res.render("home", { user: sessionObj });
 });
 
+
+
 module.exports = router;

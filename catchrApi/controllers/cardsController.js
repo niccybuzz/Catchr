@@ -122,9 +122,6 @@ router.get("/", cacheChecker, async (req, res) => {
         totalPages: totalPages,
       },
     };
-
-    console.log(cacheKey)
-
     // Setting the last request timestamp to now for comparison in the cache middleware
     req.lastRequestTimestamp = Date.now();
 

@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 const Like = require("../models/Like");
 const Collection = require("../models/Collection");
+const User = require("../models/User");
 
 router.get("/singlelike", async (req, res) => {
   try {
@@ -16,11 +17,10 @@ router.get("/singlelike", async (req, res) => {
     if (like) {
       res.status(200).json(like);
     } else {
-      res.status(404).json("No like found")
+      res.status(404).json("No like found");
     }
-    
   } catch (err) {
-    res.status(500).json("Server error: "+err);
+    res.status(500).json("Server error: " + err);
   }
 });
 
@@ -35,6 +35,33 @@ router.get("/", async (req, res) => {
   }
 });
 
+router.get("/user/:user_id", async (req, res) => {
+  try {
+    const user_id = req.params.user_id;
+    const usersLikes = await Like.findAll({
+      attributes: ["like_id"],
+      where: {
+        user_id: user_id,
+      },
+      include: [
+        {
+          model: Collection,
+          attributes: ["collection_id", "user_id"],
+          include: [
+            {
+              model: User,
+              attributes: ["username"],
+            },
+          ],
+        },
+      ],
+    });
+    res.status(200).json(usersLikes);
+  } catch (err) {
+    res.status(500).json("Server error: " + err);
+  }
+});
+
 router.post("/", async (req, res) => {
   try {
     const { collection_id, user_id } = req.body;
@@ -42,7 +69,6 @@ router.post("/", async (req, res) => {
       user_id: user_id,
       collection_id: collection_id,
     });
-    console.log(newLike)
     const collection = await Collection.findOne({
       where: {
         collection_id: collection_id,
@@ -65,14 +91,11 @@ router.post("/", async (req, res) => {
 router.delete("/", async (req, res) => {
   try {
     const { collection_id, user_id } = req.query;
-    console.log(collection_id)
-    console.log(user_id)
-
     const like = await Like.findOne({
       where: {
         user_id: user_id,
-        collection_id: collection_id
-      }
+        collection_id: collection_id,
+      },
     });
     if (!like) {
       res.status(404).json("Like doesn't exist");

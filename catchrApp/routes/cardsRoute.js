@@ -2,12 +2,25 @@ const express = require("express");
 const router = express.Router();
 const axios = require("axios");
 
-//Clears all filters and sort methods
-router.get("/clearsearch", (req, res) => {
-  req.session.sortBy = null;
-  req.session.orderBy = null;
-  filters = {};
-  res.redirect("/cards");
+/**
+ * Route for comparing 2 or more cards
+ */
+router.post("/compare", async (req, res) => {
+  try {
+    const selectedCards = req.body.selectedCards;
+
+    const card1 = await axios.get(
+      `http://localhost:4000/api/cards/${selectedCards[0]}`
+    );
+    const card2 = await axios.get(
+      `http://localhost:4000/api/cards/${selectedCards[1]}`
+    );
+    const cards = [card1.data, card2.data];
+    res.render("comparison", { cards: cards, user: req.session });
+  } catch (err) {
+    console.log(err);
+    res.redirect("/cards");
+  }
 });
 
 // Get request for a specific card
@@ -33,7 +46,6 @@ router.get("/:id", async (req, res) => {
           card.ability1type1 = card.Abilities[0].primary_type.type_description;
           card.ability1cost1 = card.Abilities[0].primary_cost;
           card.ability1icon1 = card.Abilities[0].primary_type.type_icon;
-          console.log("yes");
           //Secondary ability cost
           if (card.Abilities[0].secondary_cost !== null) {
             card.ability1type2 =
@@ -84,7 +96,9 @@ router.get("/:id", async (req, res) => {
       });
     }
   } catch (err) {
-    res.redirect("/cards");
+    console.log(err.response.data);
+    console.log(err);
+    res.render("error", {error: err, user: req.session})
   }
 });
 
@@ -104,12 +118,14 @@ router.get("/", async (req, res) => {
 
     //Holding on to the sortby and orderby
     const sessionObj = req.session;
-    if (sortBy) {
-      req.session.sortBy = sortBy;
-    } else {
-    }
-    if (orderBy) {
-      req.session.orderBy = orderBy;
+
+    //Getting the user's collection, if at all, to enable adding card to my collection
+    let mycollection = "placeholder";
+    if (user_id) {
+      const collection = await axios.get(
+        `http://localhost:4000/api/collections/user/${user_id}`
+      );
+      mycollection = collection.data.collection;
     }
 
     //Getting all of the sets, rarities and types to populate dropdown menus
@@ -119,75 +135,59 @@ router.get("/", async (req, res) => {
     const sets = await axios.get(`http://localhost:4000/api/others/sets`);
     const types = await axios.get(`http://localhost:4000/api/others/types`);
 
-    let mycollection = "placeholder";
-    if (user_id) {
-      const collection = await axios.get(
-        `http://localhost:4000/api/collections/user/${user_id}`
-      );
-      mycollection = collection.data.collection;
-    }
-
-    // Finding the specific type/rarity/set name that the user searched for
-    let filteredSet;
-    let filteredRarity;
-    let filteredType;
+    // Finding the user's chosen set, rarity or type from the bulk data we retrieved
+    //So that we can get the name and stats for that set
+    let chosenSet;
+    let chosenRarity;
+    let chosenType;
 
     sets.data.forEach((set) => {
       if (set.set_id == set_id) {
-        filteredSet = set;
+        chosenSet = set;
       }
     });
     rarities.data.forEach((rarity) => {
       if (rarity.rarity_id == rarity_id) {
-        filteredRarity = rarity;
+        chosenRarity = rarity;
       }
     });
     types.data.forEach((type) => {
       if (type.type_id == type_id) {
-        filteredType = type;
+        chosenType = type;
       }
     });
 
-    //Calling getcards with any query parameters. Returns pagination and filters selected
+    //Calling getCards with any query parameters. Returns pagination and filters selected
     const result = await getCards(
       page,
       limit,
       sortBy,
       orderBy,
       card_name,
-      filteredSet,
-      filteredRarity,
-      filteredType
+      chosenSet,
+      chosenRarity,
+      chosenType
     );
     const cards = result.cards;
     const pagination = result.pagination;
     const filters = result.filters;
-
-    //Getting this to create the 'applied filter' divs in allCards
-    const numberOfFilters = Object.keys(filters).length;
-
-    let message = "";
-    if (cards.length > 0) {
-      message = "All cards:";
-    } else {
-      message = "No cards found";
-    }
+    const numFilters = result.numFilters
 
     res.render("allcards", {
       cards: cards,
       user: sessionObj,
       pagination: pagination,
-      message: message,
       filters: filters,
-      numFilters: numberOfFilters,
+      numFilters: numFilters,
       rarities: rarities.data,
       sets: sets.data,
       types: types.data,
       collection: mycollection,
     });
   } catch (err) {
-    console.log(err.response);
-    res.redirect("/");
+    console.log(err.response.data);
+    console.log(err);
+    res.render("error", {error: err, user: req.session})
   }
 });
 
@@ -205,6 +205,7 @@ async function getCards(
   let endp = `http://localhost:4000/api/cards?page=${page}&limit=${limit}`;
 
   let filters = {};
+  let numFilters = 0;
   /**
    * For each query parameter passed into the method, it concatenates the base query with additional parameters
    * Then, it adds a new field in the "filters" object, which is used to create 'applied filter' divs in allCards
@@ -212,29 +213,35 @@ async function getCards(
   if (card_name) {
     endp += `&card_name=${card_name}`;
     filters.Name = card_name;
+    numFilters++;
   }
   if (set) {
     endp += `&set_id=${set.set_id}`;
     filters.Set = set.set_name;
+    numFilters++;
   }
   if (rarity) {
     endp += `&rarity_id=${rarity.rarity_id}`;
     filters.Rarity = rarity.rarity_description;
+    numFilters++;
   }
   if (type) {
     endp += `&type_id=${type.type_id}`;
     filters.Type = type.type_description;
+    numFilters++;
   }
   if (sortBy) {
     endp += `&sortBy=${sortBy}`;
     endp += `&sortOrder=${orderBy}`;
-
+    numFilters++;
     /**
-     * This part is basically clearning up the names so that they can be added to "filters" object 
+     * This part is basically cleaning up the names so that they can be added to "filters" object
      * and then displayed on the website as tags
      **/
     if (sortBy == "rarity") {
       sortBy = "Rarity";
+
+      //For example, if we don't do this the tag will be displayed as "card_name" on the site which is ugly
     } else if (sortBy == "card_name") {
       sortBy = "Card Name";
     }
@@ -253,7 +260,7 @@ async function getCards(
   const currentPage = response.data.paginations.page;
   const totalPages = response.data.paginations.totalPages;
   const pagination = { currentPage, totalPages };
-  return { cards, pagination, filters };
+  return { cards, pagination, filters, numFilters };
 }
 
 module.exports = router;
