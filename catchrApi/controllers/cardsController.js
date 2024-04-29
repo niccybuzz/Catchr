@@ -122,7 +122,6 @@ router.get("/", cacheChecker, async (req, res) => {
         totalPages: totalPages,
       },
     };
-
     // Setting the last request timestamp to now for comparison in the cache middleware
     req.lastRequestTimestamp = Date.now();
 
@@ -151,7 +150,7 @@ router.get("/:card_id", async (req, res) => {
         "weakness_amount",
         "resistance_amount",
         "retreat_cost",
-        "card_description"
+        "card_description",
       ],
       include: [
         {
@@ -209,6 +208,11 @@ router.get("/:card_id", async (req, res) => {
         {
           model: Rarity,
           attributes: ["rarity_id", "rarity_description", "rarity_icon"],
+        },
+        {
+          model: Card,
+          as: "evolves_from",
+          attributes: ["card_id", "card_name"]
         },
         {
           model: Fineprint,

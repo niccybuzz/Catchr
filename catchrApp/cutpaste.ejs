@@ -1,0 +1,24 @@
+          <!-- Line for each collection -->
+          <% let i = 1 %>
+          <% collections.forEach((collection) => { %>
+          <div
+            class="text-lg py-2 px-2 m-1 text-left rounded-lg hover:bg-canvas hover:text-container transition-colors duration-300"
+          >
+            <div class="grid grid-cols-4 gap-28 justify-evenly">
+              
+              <p> <%= i %> </p>
+              <% i++ %>
+              <p><%=collection.User.username%></p>
+
+              <p><%=collection.numLikes%></p>
+              <a
+                class="justify-self-end text-container text-sm"
+                href="/collections/<%=collection.collection_id%>"
+              >
+                <button class="text-center py-1 px-4 bg-canvas rounded-md">
+                  Go
+                </button>
+              </a>
+            </div>
+          </div>
+          <% }) %>

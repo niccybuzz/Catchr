@@ -8,6 +8,9 @@ const Set = require("../models/Set");
 const Rarity = require("../models/Rarity");
 const CardCollections = require("../models/many-to-many-files/CardCollection");
 const authenticateJWT = require("../auth/authenticateJWT");
+const { Op, where } = require("sequelize");
+const cache = require("../cache/cache");
+const cacheChecker = require("../cache/cacheChecker");
 
 const router = express.Router();
 
@@ -78,7 +81,7 @@ router.post("/card", authenticateJWT, async (req, res) => {
   try {
     const { card_id, collection_id } = req.body;
     const cardToAdd = await Card.findByPk(card_id);
-    
+
     if (!cardToAdd) {
       return res.status(404).json("Can't find that card");
     } else {
@@ -86,7 +89,7 @@ router.post("/card", authenticateJWT, async (req, res) => {
       if (!collectionToAddTo) {
         return res.status(404).json("Can't find that collection");
       }
-      
+
       // Verifiying the user has access to this collection
       if (req.user.id == collectionToAddTo.user_id || req.user.admin) {
         //checking if the card already exists in the collection. If so, incrementing the number rather than adding in duplicate data
@@ -99,9 +102,15 @@ router.post("/card", authenticateJWT, async (req, res) => {
             },
           });
           let numInCollection = cardcollection.numInCollection;
+          //Updating the CardCollection and Collection tables
           await cardcollection.update({ numInCollection: numInCollection + 1 });
           await cardcollection.reload();
-          
+
+          //Determinig the total cards in the collection,
+          //as defined by the total number of entries in "CardCollection"
+          //Multipled by the "numInCollection" value
+          await updateStats(collection_id, collectionToAddTo);
+
           res
             .status(200)
             .json(
@@ -138,13 +147,35 @@ router.post("/card", authenticateJWT, async (req, res) => {
   }
 });
 
+/**
+ * Updates the stats of a collection when a card is added or removed from a collection
+ * Finds the total number of unique entries in many-to-many table "CardCollections"
+ * Then multiples each entry by the value of column "numInCollection"
+ * Then updates the Collection column "numCards"
+ */
+async function updateStats(collection_id, collectionToAddTo) {
+  let totalCards = 0;
+  const allCardsInCollection = await CardCollections.findAll({
+    where: {
+      CollectionCollectionId: collection_id,
+    },
+  });
+  allCardsInCollection.forEach((card) => {
+    totalCards += card.numInCollection;
+  });
+  await collectionToAddTo.update({
+    numCards: totalCards,
+  });
+  await collectionToAddTo.reload();
+}
+
 //Get single collection by ID
 router.get("/user/:user_id", async (req, res) => {
   try {
     const user_id = req.params.user_id;
     const foundCollection = await Collection.findOne({
       where: {
-        user_id: user_id
+        user_id: user_id,
       },
       attributes: ["collection_id", "user_id", "rating", "numLikes"],
       include: [
@@ -155,7 +186,6 @@ router.get("/user/:user_id", async (req, res) => {
         {
           model: Card,
           attributes: ["card_id", "card_name", "card_image"],
-          through: { where: {} }, // Include duplicates
           include: [
             {
               model: Category,
@@ -185,7 +215,7 @@ router.get("/user/:user_id", async (req, res) => {
       const stats = await getStats(cards);
       res.status(200).json({
         collection: foundCollection,
-        stats: stats
+        stats: stats,
       });
     }
   } catch (err) {
@@ -237,7 +267,7 @@ router.get("/:collection_id", async (req, res) => {
       const stats = await getStats(cards);
       res.status(200).json({
         collection: foundCollection,
-        stats: stats
+        stats: stats,
       });
     }
   } catch (err) {
@@ -250,22 +280,33 @@ async function getStats(cards) {
   let totalCards = 0;
   let shinies = 0;
 
-  cards.forEach((card)=> {
+  cards.forEach((card) => {
     totalCards += card.CardCollection.numInCollection;
-    if (card.Rarity.rarity_id > 4){
-      shinies++
+    if (card.Rarity.rarity_id > 4) {
+      shinies++;
     }
-  })
-  return {uniqueCards, totalCards, shinies}
+  });
+  return { uniqueCards, totalCards, shinies };
 }
 
 //get all collections Route, with optional sorting and filtering
 router.get("/", async (req, res) => {
   try {
-    let { sortBy, sortOrder } = req.query;
+    let { sortBy, sortOrder, page, limit } = req.query;
     const whereClause = {};
 
+    //Need to do this or it bugs out
 
+    limit = parseInt(limit);
+    page = parseInt(page);
+    //setting default parameters for pagination if not passed by the user
+    if (!page) {
+      page = 1;
+    }
+    if (!limit) {
+      limit = 10;
+    }
+    console.log(page);
     //option to add ordering
     let orderClause = [];
     if (sortBy && sortOrder) {
@@ -273,18 +314,33 @@ router.get("/", async (req, res) => {
     }
 
     const collections = await Collection.findAll({
+      offset: (page - 1) * 10,
+      limit: limit,
       where: whereClause,
       order: orderClause,
       include: [
         {
           model: User,
-          attributes: ["username"]
-        }
-      ]
+          attributes: ["username"],
+        },
+      ],
     });
 
+    let totalCount = await Collection.count({
+      where: whereClause,
+    });
+    const totalPages = Math.ceil(totalCount / limit);
+
     if (collections.length > 0) {
-      res.status(200).json(collections);
+      res.status(200).json({
+        collections: collections,
+        paginations: {
+          page: page,
+          limit: limit,
+          totalCount: totalCount,
+          totalPages: totalPages,
+        },
+      });
     } else {
       res.status(404).json("Can't find collections");
     }
@@ -325,8 +381,6 @@ router.put("/:id", authenticateJWT, async (req, res) => {
     res.status(500).json({ message: err.message });
   }
 });
-
-
 
 //Delete a collection
 router.delete("/:id", authenticateJWT, async (req, res) => {

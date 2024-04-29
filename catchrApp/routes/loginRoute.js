@@ -2,7 +2,6 @@ const express = require("express");
 const router = express.Router();
 const axios = require("axios");
 const redirectCards = require("../middleware/redirectCards");
-const bcrypt = require("bcrypt")
 
 // get login page
 router.get("/", redirectCards, (req, res) => {
@@ -30,29 +29,34 @@ router.post("/", async (req, res) => {
     };
 
     const result = await axios.post(endp, userdetails, config);
-    
-      const user = result.data.user;
-      const authToken = result.data.token;
-    
-      sessionObj.user = user;
-      sessionObj.authen = user.user_id;
-      sessionObj.admin = user.admin;
-      sessionObj.username = user.username;
-      sessionObj.email = user.email_address
-      sessionObj.authToken = authToken
 
-      res.redirect("/cards");
+    const user = result.data.user;
+    const authToken = result.data.token;
+
+    sessionObj.user = user;
+    sessionObj.authen = user.user_id;
+    sessionObj.admin = user.admin;
+    sessionObj.username = user.username;
+    sessionObj.email = user.email_address;
+    sessionObj.authToken = authToken;
+
+    res.redirect("/cards");
   } catch (err) {
     if (err.response && err.response.status === 401) {
-        // Handle incorrect password case
-        console.log(err.response.data)
-        return res.render("login", { message: err.response.data, user: req.session });
+      // Handle incorrect password case
+      console.log(err.response.data);
+      res.render("login", {
+        message: err.response.data,
+        user: req.session,
+      });
     } else if (err.response && err.response.status === 404) {
-        // Handle other errors
-        return res.render("login", { message: err.response.data, user: req.session });
-        
+      // Handle other errors
+      res.render("login", {
+        message: err.response.data,
+        user: req.session,
+      });
     }
-}
+  }
 });
 
 module.exports = router;

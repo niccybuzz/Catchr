@@ -1,0 +1,17 @@
+    <!-- Pagination stuff -->
+    <div class="flex flex-col justify-center text-center m-2">
+        <% if (pagination.totalPages > 1) { %>
+        <h3 class="text-container m-2">Page:</h3>
+        <div class="flex justify-center" id="pageContainer">
+          <% for (let i = 1; i <=pagination.totalPages; i++) { %>
+  
+          <a pageNum="<%= i %>" href=""
+            class="px-2 mx-2 min-w-8 rounded-lg bg-container text-text border border-white text-text text-xl text-center"
+            ><%= i %></a
+          >
+  
+          <% } %>
+        </div>
+  
+        <% } %>
+      </div>

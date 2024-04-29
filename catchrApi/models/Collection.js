@@ -22,11 +22,24 @@ const Collection = sequelize.define(
       type: DataTypes.INTEGER,
       allowNull: true,
       defaultValue: 0
+    },
+    numCards: {
+      type: DataTypes.INTEGER,
+      allowNull: true,
+      defaultValue: 0
     }
   },
   {
     tableName: "collections",
   }
 );
+
+// Update NumCards after a new association between Collection and Card is created
+Collection.afterBulkCreate(async (collections, options) => {
+  for (const collection of collections) {
+    const numCards = await collection.countCards();
+    await collection.update({ numCards });
+  }
+});
 
 module.exports = Collection;

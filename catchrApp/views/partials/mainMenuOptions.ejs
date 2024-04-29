@@ -1,0 +1,47 @@
+<!-- The actual dropdown menu options. When button above is clicked, dropdown toggle function will be triggered, showing or hiding these options -->
+<div
+  id="dropdown-menu"
+  class="hidden z-10 text-black absolute top-16 right-3 w-48 rounded-lg shadow-lg bg-button"
+>
+  <div class="rounded-lg" role="menu">
+    <% if (user.authen) { %>
+    <div class="block px-4 py-2 bg-gray-300" >
+      Logged in as <%=user.username %>
+    </div>
+    <% } %>
+    <a
+      href="<%= user.authen ? '/myaccount' : '/login' %>"
+      class="block px-4 py-2 hover:bg-gray-100 hover:text-gray-900"
+      role="menuitem"
+      ><%= user.authen ? 'My Account' : 'Log In' %></a
+    >
+    <% if (!user.authen) { %>
+    <a
+      href="/register"
+      class="block px-4 py-2 hover:bg-gray-100 hover:text-gray-900"
+      role="menuitem"
+      >Sign Up</a
+    >
+    <% } %>
+    <a
+      href="/cards"
+      class="block px-4 py-2 hover:bg-gray-100 hover:text-gray-900"
+      role="menuitem"
+      >Browse Cards</a
+    >
+    <a
+      href="/collections/topcollections"
+      class="block px-4 py-2 hover:bg-gray-100 hover:text-gray-900"
+      role="menuitem"
+      >Browse Collections</a
+    >
+    <% if (user.authen) { %>
+    <a
+      href="/logout"
+      class="block px-4 py-2 hover:bg-gray-100 hover:text-gray-900"
+      role="menuitem"
+      >Log Out</a
+    >
+    <% } %>
+  </div>
+</div>

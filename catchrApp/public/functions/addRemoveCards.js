@@ -35,8 +35,9 @@ window.addEventListener("load", () => {
     const addButtons = document.querySelectorAll(".addToCollection");
 
     addButtons.forEach((button) => {
-      button.addEventListener("click", async function () {
+      button.addEventListener("click", async function (event) {
         try {
+          event.preventDefault();
           const selectedCard = this.getAttribute("card");
           const selectedCollection = this.getAttribute("collection");
           const response = await fetch(

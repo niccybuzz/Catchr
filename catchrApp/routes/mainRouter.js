@@ -1,3 +1,7 @@
+/**
+ * "Pinches" all the other routes into 1, for readability
+ */
+
 const express = require("express");
 const router = express.Router();
 
