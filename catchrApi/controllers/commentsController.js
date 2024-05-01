@@ -125,6 +125,7 @@ router.post("/", async (req, res) => {
       owner_id: owner_id,
     });
   } catch (err) {
+    console.log(err)
     res.status(500).json("Error posting comment: " + err);
   }
 });

@@ -9,7 +9,7 @@
 
     <!-- Full screen size flexbox -->
     <div
-      class="flex items-start pt-6 md:pt-0 md:items-center justify-center flex-1 overflow-y-auto"
+      class="flex items-start pt-6 md:pt-0 md:items-center justify-center flex-1"
     >
       
       <!-- My account box -->
@@ -17,20 +17,16 @@
         class="flex flex-col justify-center items-center bg-container p-8 rounded shadow-md h-fit w-10/12 md:w-1/2 xl:w-1/3 ws:w-1/5 ws:m-20 text-text"
       >
         <!-- Header -->
-        <h1 class="text-3xl text-text text-center font-bold m-2">My Likes</h1>
-
-        <% if (likes.length == 0) { %>
-          <div class="text-white m-10 text-xl">No Likes</div>
-        <% } %>
+        <h1 class="text-3xl text-text text-center font-bold m-2">All Users</h1>
  
         <!-- Line for each collection -->
-        <% likes.forEach((like) => { %>
+        <% users.forEach((user) => { %>
         <div
           class="border-2 border-gray-600 flex justify-between w-full border-opacity-50 rounded-lg p-2 md:p-4 lg:text-xl mx-2 my-1"
         >
-          <%= like.Collection.User.username%>'s Collection
-          <a href="/collections/<%=like.Collection.user_id%>">
-            <button class="px-2 py-1 bg-button rounded-lg text-base text-container"> Go</button>
+          <a href="/collections/<%=user.user_id%>"><%= user.username%></a> 
+          <a href="/admin/users/delete/<%=user.user_id%>">
+            <button class="px-2 py-1 bg-red-500 rounded-lg text-base text-container"> Delete Account </button>
           </a>
           
         </div>

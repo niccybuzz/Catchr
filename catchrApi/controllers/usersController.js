@@ -6,6 +6,8 @@ const authenticateJWT = require("../auth/authenticateJWT");
 
 const User = require("../models/User");
 const Collection = require("../models/Collection");
+const Comment = require("../models/Comment");
+const Like = require("../models/Like");
 const { Op } = require("sequelize");
 const router = express.Router();
 
@@ -90,10 +92,7 @@ router.post("/register", async (req, res) => {
         user_id: newUser.user_id,
       });
 
-      res.status(201).json({
-        message: "User created successfully",
-        user: newUser,
-      });
+      res.status(201).json(newUser);
     }
   } catch (err) {
     res.status(500).json("Server error " + err.message);
@@ -154,7 +153,7 @@ router.put("/details", authenticateJWT, async (req, res) => {
   try {
     //retrieve the user id and fields to be changed from the params and body
     const { new_username, new_email, admin, password } = req.body;
-    const user_id = req.user.id
+    const user_id = req.user.id;
     //first, authenticate whether the user is updating their own profile OR the user is an admin
 
     // Making sure that the user has entered information to update in at least 1 field
@@ -246,7 +245,7 @@ router.put("/password", authenticateJWT, async (req, res) => {
   }
 });
 
-router.delete("/delete/:userid", authenticateJWT, async (req, res) => {
+router.delete("/:userid", authenticateJWT, async (req, res) => {
   try {
     const userid = req.params.userid;
     if (req.user.id == userid || req.user.admin) {
@@ -254,18 +253,56 @@ router.delete("/delete/:userid", authenticateJWT, async (req, res) => {
       if (!userToDelete) {
         res.status(404).json("Can't find that user to delete");
       } else {
+        const collectionToDelete = await Collection.findOne({
+          where: {
+            user_id: userid,
+          },
+        });
+
+        const commentsToDelete = await Comment.findAll({
+          where: {
+            user_id: userid,
+          },
+        });
+        const likesToDelete = await Like.findAll({
+          where: {
+            user_id: userid
+          }
+        })
+        const commentsOnCollection = await Comment.findAll({
+          where: {
+            collection_id: collectionToDelete.collection_id
+          }
+        })
+        const likesOnCollection = await Like.findAll({
+          where: {
+            collection_id : collectionToDelete.collection_id
+          }
+        })
+      
+        //Cant use forEach here because requires async
+        for (const comment of commentsToDelete) {
+          await comment.destroy();
+        }
+        for (const comment of commentsOnCollection) {
+          await comment.destroy();
+        }
+        for (const like of likesToDelete) {
+          await like.destroy();
+        }  
+        for (const like of likesOnCollection) {
+          await like.destroy();
+        }            
+        await collectionToDelete.destroy();
         await userToDelete.destroy();
+        
         res.status(200).json("Account deleted succesfully");
       }
     } else {
-      res.status(401).json({
-        message: "Not authorised to delete this account",
-      });
+      res.status(401).json("Not authorised to delete this account",);
     }
   } catch (err) {
-    res.status(500).json({
-      message: `Internal server error: ${err.message}`,
-    });
+    res.status(500).json(`Internal server error: ${err}`);
   }
 });
 

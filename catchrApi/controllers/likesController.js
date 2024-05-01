@@ -3,6 +3,9 @@ const router = express.Router();
 const Like = require("../models/Like");
 const Collection = require("../models/Collection");
 const User = require("../models/User");
+const cache = require("../cache/cache");
+const cacheChecker = require("../cache/cacheChecker");
+const updateCache = require("../cache/updateCache");
 
 router.get("/singlelike", async (req, res) => {
   try {
@@ -24,12 +27,16 @@ router.get("/singlelike", async (req, res) => {
   }
 });
 
-router.get("/", async (req, res) => {
+router.get("/", cacheChecker, async (req, res) => {
   try {
     const likes = await Like.findAll({
       attributes: ["like_id", "user_id", "collection_id"],
     });
-    res.status(200).json(likes);
+    const cacheKey = req.originalUrl;
+    cache[cacheKey] = likes;
+    req.lastRequestTimestamp = Date.now();
+    console.log(req.originalUrl)
+    res.status(200).json(cache[cacheKey])
   } catch (err) {
     res.status(404).json("Couldn't find likes");
   }
@@ -62,7 +69,7 @@ router.get("/user/:user_id", async (req, res) => {
   }
 });
 
-router.post("/", async (req, res) => {
+router.post("/", updateCache, async (req, res) => {
   try {
     const { collection_id, user_id } = req.body;
     const newLike = await Like.create({
@@ -79,6 +86,7 @@ router.post("/", async (req, res) => {
     const addLike = await collection.update({
       numLikes: numLikes + 1,
     });
+
     res.status(200).json({
       newLike: newLike,
       collection: collection,
@@ -88,7 +96,7 @@ router.post("/", async (req, res) => {
   }
 });
 
-router.delete("/", async (req, res) => {
+router.delete("/", updateCache, async (req, res) => {
   try {
     const { collection_id, user_id } = req.query;
     const like = await Like.findOne({

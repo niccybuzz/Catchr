@@ -13,6 +13,7 @@ const logoutRoute = require("./logoutRoute.js");
 const myCollecRoute = require("./myCollectionRoute.js");
 const collectionsRoute = require("./collectionsRoute.js");
 const myAccountRoute = require("./myAccountRoute.js");
+const adminRoute = require("./adminRoute.js");
 
 router.use("/cards", cardsRoute);
 router.use("/mycollection", myCollecRoute);
@@ -21,6 +22,7 @@ router.use("/login", loginRoute);
 router.use("/logout", logoutRoute);
 router.use("/myaccount", myAccountRoute);
 router.use("/collections", collectionsRoute);
+router.use("/admin", adminRoute);
 router.use("/", homeRoute);
 
 

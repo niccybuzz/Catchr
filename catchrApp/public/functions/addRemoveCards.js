@@ -11,9 +11,9 @@ window.addEventListener("load", () => {
           );
           const data = await response.json();
           if (response.ok) {
-            document.getElementById("popupMessage").textContent =
-              data;
-            document.getElementById("popup").style.display = "block";
+            document.getElementById("popupMessage").textContent = data;
+            document.getElementById("popup").classList.add("flex")
+            document.getElementById("popup").classList.remove("hidden")
           } else {
             alert(data.message);
           }
@@ -26,7 +26,8 @@ window.addEventListener("load", () => {
     document
       .getElementById("closePopup")
       .addEventListener("click", function () {
-        document.getElementById("popup").style.display = "none";
+        document.getElementById("popup").classList.add("hidden")
+        document.getElementById("popup").classList.remove("flex")
         location.reload();
       });
   });
@@ -46,7 +47,9 @@ window.addEventListener("load", () => {
           const data = await response.json();
           if (response.ok) {
             document.getElementById("popupMessage").textContent = data;
-            document.getElementById("popup").style.display = "block";
+            document.getElementById("popup").classList.add("flex")
+            document.getElementById("popup").classList.remove("hidden")
+
           } else {
             alert(data);
           }
@@ -59,6 +62,8 @@ window.addEventListener("load", () => {
     document
       .getElementById("closePopup")
       .addEventListener("click", function () {
-        document.getElementById("popup").style.display = "none";
+        document.getElementById("popup").classList.add("flex")
+        document.getElementById("popup").classList.remove("hidden")
+  
       });
   });

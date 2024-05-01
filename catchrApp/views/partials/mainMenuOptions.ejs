@@ -7,6 +7,9 @@
     <% if (user.authen) { %>
     <div class="block px-4 py-2 bg-gray-300" >
       Logged in as <%=user.username %>
+      <% if (user.admin) { %>
+        (Admin Mode)
+      <% } %>
     </div>
     <% } %>
     <a
@@ -42,6 +45,12 @@
       role="menuitem"
       >Log Out</a
     >
+    <a
+    href="/admin"
+    class="block px-4 py-2 hover:bg-gray-100 hover:text-gray-900"
+    role="menuitem"
+    >Admin Panel</a
+  >
     <% } %>
   </div>
 </div>

@@ -49,7 +49,7 @@
                   </div>
 
                   <!-- Adding a "delete comment" box if the comment belongs to user -->
-                  <% if (comment.isMine) { %>
+                  <% if (comment.isMine || user.admin) { %>
                   <a class="deletebutton" comment=" <%= comment.comment_id %> ">
                     <button
                       class="bg-button rounded-lg text-xs px-2 py-1 h-8 w-16"

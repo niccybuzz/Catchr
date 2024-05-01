@@ -17,6 +17,9 @@ router.get("/add", async (req, res) => {
       card_id: card,
       collection_id: collection,
     };
+
+    console.log(collection)
+    console.log(card)
     // Setting configuration to allow app to parse url data
     const config = {
       headers: {
@@ -33,6 +36,58 @@ router.get("/add", async (req, res) => {
     res.send(err.response.data) 
   }
 });
+
+/**
+ * Takes user to the collections dashboard
+ * Retrieves the users collection (with all cards and status),
+ * a list of other user's collections, and all comments on user's collection.
+ */
+router.get("/", async (req, res) => {
+  try {
+    const user_id = req.session.authen;
+    // Declaring these as null so that i can still pass empty to the browser if user isn't logged in
+    let mystats,
+      mycollection,
+      cards,
+      myComments = null;
+    if (user_id) {
+      try {
+        //Getting my collection details, cards and stats
+        const myCollecResults = await axios.get(
+          `http://localhost:4000/api/collections/user/${user_id}`
+        );
+        mycollection = myCollecResults.data.collection;
+        mystats = myCollecResults.data.stats;
+        cards = mycollection.Cards;
+        const mycollection_id = mycollection.collection_id;
+        // Getting all comments on my collection, if any
+        try {
+          const commentsResults = await axios.get(
+            `http://localhost:4000/api/comments/collection/${mycollection_id}`
+          );
+          myComments = commentsResults.data;
+          myComments = await markMyComments(myComments, user_id);
+        } catch (err) {
+          myComments = null;
+        }
+      } catch (err) {
+        mycollection, mystats, (cards = null);
+      }
+    }
+    res.render("MyCollection", {
+      user: req.session,
+      collection: mycollection,
+      stats: mystats,
+      cards: cards,
+      comments: myComments,
+    });
+  } catch (err) {
+    console.log(err.response.data)
+    console.log(err)
+    res.render("error", {error: err, user: req.session})
+  }
+});
+
 
 /**
  * Removes a card from a collection

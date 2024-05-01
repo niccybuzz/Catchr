@@ -116,7 +116,7 @@
 
         <% } %>
 
-        <div class="flex">
+        <div class="flex text-sm md:text-base">
           <% if (card.hp ) { %>
           <div class="w-1/2 border-r border-text border-opacity-30">
             <!-- Weakness -->
@@ -149,7 +149,7 @@
           </div>
           <% } %>
 
-          <div class="w-full">
+          <div class="w-1/2">
             <!-- Set -->
             <div class="flex justify-between items-center px-4 py-2">
               <h3>Set:</h3>
@@ -178,11 +178,13 @@
         </div>
         <!-- Description -->
         <% if (card.card_description) { %>
-          <div class="flex justify-between">
-            <h3 class="m-4 w-1/2">Description</h3>
-            <p class="text-sm italic mx-6 my-2 text-end w-1/2"> <%= card.card_description %></p>
-          </div>
-          
+        <div class="flex justify-between">
+          <h3 class="m-4 w-1/2">Description</h3>
+          <p class="text-sm italic mx-6 my-2 text-end w-1/2">
+            <%= card.card_description %>
+          </p>
+        </div>
+
         <% } %>
 
         <!-- Height and Weight -->
@@ -205,22 +207,42 @@
     <div class="flex justify-center mb-12 text-center" id="buttonbox">
       <a href="/cards" class="">
         <button
-          class="bg-button border-2 border-container hover:bg-clawitzerdb hover:text-white rounded-md mx-4 py-2 px-4 md:px-4 text-center md:text-xl transition-colors font-bold"
+          class="bg-button hover:text-white hover:text-container rounded-md mx-4 py-2 px-4 md:px-4 text-center md:text-xl transition-colors font-bold"
         >
           Back to Cards
         </button>
       </a>
-      <a href="/addtocollection/<%=card.card_id%>" class="">
+      <% if (user.authen) { %>
+        <a
+        class="addToCollection" card="<%=card.card_id%>" collection="<%=collection.collection_id%>"
+      >
         <button
-          class="bg-button border-2 border-container hover:bg-clawitzerdb hover:text-white rounded-md mx-4 py-2 px-4 md:px-4 text-center md:text-xl transition-colors font-bold"
+          class="bg-button hover:text-white hover:text-container rounded-md mx-4 py-2 px-4 md:px-4 text-center md:text-xl transition-colors font-bold"
         >
           Add to Collection
         </button>
       </a>
+      <%} %>
+
     </div>
 
-    <%- include (`partials/footer.ejs`) %>
+    <div
+    id="popup"
+    class="fixed hidden text-canvas max-w-72 text-center z-20 top-1/4 md:top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-container p-6 flex-col justify-center items-center shadow-lg rounded-lg"
+    
+  >
+    <p id="popupMessage" class="text-lg mb-4"></p>
+    <button
+      type="button"
+      id="closePopup"
+      class="bg-canvas text-container font-bold py-2 px-4 rounded"
+    >
+      Close
+    </button>
+  </div>
 
+    <%- include (`partials/footer.ejs`) %>
+    <script src="/functions/addRemoveCards.js"></script>
     <script src="/functions/loadCards.js"></script>
   </body>
   <%- include (`partials/tailwindDark.ejs`) %>

@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <%- include (`partials/header.ejs`) %>
+    <title>Login</title>
+  </head>
+  <body class="box-border bg-canvas h-screen flex flex-col font-kanit">
+    <%- include (`partials/nav.ejs`) %>
+
+    <!-- Full screen size flexbox -->
+    <div
+      class="flex items-start pt-6 md:pt-0 md:items-center justify-center flex-1"
+    >
+      <!-- My account box -->
+      <div
+        class="flex flex-col justify-center items-center border-4 bg-container p-8 lg: my-10 rounded-lg shadow-md h-fit w-10/12 md:w-1/2 xl:w-1/3 ws:w-1/5 ws:m-20 text-text"
+      >
+        <!-- Header -->
+        <h1 class="text-3xl text-text text-center font-bold m-2">
+          Admin Panel
+        </h1>
+
+        <% if (!user.admin) { %>
+        <h1 class="text-xl text-text text-center font-bold m-2">
+          You aren't an admin! But if you log in with the credentials PokeAdmin,
+          password 123 you might be..
+        </h1>
+        <% } else { %>
+        <!-- Buttons -->
+        <div
+          class="text-container text-sm md:text-base lg:text-lg text-center w-full m-2 flex flex-col md:flex-row justify-between md:justify-evenly"
+        >
+          <a href="/admin/users">
+            <button
+              class="bg-button min-w-[200px] max-w-[350px] w-full hover:bg-white transition-colors duration-500 rounded-lg py-2 px-2 my-2 font-bold"
+            >
+              All Users
+            </button>
+          </a>
+        </div>
+        <div
+          class="text-container text-sm md:text-base lg:text-lg text-center w-full m-2 flex flex-col md:flex-row justify-between md:justify-evenly"
+        >
+          <a href="/admin/comments">
+            <button
+              class="bg-button min-w-[200px] max-w-[350px] w-full hover:bg-white transition-colors duration-500 rounded-lg py-2 my-2 px-8 font-bold"
+            >
+              All comments
+            </button>
+          </a>
+        </div>
+              
+        <% } %>
+      </div>
+    </div>
+    <script src="/functions/deleteAccount.js"></script>
+    <%- include (`partials/footer.ejs`) %>
+  </body>
+  <!-- Scripts etc -->
+  <%- include (`partials/tailwindConfig.ejs`) %>
+</html>

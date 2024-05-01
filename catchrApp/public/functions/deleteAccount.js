@@ -5,7 +5,7 @@ document
 async function deleteAccount(event) {
   event.preventDefault();
   try{
-    if (confirm("Are you sure you want to delete your account?")){
+    if (confirm("Are you sure you want to delete your account? This will erase your collection and any comment or likes you have left.")){
         const response = await fetch("/myaccount/delete", {
             method: "DELETE"
         })

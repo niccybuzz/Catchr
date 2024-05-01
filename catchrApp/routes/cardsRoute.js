@@ -30,7 +30,6 @@ router.get("/:id", async (req, res) => {
     let sessionObj = req.session;
     let endp = `http://localhost:4000/api/cards/${id}`;
     const results = await axios.get(endp);
-    console.log(results.data);
     if (results) {
       let card = results.data;
       /**
@@ -89,10 +88,18 @@ router.get("/:id", async (req, res) => {
         card.retreat_icon = card.retreat_type.type_icon;
       }
 
+      let myCollection = null;
+      if (sessionObj.authen) {
+        const myCollectionData = await axios.get(`http://localhost:4000/api/collections/user/${sessionObj.authen}`)
+        myCollection = myCollectionData.data.collection;
+      } 
+           
+
+      console.log(myCollection)
       res.render("singleCard", {
         card: card,
         user: sessionObj,
-        collection: "collection",
+        collection: myCollection,
       });
     }
   } catch (err) {
