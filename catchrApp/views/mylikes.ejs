@@ -19,6 +19,10 @@
         <!-- Header -->
         <h1 class="text-3xl text-text text-center font-bold m-2">My Likes</h1>
 
+        <% if (likes.length == 0) { %>
+          <div class="text-white m-10 text-xl">No Likes</div>
+        <% } %>
+ 
         <!-- Line for each collection -->
         <% likes.forEach((like) => { %>
         <div
@@ -31,6 +35,7 @@
           
         </div>
         <% }) %>
+        <%- include ("partials/myAccountButton.ejs") %>
       </div>
     </div>
 

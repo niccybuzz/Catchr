@@ -144,7 +144,7 @@
         </button>
       </div>
       <div
-        class="grid justify-center items-center gap-6 px-4 lg:px-36 ws:px-96 h-full grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 ws:grid-cols-5 opacity-0 transition-opacity duration-500 flex-1 overflow-y-auto"
+        class="grid justify-center items-center gap-6 px-4 lg:px-36 ws:px-96 h-full grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 ws:grid-cols-5 opacity-0 transition-opacity duration-500 flex-1"
         id="gridDiv"
       >
         <!-- Iterating through each pokemon (row in data) and creates a card object each -->
@@ -153,7 +153,7 @@
         <div
           class="flex flex-col justify-center items-center bg-canvas bg-opacity-90 text-container rounded-lg"
         >
-          <!-- Wrapping the whole card a link -->
+          <!-- Wrapping the card image a link -->
           <a
             href="/cards/<%= card.card_id %>"
             class="p-4 flex flex-col justify-center items-center hover:scale-105 max-w-96 min-w-72"
@@ -181,26 +181,74 @@
               </p>
             </div>
 
-            <!-- Add to collection button -->
-            <% if (user.authen) { %>
-            <a
-              type="button"
-              class="addToCollection"
-              card="<%=card.card_id%>"
-              collection="<%=collection .collection_id%>"
-            >
+            <!-- More options dropdown -->
+
+            <div class="relative" id="card-dropdown">
+              <!-- Button -->
               <button
                 type="button"
-                class="rounded-full text-canvas m-4 bg-container hover:bg-white h-7 w-7 border-2 transition-colors border-container duration-300 hover:border-red-500 hover:text-black flex items-center justify-center text-xl text-center relative"
+                id="card-dropdown-button"
+                cardId="<%=card.card_id%>"
+                class="text-container flex items-center bg-container rounded-full justify-center text-2xl text-center relative w=full"
               >
-                +
+                <img
+                  class="m-1 h-4 w-4"
+                  src="https://cdn-icons-png.freepik.com/512/17/17764.png"
+                />
               </button>
-            </a>
+
+              <!-- Dropdown options -->
+              <div
+                class="absolute bg-container hidden text-canvas text-lg right-0 top-8 rounded-lg w-48 flex-col"
+                id="<%=card.card_id%>"
+              >
+                <% if (user.authen) { %>
+                <div
+                  class="px-2 py-1 w-full round cursor-pointer hover:bg-button transition-colors"
+                >
+                  <a
+                    class="addToCollection"
+                    card="<%=card.card_id%>"
+                    collection="<%=collection.collection_id%>"
+                    >Add To Collection
+                  </a>
+                </div>
+
+                <div
+                  class="px-2 py-1 cursor-pointer hover:bg-button transition-colors"
+                >
+                  <a
+                    class="addToWishlist"
+                    card="<%=card.card_id%>"
+                    wishlist="<%=wishlist.wishlist_id%>"
+                  >
+                    Add to Wishlist
+                  </a>
+                </div>
+                <% } else { %>
+                  <div
+                  class="px-2 py-1 rounded-lg bg-gray-300 cursor-pointer hover:bg-button transition-colors text-base"
+                >
+                  <a
+                    href="/login"
+                  >
+                    Sign in to add to your collection
+                  </a>
+                </div>
+                 <%} %>
+
+                <a
+                  class="px-2 py-1 hover:bg-button transition-colors"
+                  href="/cards/<%=card.card_id%>"
+                >
+                  View Details
+                </a>
+              </div>
+            </div>
 
             <div
               id="popup"
-              class="fixed text-canvas max-w-72 text-center z-20 top-1/4 md:top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-container p-6 flex justify-center items-center shadow-lg rounded-lg"
-              style="display: none"
+              class="fixed hidden text-canvas max-w-72 text-center z-20 top-1/4 md:top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-container p-6 flex-col justify-center items-center shadow-lg rounded-lg"
             >
               <p id="popupMessage" class="text-lg mb-4"></p>
               <button
@@ -211,16 +259,6 @@
                 Close
               </button>
             </div>
-            <% } else { %>
-            <a href="/login">
-              <button
-                type="button"
-                class="rounded-full text-canvas m-4 bg-container hover:bg-white h-7 w-7 border-2 transition-colors border-container duration-300 hover:border-red-500 hover:text-black flex items-center justify-center text-xl text-center relative"
-              >
-                +
-              </button>
-            </a>
-            <% } %>
           </div>
           <div class="flex text-white justify-center items-center mr-10">
             <input
@@ -248,6 +286,7 @@
     (`partials/footer.ejs`) %>
     <script src="/functions/loadCards.js"></script>
     <script src="/functions/cardFilters.js"></script>
+    <script src="/functions/cardDropdown.js"></script>
     <script src="/functions/swapcolours.js"></script>
     <script src="/functions/addRemoveCards.js"></script>
     <script src="/functions/cardComparisonChecker.js"></script>

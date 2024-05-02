@@ -1,5 +1,4 @@
 const express = require("express");
-const { Op } = require("sequelize");
 const User = require("../models/User");
 const Comment = require("../models/Comment");
 const Collection = require("../models/Collection");
@@ -10,7 +9,6 @@ const router = express.Router();
 router.delete("/:comment_id", async (req, res) => {
   try {
     const comment_id = req.params.comment_id;
-    console.log(comment_id);
     const comment = await Comment.findByPk(comment_id);
     if (!comment) {
       res.status(404).json("Can't find that comment");
@@ -73,10 +71,10 @@ router.get("/user/:id", async (req, res) => {
           include: [
             {
               model: User,
-              attributes: ["username"]
-            }
-          ]
-        }
+              attributes: ["username"],
+            },
+          ],
+        },
       ],
     });
     res.status(200).json(allComments);
@@ -91,10 +89,22 @@ router.get("/user/:id", async (req, res) => {
 router.get("/", async (req, res) => {
   try {
     const allComments = await Comment.findAll({
+      attributes: ["comment_id", "comment_body"],
       include: [
         {
           model: User,
+          
           attributes: ["username", "user_id"],
+        },
+        {
+          model: Collection,
+          attributes: ["collection_id"],
+          include: [
+            {
+              model: User,
+              attributes: ["username", "user_id"],
+            },
+          ],
         },
       ],
     });
@@ -125,6 +135,7 @@ router.post("/", async (req, res) => {
       owner_id: owner_id,
     });
   } catch (err) {
+    console.log(err);
     res.status(500).json("Error posting comment: " + err);
   }
 });

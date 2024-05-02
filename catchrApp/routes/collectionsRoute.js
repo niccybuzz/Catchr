@@ -15,6 +15,10 @@ router.post("/comment/:collectionid", async (req, res) => {
     const token = sessionObj.authToken;
     const { comment } = req.body;
     const user_id = sessionObj.authen;
+
+    console.log(collection_id)
+    console.log(comment)
+    console.log(user_id)
     const endp = `http://localhost:4000/api/comments`;
     const postComment = {
       collection_id: collection_id,
@@ -24,7 +28,7 @@ router.post("/comment/:collectionid", async (req, res) => {
     const config = {
       headers: {
         "Content-Type": "application/x-www-form-urlencoded",
-        Authorization: `Bearer ${token}`,
+        "Authorization": `Bearer ${token}`,
       },
     };
 
@@ -53,56 +57,7 @@ router.delete("/comment/delete/:id", async (req, res) => {
   }
 });
 
-/**
- * Takes user to the collections dashboard
- * Retrieves the users collection (with all cards and status),
- * a list of other user's collections, and all comments on user's collection.
- */
-router.get("/mycollection", async (req, res) => {
-  try {
-    const user_id = req.session.authen;
-    // Declaring these as null so that i can still pass empty to the browser if user isn't logged in
-    let mystats,
-      mycollection,
-      cards,
-      myComments = null;
-    if (user_id) {
-      try {
-        //Getting my collection details, cards and stats
-        const myCollecResults = await axios.get(
-          `http://localhost:4000/api/collections/user/${user_id}`
-        );
-        mycollection = myCollecResults.data.collection;
-        mystats = myCollecResults.data.stats;
-        cards = mycollection.Cards;
-        const mycollection_id = mycollection.collection_id;
-        // Getting all comments on my collection, if any
-        try {
-          const commentsResults = await axios.get(
-            `http://localhost:4000/api/comments/collection/${mycollection_id}`
-          );
-          myComments = commentsResults.data;
-          myComments = await markMyComments(myComments, user_id);
-        } catch (err) {
-          myComments = null;
-        }
-      } catch (err) {
-        mycollection, mystats, (cards = null);
-      }
-    }
-    res.render("MyCollection", {
-      user: req.session,
-      collection: mycollection,
-      stats: mystats,
-      cards: cards,
-      comments: myComments,
-    });
-  } catch (err) {
-    console.log(err.response.data)
-    console.log(err)
-    res.render("error", {error: err, user: req.session})
-  }
-});
+
 
 //Gets a list of top 10 user collections by likes
 router.get("/topcollections", async (req, res) => {
@@ -128,7 +83,7 @@ router.get("/topcollections", async (req, res) => {
 });
 
 // "Likes" a collection
-router.get("/like/:collection_id", async (req, res) => {
+router.get("/like/:collection_id", redirectLogin, async (req, res) => {
   try {
     const user_id = req.session.authen;
     const token = req.session.authToken;
@@ -149,7 +104,7 @@ router.get("/like/:collection_id", async (req, res) => {
     const owner_id = results.data.collection.user_id
     res.redirect(`/collections/${owner_id}`);
   } catch (err) {
-    console.log(err)
+    console.log(err.response.data)
     res.render("error", {error: err, user: req.session})
   }
 });
@@ -190,6 +145,7 @@ router.get("/:owner_id", async (req, res) => {
     const results = await axios.get(endp);
     const collection = results.data.collection;
     const collection_id = collection.collection_id;
+
     const cards = collection.Cards;
     const stats = results.data.stats;
 
@@ -207,7 +163,7 @@ router.get("/:owner_id", async (req, res) => {
 
     if (user_id == collection.User.user_id) {
     
-      res.redirect("/collections/mycollection");
+      res.redirect("/mycollection");
     } else {
       let collectionLiked = false;
       try{

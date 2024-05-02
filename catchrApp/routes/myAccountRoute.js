@@ -73,6 +73,7 @@ router.post("/changepassword", redirectLogin, async (req, res) => {
     
     if (newpassword !== newpasswordConfirm){
       res.render("changepassword", {message: "Passwords don't match. Please enter again", user: sessionObj, updated:false})
+      return;
     } 
     
     const newPassword = {

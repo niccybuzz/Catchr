@@ -1,5 +1,6 @@
 const User = require('./User');
 const Collection = require('./Collection');
+const Wishlist = require('./Wishlist');
 const Set = require("./Set")
 const Series = require("./Series")
 const Card = require("./Card")
@@ -12,12 +13,19 @@ const Ability = require("./Ability")
 const Comment = require("./Comment")
 const Like = require("./Like")
 const CardCollection = require("./many-to-many-files/CardCollection");
+const CardWishlist = require("./many-to-many-files/CardWishlist");
 
 User.hasOne(Collection, { foreignKey: 'user_id' });
 Collection.belongsTo(User, { foreignKey: 'user_id' });
 
 Collection.belongsToMany(Card, {through: CardCollection})
 Card.belongsToMany(Collection, {through: CardCollection})
+
+User.hasOne(Wishlist, { foreignKey: 'user_id' });
+Wishlist.belongsTo(User, { foreignKey: 'user_id' });
+
+Wishlist.belongsToMany(Card, {through: CardWishlist})
+Card.belongsToMany(Wishlist, {through: CardWishlist})
 
 Comment.belongsTo(Collection, {foreignKey: 'collection_id'})
 Collection.hasMany(Comment, {foreignKey: 'collection_id'})

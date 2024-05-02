@@ -1,15 +1,21 @@
 const express = require("express");
 const Set = require("../models/Set");
 const Series = require("../models/Series");
+const Card = require("../models/Card");
 const Illustrator = require("../models/Illustrator");
 const Type = require("../models/Type");
 const Rarity = require("../models/Rarity");
 const Ability = require("../models/Ability");
 const Fineprint = require("../models/Fineprint");
+const cache = require("../cache/cache");
+const cacheChecker = require("../cache/cacheChecker");
+const updateCache = require("../cache/updateCache");
 
 const router = express.Router();
 
-router.get("/sets", async (req, res) => {
+//Gets all expansions (sets)
+//Has a cache
+router.get("/sets", cacheChecker, async (req, res) => {
   try {
     const allSets = await Set.findAll({
       attributes: ["set_id", "set_name", "no_of_cards"],
@@ -20,18 +26,18 @@ router.get("/sets", async (req, res) => {
         },
       ],
     });
-    res.status(200).json(allSets);
+    const cacheKey = req.originalUrl;
+    cache[cacheKey] = allSets
+    res.status(200).json(cache[cacheKey]);
   } catch (err) {
     res.status(404).json("Couldn't find sets");
   }
 });
 
+//Posts a new illustrator in the database
 router.post("/illustrators", async (req, res) => {
   try {
     const illustrator = req.body.illustrator;
-    console.log("Received illustrator data:", illustrator);
-
-    // Assuming Illustrator is your Sequelize model
     const newIllus = await Illustrator.create({
       illustrator_name: illustrator,
     });
@@ -45,12 +51,10 @@ router.post("/illustrators", async (req, res) => {
   }
 });
 
+//Posts a new fineprint in the database
 router.post("/fineprints", async (req, res) => {
   try {
     const fineprint = req.body.fineprint_text;
-    console.log("Received fineprint data:", fineprint);
-
-    // Assuming Illustrator is your Sequelize model
     const newFineprint = await Fineprint.create({
       fineprint_text: fineprint,
     });
@@ -64,38 +68,40 @@ router.post("/fineprints", async (req, res) => {
   }
 });
 
-router.get("/rarities", async (req, res) => {
+//Gets all rarities. Has a cache
+router.get("/rarities", cacheChecker, async (req, res) => {
   try {
     const rarities = await Rarity.findAll({
       attributes: ["rarity_id", "rarity_description", "rarity_icon"]
     });
-    res.status(200).json(rarities)
+    const cacheKey = req.originalUrl;
+    cache[cacheKey] = rarities
+    res.status(200).json(cache[cacheKey])
   } catch (err) {
     res.status(404).json("Couldn't find rarities")
   }
 });
 
-router.get("/types", async (req, res) => {
+//Gets all types. Has a cacahe
+router.get("/types", cacheChecker, async (req, res) => {
   try {
     const types = await Type.findAll({
       attributes: ["type_id", "type_description", "type_icon"]
     });
-    res.status(200).json(types)
+    const cacheKey = req.originalUrl;
+    cache[cacheKey] = types
+    res.status(200).json(cache[cacheKey])
   } catch (err) {
-    res.status(404).json("Couldn't find rarities")
+    res.status(404).json("Couldn't get types")
   }
 });
 
-router.post("/rarities", async (req, res) => {
+//Post a new rarity. Updates rarity cache
+router.post("/rarities", updateCache, async (req, res) => {
   try {
     const rarity = req.body.rarity_description;
     const rarityIcon = req.body.rarity_icon;
-    console.log("Received illustrator data:", rarity);
 
-    console.log(rarity);
-    console.log(rarityIcon);
-
-    // Assuming Illustrator is your Sequelize model
     const newRarity = await Rarity.create({
       rarity_description: rarity,
       rarity_icon: rarityIcon,
@@ -110,36 +116,5 @@ router.post("/rarities", async (req, res) => {
   }
 });
 
-router.get("/abilities", async (req, res) => {
-  try {
-    const allAbilities = await Ability.findAll({
-      attributes: [
-        "ability_id",
-        "ability_name",
-        "ability_id",
-        "ability_damage",
-        "primary_cost",
-        "secondary_cost",
-      ],
-      include: [
-        {
-          model: Type,
-          as: "AbilityTypes", // Alias for primary type
-          attributes: ["type_description"],
-          through: { attributes: [] },
-        },
-        {
-          model: Card,
-          attributes: ["card_id", "card_name"],
-        },
-      ],
-    });
-
-    res.json(allAbilities);
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: "Internal server error" });
-  }
-});
 
 module.exports = router;

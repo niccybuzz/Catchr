@@ -4,9 +4,7 @@
     <%- include (`partials/header.ejs`) %>
     <title>Login</title>
   </head>
-  <body
-    class="box-border bg-canvas h-screen flex flex-col font-kanit"
-  >
+  <body class="box-border bg-canvas h-screen flex flex-col font-kanit">
     <%- include (`partials/nav.ejs`) %>
 
     <!-- Full screen size flexbox -->
@@ -45,15 +43,15 @@
             Please enter your password to confirm your identity.
           </p>
           <input
-          type="password"
-          name="password"
-          placeholder=" Password"
-          class="w-full mb-4 wt-2 rounded-md" 
-          required
-        />
-        <% if (message) { %>
+            type="password"
+            name="password"
+            placeholder=" Password"
+            class="w-full mb-4 wt-2 rounded-md"
+            required
+          />
+          <% if (message) { %>
           <p class="text-white"><%=message %></p>
-        <% } %>
+          <% } %>
           <button
             type="submit"
             class="bg-button text-container w-full hover:bg-white transition-colors duration-500 rounded-lg py-2 px-4 my-2 font-bold"
@@ -62,9 +60,13 @@
           </button>
         </form>
 
+
+
         <%} else { %>
         <div class="flex flex-col text-text justify-evenly items-center">
-          <H1 class="text-3xl text-center font-bold"> Details Updated Successfully! </H1>
+          <H1 class="text-3xl text-center font-bold">
+            Details Updated Successfully!
+          </H1>
           <img
             src="https://www.freeiconspng.com/thumbs/pokemon-png/render-pokemon-png-1.png"
             class="w-48 m-6"
@@ -81,7 +83,7 @@
             </a>
             <a href="/myaccount" class="">
               <button
-                class="bg-button  w-full hover:bg-white transition-colors duration-500 rounded-lg py-2 my-2 px-4 font-bold"
+                class="bg-button w-full hover:bg-white transition-colors duration-500 rounded-lg py-2 my-2 px-4 font-bold"
               >
                 My Account
               </button>
@@ -91,7 +93,6 @@
 
         <% } %>
       </div>
-      
     </div>
     <%- include (`partials/footer.ejs`) %>
   </body>

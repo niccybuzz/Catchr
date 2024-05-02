@@ -5,8 +5,9 @@
 >
   <div class="rounded-lg" role="menu">
     <% if (user.authen) { %>
-    <div class="block px-4 py-2 bg-gray-300" >
-      Logged in as <%=user.username %>
+    <div class="block px-4 py-2 bg-gray-300">
+      Logged in as <%=user.username %> <% if (user.admin) { %> (Admin Mode) <% }
+      %>
     </div>
     <% } %>
     <a
@@ -36,11 +37,23 @@
       >Browse Collections</a
     >
     <% if (user.authen) { %>
+      <a
+      href="/mywishlist"
+      class="block px-4 py-2 hover:bg-gray-100 hover:text-gray-900"
+      role="menuitem"
+      >My Wishlist</a
+    >
     <a
       href="/logout"
       class="block px-4 py-2 hover:bg-gray-100 hover:text-gray-900"
       role="menuitem"
       >Log Out</a
+    >
+    <a
+      href="/admin"
+      class="block px-4 py-2 hover:bg-gray-100 hover:text-gray-900"
+      role="menuitem"
+      >Admin Panel</a
     >
     <% } %>
   </div>
