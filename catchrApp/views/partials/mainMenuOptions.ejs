@@ -1,11 +1,11 @@
 <!-- The actual dropdown menu options. When button above is clicked, dropdown toggle function will be triggered, showing or hiding these options -->
 <div
   id="dropdown-menu"
-  class="hidden z-10 text-black absolute top-16 right-3 w-48 rounded-lg shadow-lg bg-button"
+  class="hidden z-10 text-container absolute top-16 right-3 text-text w-48 rounded-lg shadow-lg bg-button"
 >
   <div class="rounded-lg" role="menu">
     <% if (user.authen) { %>
-    <div class="block px-4 py-2 bg-gray-300">
+    <div class="block px-4 py-2 bg-gray-300 text-black rounded-lg">
       Logged in as <%=user.username %> <% if (user.admin) { %> (Admin Mode) <% }
       %>
     </div>

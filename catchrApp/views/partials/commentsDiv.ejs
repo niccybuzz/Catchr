@@ -23,7 +23,7 @@
           class="rounded-md border border-container border-opacity-45 text-canvas"
           placeholder=" Comment"
         />
-        <button class="bg-button text-canvas px-2 py-1 mx-2 rounded-lg">
+        <button class="bg-button text-container px-2 py-1 mx-2 rounded-lg">
           Submit
         </button>
       </div>
@@ -55,7 +55,7 @@
         <!-- Adding a "delete comment" box if the comment belongs to user -->
         <% if (comment.isMine || user.admin) { %>
         <a class="deletebutton" comment=" <%= comment.comment_id %> ">
-          <button class="bg-button text-canvas rounded-lg text-xs px-2 py-1 h-8 w-16">
+          <button class="bg-button text-container rounded-lg text-xs px-2 py-1 h-8 w-16">
             Delete
           </button>
         </a>
