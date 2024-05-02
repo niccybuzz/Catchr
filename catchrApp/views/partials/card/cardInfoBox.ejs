@@ -1,42 +1,40 @@
-              <!-- Container for brief card details and add button -->
-              <div class="flex justify-evenly items-center rounded-lg">
-                <!-- Add to collection button -->
-                <a
-                  class="removeFromCollection"
-                  card="<%=card.card_id%>"
-                  collection="<%=collection.collection_id%>"
-                >
-                  <button
-                    class="text-container m-4 h-7 w-7 flex items-center justify-center text-2xl text-center relative"
-                  >
-                    -
-                  </button>
-                </a>
+<!-- Container for brief card details and add button -->
+<div class="flex justify-evenly items-center rounded-lg">
+  <!-- Add to collection button -->
+  <a
+    class="removeFromCollection"
+    card="<%=card.card_id%>"
+    collection="<%=collection.collection_id%>"
+  >
+    <button
+      class="text-container m-4 h-7 w-7 flex items-center justify-center text-2xl text-center relative"
+    >
+      -
+    </button>
+  </a>
 
-                <!-- Card name and card/set number -->
-                <div
-                  class="px-2 flex flex-col justify-center items-center text-center"
-                >
-                  <h2 class="text-lg mx-4"><%= card.card_name %></h2>
+  <!-- Card name and card/set number -->
+  <div class="px-2 flex flex-col justify-center items-center text-center">
+    <h2 class="text-lg mx-4"><%= card.card_name %></h2>
 
-                  <p class="italic mb-2"><%=card.Rarity.rarity_description%></p>
+    <p class="italic mb-2"><%=card.Rarity.rarity_description%></p>
 
-                  <p
-                    class="text-sm italic bg-container rounded-lg text-canvas px-2 py-1"
-                  >
-                    <%=card.CardCollection.numInCollection%> in collection
-                  </p>
-                </div>
+    <p class="text-sm italic bg-container rounded-lg text-canvas px-2 py-1">
+      <%=card.CardCollection.numInCollection%> in collection
+    </p>
+  </div>
 
-                <a
-                  class="addToCollection"
-                  card="<%=card.card_id%>"
-                  collection="<%=collection.collection_id%>"
-                >
-                  <button type="button"
-                    class="text-container m-4 h-7 w-7 flex items-center justify-center text-2xl text-center relative"
-                  >
-                    +
-                  </button>
-                </a>
-              </div>
+  <!-- Add to collection button -->
+  <a
+    class="addToCollection"
+    card="<%=card.card_id%>"
+    collection="<%=collection.collection_id%>"
+  >
+    <button
+      type="button"
+      class="text-container m-4 h-7 w-7 flex items-center justify-center text-2xl text-center relative"
+    >
+      +
+    </button>
+  </a>
+</div>

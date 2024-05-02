@@ -17,23 +17,21 @@ router.get("/users", authenticateAdmin, async (req, res) => {
 //Allows an admin to delete a user from the site
 router.delete("/users/delete/:user_id", authenticateAdmin, async (req, res) => {
   try {
-    console.log("triggered")
     const token = req.session.authToken;
     const config = {
       headers: {
-        Authorization: `Bearer: ${token}`,
+        "Authorization": `Bearer ${token}`,
       },
     };
     const userToDelete = req.params.user_id;
-    console.log(userToDelete)
     const endp = `http://localhost:4000/api/users/${userToDelete}`;
     const deletedUser = await axios.delete(endp, config);
     res.status(200).json("Account deleted successfully")
   } catch (err) {
-    console.log(err.response.data);
-    res.render("error", { error: err, user: req.session });
+    res.status(500).json("Server error: " + err)
   }
 });
+
 
 //Allows an admin to delete a comment
 router.get("/comments/delete/:comment_id", authenticateAdmin, async (req, res) => {
@@ -57,7 +55,6 @@ router.get("/comments/delete/:comment_id", authenticateAdmin, async (req, res) =
 router.get("/comments", authenticateAdmin, async (req, res) => {
   try {
     const allComments = await axios.get(`http://localhost:4000/api/comments`);
-    console.log(allComments.data);
     res.render("adminPanelComments", {
       comments: allComments.data,
       user: req.session,

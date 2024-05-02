@@ -79,7 +79,7 @@
             id="types-dropdown"
             class="hidden absolute w-44 h-60 overflow-y-auto top-8 right-0 md:left-0 text-left rounded-md text-container flex-col"
           >
-            <div role="menu">
+            <div role="menu" >
               <% types.forEach((type) => { %>
               <a
                 href=""
@@ -134,7 +134,7 @@
       <h2 class="text-center text-3xl text-container py-8 col-span-2">
         All Cards
       </h2>
-
+      <!-- Compare -->
       <div>
         <button
           type="submit"
@@ -143,6 +143,7 @@
           Compare
         </button>
       </div>
+      <!-- Card grid -->
       <div
         class="grid justify-center items-center gap-6 px-4 lg:px-36 ws:px-96 h-full grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 ws:grid-cols-5 opacity-0 transition-opacity duration-500 flex-1"
         id="gridDiv"
@@ -189,7 +190,7 @@
                 type="button"
                 id="card-dropdown-button"
                 cardId="<%=card.card_id%>"
-                class="text-container flex items-center bg-container rounded-full justify-center text-2xl text-center relative w=full"
+                class="text-container flex items-center bg-container rounded-full justify-center text-2xl text-center relative w-full"
               >
                 <img
                   class="m-1 h-4 w-4"
@@ -199,43 +200,40 @@
 
               <!-- Dropdown options -->
               <div
-                class="absolute bg-container hidden text-canvas text-lg right-0 top-8 rounded-lg w-48 flex-col"
+                class="absolute bg-container hidden text-canvas text-lg right-0 top-8 rounded-lg w-48 flex-col z-20"
                 id="<%=card.card_id%>"
               >
                 <% if (user.authen) { %>
                 <div
                   class="px-2 py-1 w-full round cursor-pointer hover:bg-button transition-colors"
                 >
-                  <a
+                  <div
                     class="addToCollection"
                     card="<%=card.card_id%>"
                     collection="<%=collection.collection_id%>"
-                    >Add To Collection
-                  </a>
+                  >
+                    <a class="w-full">Add To Collection </a>
+                  </div>
                 </div>
 
                 <div
-                  class="px-2 py-1 cursor-pointer hover:bg-button transition-colors"
+                  class="px-2 py-1 w-full cursor-pointer hover:bg-button transition-colors"
                 >
-                  <a
+                  <div
                     class="addToWishlist"
                     card="<%=card.card_id%>"
                     wishlist="<%=wishlist.wishlist_id%>"
                   >
-                    Add to Wishlist
-                  </a>
+                    <a class="w-full"> Add to Wishlist </a>
+                  </div>
                 </div>
                 <% } else { %>
-                  <div
+                <div
                   class="px-2 py-1 rounded-lg bg-gray-300 cursor-pointer hover:bg-button transition-colors text-base"
                 >
-                  <a
-                    href="/login"
-                  >
-                    Sign in to add to your collection
-                  </a>
+                  <a href="/login"> Sign in to add to your collection </a>
                 </div>
-                 <%} %>
+                <%} %>
 
                 <a
                   class="px-2 py-1 hover:bg-button transition-colors"
@@ -290,6 +288,7 @@
     <script src="/functions/swapcolours.js"></script>
     <script src="/functions/addRemoveCards.js"></script>
     <script src="/functions/cardComparisonChecker.js"></script>
+    <!-- Checkbox script -->
     <script>
       window.onload = function () {
         const checkboxes = document.querySelectorAll('input[type="checkbox"]');

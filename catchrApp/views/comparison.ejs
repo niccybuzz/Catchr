@@ -9,51 +9,51 @@
     <!-- Header Bar -->
     <%- include (`partials/nav.ejs`) %>
 
-    
-    <h2 class="text-center text-3xl text-container py-8 col-span-2 font-bold">Compare </h2>
+    <h2 class="text-center text-3xl text-container py-8 col-span-2 font-bold">
+      Compare
+    </h2>
 
     <!-- Main container with card and description -->
-    <div class="grid grid-cols-1 md:grid-cols-2 justify-center justify-items-center md:mx-20 lg:mx-52  gap-20">
+    <div
+      class="grid grid-cols-1 md:grid-cols-2 justify-center justify-items-center md:mx-20 lg:mx-52 gap-20"
+    >
       <% cards.forEach((card) => { %>
 
-        <div
-          class="flex flex-col justify-center items-center bg-canvas bg-opacity-90 text-container rounded-lg"
+      <div
+        class="flex flex-col justify-center items-center bg-canvas bg-opacity-90 text-container rounded-lg"
+      >
+        <!-- Wrapping the whole card a link -->
+        <a
+          href="/cards/<%= card.card_id %>"
+          class="p-4 flex flex-col justify-center items-center hover:scale-105 max-w-96 min-w-72"
         >
-          <!-- Wrapping the whole card a link -->
-          <a
-            href="/cards/<%= card.card_id %>"
-            class="p-4 flex flex-col justify-center items-center hover:scale-105 max-w-96 min-w-72"
+          <!-- Card image -->
+          <img src="<%= card.card_image %>" />
+        </a>
+
+        <!-- Container for brief card details and dropdown -->
+        <div class="flex justify-evenly items-center rounded-lg px-10">
+          <!-- Add to collection button -->
+          <img
+            class="p-2 max-w-10 min-w-10 filter invert"
+            src="<%= card.Rarity.rarity_icon %>"
+          />
+
+          <!-- Card name and card/set number -->
+          <div
+            class="px-2 flex flex-col justify-center items-center text-center"
           >
-            <!-- Card image -->
-            <img src="<%= card.card_image %>" />
-          </a>
-  
-          <!-- Container for brief card details and add button -->
-          <div class="flex justify-evenly items-center rounded-lg px-10">
-            <!-- Add to collection button -->
-            <img
-              class="p-2 max-w-10 min-w-10 filter invert"
-              src="<%= card.Rarity.rarity_icon %>"
-            />
-  
-            <!-- Card name and card/set number -->
-            <div
-              class="px-2 flex flex-col justify-center items-center text-center"
-            >
-              <h2 class="text-lg pt-0 mx-4 text-wrap"><%= card.card_name %></h2>
-  
-              <p class="text-sm">
-                <%=card.card_set_number%>/<%=card.Set.no_of_cards%>
-              </p>
-            </div>
-            
+            <h2 class="text-lg pt-0 mx-4 text-wrap"><%= card.card_name %></h2>
+
+            <p class="text-sm">
+              <%=card.card_set_number%>/<%=card.Set.no_of_cards%>
+            </p>
           </div>
         </div>
-  
-  
-        <% }) %>
-    </div>
+      </div>
 
+      <% }) %>
+    </div>
 
     <!-- Buttons -->
     <div class="flex justify-center mb-12 text-center" id="buttonbox">
@@ -64,7 +64,6 @@
           Back to Cards
         </button>
       </a>
-
     </div>
 
     <%- include (`partials/footer.ejs`) %>

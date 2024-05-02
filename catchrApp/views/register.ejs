@@ -3,13 +3,9 @@
   <head>
     <%- include (`partials/header.ejs`) %>
     <title>Register</title>
-
   </head>
   <body class="box-border bg-canvas h-screen flex flex-col font-kanit">
-    <div>
-      <%- include (`partials/nav.ejs`) %>
-    </div>
-    
+    <div><%- include (`partials/nav.ejs`) %></div>
 
     <!-- Full screen size flexbox -->
     <div class="flex justify-center items-center flex-1">
@@ -22,19 +18,18 @@
           User Registration
         </h2>
         <% if (message) { %>
-          <p class="text-text bg-red-700 py-1 px-4 rounded-lg">
-            <%= message %>
-          </p>
+        <p class="text-text bg-red-700 py-1 px-4 rounded-lg"><%= message %></p>
         <% } %>
-        
 
         <!-- Main form -->
-        <form method="POST" action="/register" class="h-full flex flex-col justify-between w-5/6">
+        <form
+          method="POST"
+          action="/register"
+          class="h-full flex flex-col justify-between w-5/6"
+        >
+        <!-- Username box -->
           <div class="m-4">
-            <!-- Username box -->
-            <label
-              for="username"
-              class="block text-xl font-medium text-white"
+            <label for="username" class="block text-xl font-medium text-white"
               >Username</label
             >
             <input
@@ -61,9 +56,7 @@
 
           <!-- Password box -->
           <div class="m-4">
-            <label
-              for="password"
-              class="block text-xl font-medium text-white"
+            <label for="password" class="block text-xl font-medium text-white"
               >Password</label
             >
             <input
@@ -73,7 +66,7 @@
               required
             />
             <% if (validpassword == false) { %>
-              <p class="text-white font-bold">Passwords do not match.</p>
+            <p class="text-white font-bold">Passwords do not match.</p>
             <% } %>
           </div>
 
@@ -96,20 +89,22 @@
           <div class="h-1/6 m-4 flex justify-center">
             <button
               type="submit"
-              class="px-8 py-4 bg-button hover:bg-white text-container rounded-3xl text-center text-2xl font-bold  hover:transition-colors duration-300"
+              class="px-6 py-1 bg-button hover:bg-white text-container rounded-xl text-center text-lg font-bold hover:transition-colors duration-300"
             >
               Submit
             </button>
           </div>
 
-          <a href="/login" class="text-white text-center underline">Already have an account? Log In</a>
+          <!-- Redirect to login -->
+          <a href="/login" class="text-white text-center underline"
+            >Already have an account? Log In</a
+          >
         </form>
       </div>
     </div>
 
     <%- include (`partials/footer.ejs`) %>
-
-</body>
-<!-- Scripts etc -->
-<%- include (`partials/tailwindConfig.ejs`) %>
+  </body>
+  <!-- Scripts etc -->
+  <%- include (`partials/tailwindConfig.ejs`) %>
 </html>

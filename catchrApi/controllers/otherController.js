@@ -34,40 +34,6 @@ router.get("/sets", cacheChecker, async (req, res) => {
   }
 });
 
-//Posts a new illustrator in the database
-router.post("/illustrators", async (req, res) => {
-  try {
-    const illustrator = req.body.illustrator;
-    const newIllus = await Illustrator.create({
-      illustrator_name: illustrator,
-    });
-
-    console.log("New Illustrator created:", newIllus);
-
-    res.status(201).json("Illustrator created successfully");
-  } catch (err) {
-    console.error("Error creating Illustrator:", err);
-    res.status(500).json("Server error");
-  }
-});
-
-//Posts a new fineprint in the database
-router.post("/fineprints", async (req, res) => {
-  try {
-    const fineprint = req.body.fineprint_text;
-    const newFineprint = await Fineprint.create({
-      fineprint_text: fineprint,
-    });
-
-    console.log("New fineprint created:", newFineprint);
-
-    res.status(201).json("fineprint created successfully");
-  } catch (err) {
-    console.error("Error creating fineprint:", err);
-    res.status(500).json("Server error");
-  }
-});
-
 //Gets all rarities. Has a cache
 router.get("/rarities", cacheChecker, async (req, res) => {
   try {

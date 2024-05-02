@@ -35,14 +35,14 @@
               <!-- Dropdown options -->
               <div
                 id="sort-menu"
-                class="hidden absolute top-12 left-0 z-10 w-48 rounded-md shadow-lg bg-container text-canvas ring-1 ring-black ring-opacity-5"
+                class="hidden  absolute top-12 left-0 z-10 w-48 rounded-md shadow-lg bg-container text-canvas ring-1 ring-black ring-opacity-5"
               >
-                <div class="py-1" role="menu">
+                <div role="menu">
                   <a
                     href=""
                     sort="numLikes"
                     order="desc"
-                    class="block px-4 py-2 text-md hover:bg-gray-100 hover:text-gray-900"
+                    class="block px-4 rounded-lg py-2 text-md hover:bg-button hover:text-gray-900 transition-colors"
                     role="menuitem"
                     >Most Likes</a
                   >
@@ -50,7 +50,7 @@
                     href=""
                     sort="numLikes"
                     order="asc"
-                    class="block px-4 py-2 text-md hover:bg-gray-100 hover:text-gray-900"
+                    class="block px-4 py-2 text-md hover:bg-button hover:text-gray-900 transition-colors"
                     role="menuitem"
                     >Least Likes</a
                   >
@@ -58,7 +58,7 @@
                     href=""
                     sort="numCards"
                     order="desc"
-                    class="block px-4 py-2 text-md hover:bg-gray-100 hover:text-gray-900"
+                    class="block px-4 py-2 text-md hover:bg-button hover:text-gray-900 transition-colors"
                     role="menuitem"
                     >Most Cards</a
                   >
@@ -67,7 +67,7 @@
                     href=""
                     sort="numCards"
                     order="asc"
-                    class="block px-4 py-2 text-md hover:bg-gray-100 hover:text-gray-900"
+                    class="block px-4 py-2 text-md hover:bg-button hover:text-gray-900 transition-colors"
                     role="menuitem"
                     >Least Cards</a
                   >
@@ -103,7 +103,7 @@
             class="text-container text-sm justify-self-end"
             href="/collections/<%=collection.user_id%>"
           >
-            <button class="text-canvas py-1 px-3 bg-button rounded-md">
+            <button class="text-canvas hover:bg-container transition-colors py-1 px-3 bg-button rounded-md">
               Go
             </button>
           </a>

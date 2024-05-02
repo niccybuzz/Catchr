@@ -41,7 +41,7 @@
         >
           <a href="<%= user.authen ?  '/mycollection' : 'register'%>" class="">
             <button
-              class="bg-button hover:bg-button text-container hover:text-container rounded-md md:my-12 mx-4 py-2 px-4 md:px-4 text-center md:text-xl transition-colors font-bold"
+              class="bg-button hover:bg-container text-container hover:text-canvas rounded-md md:my-12 mx-4 py-2 px-4 md:px-4 text-center md:text-xl transition-colors font-bold"
             >
               <%= user.authen ? "My Collection" : "Sign Up" %>
             </button>
@@ -85,7 +85,7 @@
                 </p>
                 <a href="/cards">
                   <button
-                    class="bg-button hover:bg-button text-container hover:text-container transition-colors rounded-md md:m-6 text-center md:text-xl font-bold py-2 px-10"
+                    class="bg-button hover:bg-canvas text-container transition-colors rounded-md md:m-6 text-center md:text-xl font-bold py-2 px-10"
                   >
                     Browse Cards
                   </button>
@@ -120,7 +120,7 @@
                 </p>
                 <a href="/collections/topcollections">
                   <button
-                    class="bg-button hover:bg-button hover:text-container transition-colors rounded-md md:my-6 md:text-xl text-center container font-bold py-2 px-10"
+                    class="bg-button  hover:bg-container text-container hover:text-canvas transition-colors rounded-md md:my-6 md:text-xl text-center font-bold py-2 px-10"
                   >
                     Top Collections
                   </button>
@@ -128,7 +128,7 @@
               </div>
             </div>
 
-            <!-- Rught container cards grid -->
+            <!-- Right container cards grid -->
             <div
               class="mx-4 mt-4 md:w-1/2 w-screen:w-2/3 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 ws:grid-cols-4 gap-6 justify-self-center justify-items-center font-bold place-items-center"
             >
@@ -211,14 +211,14 @@
             <div class="py-6 text-2xl flex justify-center">
               <a href="/register" class="px-4">
                 <button
-                  class="bg-button hover:bg-button transition-colors duration-500 rounded-md py-2 px-6 md:px-8 xl:px-10 text-center md:text-xl text-container hover:text-container font-bold shadow-md"
+                  class="bg-button  hover:bg-canvas transition-colors duration-500 rounded-md py-2 px-6 md:px-8 xl:px-10 text-center md:text-xl text-container font-bold shadow-md"
                 >
                   Sign Up
                 </button>
               </a>
               <a href="/login" class="px-4">
                 <button
-                  class="bg-button hover:bg-button transition-colors duration-500 rounded-md py-2 px-6 md:px-8 xl:px-10 text-center md:text-xl text-container hover:text-container font-bold shadow-md"
+                  class="bg-button  hover:bg-canvas transition-colors duration-500 rounded-md py-2 px-6 md:px-8 xl:px-10 text-center md:text-xl text-container  font-bold shadow-md"
                 >
                   Log In
                 </button>
