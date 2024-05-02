@@ -83,7 +83,7 @@ router.get("/topcollections", async (req, res) => {
 });
 
 // "Likes" a collection
-router.get("/like/:collection_id", async (req, res) => {
+router.get("/like/:collection_id", redirectLogin, async (req, res) => {
   try {
     const user_id = req.session.authen;
     const token = req.session.authToken;
@@ -104,7 +104,7 @@ router.get("/like/:collection_id", async (req, res) => {
     const owner_id = results.data.collection.user_id
     res.redirect(`/collections/${owner_id}`);
   } catch (err) {
-    console.log(err)
+    console.log(err.response.data)
     res.render("error", {error: err, user: req.session})
   }
 });

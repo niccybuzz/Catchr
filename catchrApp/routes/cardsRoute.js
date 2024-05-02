@@ -90,12 +90,12 @@ router.get("/:id", async (req, res) => {
 
       let myCollection = null;
       if (sessionObj.authen) {
-        const myCollectionData = await axios.get(`http://localhost:4000/api/collections/user/${sessionObj.authen}`)
+        const myCollectionData = await axios.get(
+          `http://localhost:4000/api/collections/user/${sessionObj.authen}`
+        );
         myCollection = myCollectionData.data.collection;
-      } 
-           
+      }
 
-      console.log(myCollection)
       res.render("singleCard", {
         card: card,
         user: sessionObj,
@@ -105,7 +105,7 @@ router.get("/:id", async (req, res) => {
   } catch (err) {
     console.log(err.response.data);
     console.log(err);
-    res.render("error", {error: err, user: req.session})
+    res.render("error", { error: err, user: req.session });
   }
 });
 
@@ -128,11 +128,16 @@ router.get("/", async (req, res) => {
 
     //Getting the user's collection, if at all, to enable adding card to my collection
     let mycollection = "placeholder";
+    let mywishlist = "placeholder";
     if (user_id) {
       const collection = await axios.get(
         `http://localhost:4000/api/collections/user/${user_id}`
       );
+      const wishlist = await axios.get(
+        `http://localhost:4000/api/wishlists/user/${user_id}`
+      );
       mycollection = collection.data.collection;
+      mywishlist = wishlist.data;
     }
 
     //Getting all of the sets, rarities and types to populate dropdown menus
@@ -178,7 +183,7 @@ router.get("/", async (req, res) => {
     const cards = result.cards;
     const pagination = result.pagination;
     const filters = result.filters;
-    const numFilters = result.numFilters
+    const numFilters = result.numFilters;
 
     res.render("allcards", {
       cards: cards,
@@ -190,11 +195,12 @@ router.get("/", async (req, res) => {
       sets: sets.data,
       types: types.data,
       collection: mycollection,
+      wishlist: mywishlist
     });
   } catch (err) {
-    console.log(err.response.data);
+
     console.log(err);
-    res.render("error", {error: err, user: req.session})
+    res.render("error", { error: err, user: req.session });
   }
 });
 

@@ -39,11 +39,11 @@
           class="flex justify-center opacity-0 transition-opacity delay-1000 duration-1000"
           id="buttonbox"
         >
-          <a href="/cards" class="">
+          <a href="<%= user.authen ?  '/mycollection' : 'register'%>" class="">
             <button
               class="bg-button hover:bg-button text-container hover:text-container rounded-md md:my-12 mx-4 py-2 px-4 md:px-4 text-center md:text-xl transition-colors font-bold"
             >
-              Browse Cards
+              <%= user.authen ? "My Collection" : "Sign Up" %>
             </button>
           </a>
         </div>

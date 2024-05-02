@@ -173,6 +173,7 @@ async function updateStats(collection_id, collectionToAddTo) {
 router.get("/user/:user_id", async (req, res) => {
   try {
     const user_id = req.params.user_id;
+  
     const foundCollection = await Collection.findOne({
       where: {
         user_id: user_id,
@@ -296,7 +297,6 @@ router.get("/", async (req, res) => {
     const whereClause = {};
 
     //Need to do this or it bugs out
-
     limit = parseInt(limit);
     page = parseInt(page);
     //setting default parameters for pagination if not passed by the user
@@ -349,43 +349,10 @@ router.get("/", async (req, res) => {
   }
 });
 
-//Update collection by collection ID
-router.put("/:id", authenticateJWT, async (req, res) => {
-  try {
-    //Getting collection ID from params and collection name from form input
-    const collection_id = req.params.id;
-    const collection_name = req.body.collection_name;
-
-    //find the collection using sequelize
-    const collectToUpdate = await Collection.findByPk(collection_id);
-    if (!collectToUpdate) {
-      res.status(404).json({
-        message: "Can't find that collection to update",
-      });
-    } else {
-      //Checking user privileges for updating that collection, then updating or rejecting
-      if (req.user.id == collectToUpdate.user_id || req.user.admin) {
-        await collectToUpdate.update({ collection_name: collection_name });
-        await collectToUpdate.reload();
-        res.status(201).json({
-          message: "Collection updated succesfully",
-          updatedCollection: collectToUpdate,
-        });
-      } else {
-        res.status(401).json({
-          message: "You don't have the privileges to update that collection",
-        });
-      }
-    }
-  } catch (err) {
-    res.status(500).json({ message: err.message });
-  }
-});
 
 //Delete a collection
 router.delete("/:id", authenticateJWT, async (req, res) => {
   try {
-    //Find the collection specified in the params
     const collection_id = req.params.id;
     const collectToDelete = await Collection.findByPk(collection_id);
     if (!collectToDelete) {
@@ -393,7 +360,7 @@ router.delete("/:id", authenticateJWT, async (req, res) => {
         message: "Can't find that collection",
       });
     } else {
-      //checking user privileges and either destroying or rejecting request
+      //checking user privileges
       if (req.user.id == collectToDelete.user_id || req.user.admin) {
         await collectToDelete.destroy();
         res.status(201).json({
@@ -407,7 +374,7 @@ router.delete("/:id", authenticateJWT, async (req, res) => {
       }
     }
   } catch (err) {
-    res.status(500).json({ message: err.message });
+    res.status(500).json(err);
   }
 });
 

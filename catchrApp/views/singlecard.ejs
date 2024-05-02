@@ -63,6 +63,9 @@
                 <% for (let i = 0; i< card.ability1cost2; i++) {%>
                 <img class="h-10 py-2 px-1" src="<%= card.ability1icon2%>" />
                 <%} %>
+                <% if (card.Abilities[0].pokemon_power) { %>
+                  <div class="border-2 rounded-lg px-2 border-container text-container font-bold">Pokemon Power</div>
+                <% } %>
               </div>
               <!-- Ability 1 Name -->
               <div class="text-lg"><%= card.Abilities[0].ability_name %></div>
@@ -244,6 +247,7 @@
     <%- include (`partials/footer.ejs`) %>
     <script src="/functions/addRemoveCards.js"></script>
     <script src="/functions/loadCards.js"></script>
+    <script src="/functions/swapcolours.js"></script>
   </body>
   <%- include (`partials/tailwindDark.ejs`) %>
 </html>

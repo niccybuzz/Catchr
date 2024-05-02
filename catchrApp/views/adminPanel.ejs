@@ -21,10 +21,12 @@
         </h1>
 
         <% if (!user.admin) { %>
-        <h1 class="text-xl text-text text-center font-bold m-2">
-          You aren't an admin! But if you log in with the credentials PokeAdmin,
-          password 123 you might be..
+        <h1 class="text-2xl text-text text-center font-bold m-6">
+          You aren't an admin! 
+
         </h1>
+        <h3 class="text-base text-text text-center font-semibold m-2">...But if you log in with the credentials "PokeAdmin",
+          password 123 you might be..</h3>
         <% } else { %>
         <!-- Buttons -->
         <div
@@ -53,7 +55,7 @@
         <% } %>
       </div>
     </div>
-    <script src="/functions/deleteAccount.js"></script>
+    <script src="/functions/deleteAccountAdmin.js"></script>
     <%- include (`partials/footer.ejs`) %>
   </body>
   <!-- Scripts etc -->

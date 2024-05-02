@@ -25,7 +25,7 @@
             <!-- The button which when clicked on will toggle "hidden" for the dropdown options below -->
             <button
               id="sort-button"
-              class="relative inline-flex justify-center items-center text-md px-2 py-1 mx-2 text-canvas rounded-md shadow-sm bg-container hover:bg-button transition-colors focus:outline-none focus:border-button focus:ring"
+              class="relative inline-flex justify-center items-center text-md px-2 py-1 mx-2 text-canvas rounded-md shadow-sm bg-button hover:bg-container transition-colors focus:outline-none focus:border-button focus:ring"
             >
               <img
                 class="w-4 h-4 text-md hover:bg-gray-100 hover:text-canvas"
@@ -83,8 +83,8 @@
         >
           <p>Rank</p>
           <p class="col-span-3">Username</p>
-          <p>Likes</p>
           <p>Cards</p>
+          <p class="text-button">Likes</p>
           <p class="justify-self-end">Profile</p>
         </div>
 
@@ -96,9 +96,9 @@
           <p><%= i %></p>
           <% i++ %>
           <p class="col-span-3"><%=collection.User.username%></p>
-
-          <p><%=collection.numLikes%></p>
           <p><%=collection.numCards%></p>
+          <p class="text-button"><%=collection.numLikes%></p>
+
           <a
             class="text-container text-sm justify-self-end"
             href="/collections/<%=collection.user_id%>"

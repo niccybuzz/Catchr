@@ -2,45 +2,44 @@
 <html lang="en">
   <head>
     <%- include (`partials/header.ejs`) %>
-    <title>Collections</title>
+    <title>Wishlists</title>
   </head>
   <body class="box-border bg-canvas flex flex-col font-kanit min-h-screen">
     <%- include (`partials/nav.ejs`) %>
 
     <!-- Full screen size flexbox -->
     <div class="flex flex-col flex-1 pt-6 p-2 md:pt-0 text-container h-full">
-      
       <!-- Header -->
       <div class="flex items-center justify-center">
         <h2
           class="text-center self-center m-10 text-3xl font-bold bg-container px-4 py-2 rounded-lg text-canvas max-w-[660px]"
         >
-          My Collection
+          My Wishlist
         </h2>
       </div>
 
-      <!-- My Collection -->
-      <div id="my-collection" class="flex flex-col w-full">
+      <!-- My Wishlist -->
+      <div id="my-wishlist" class="flex flex-col w-full">
         <!-- FIrst, checking if the user is logged in -->
         <% if (!user.authen) { %>
 
         <div class="self-center flex text-xl items-center justify-center">
           <p>
             <a href="/login" class="underline text-blue-600">Sign in</a> to view
-            your collection!
+            your wishlist!
           </p>
         </div>
         <!-- If not logged in, show sign in prompt -->
         <% } else { %>
 
-        <!-- Redirecting if collection is empty -->
-        <% if (collection.Cards.length == 0) { %>
+        <!-- Redirecting if wishlist is empty -->
+        <% if (wishlist.Cards.length == 0) { %>
         <div class="flex-grow">
           <div
             class="container mx-auto my-10 flex justify-center items-center h-full"
           >
             <div class="text-center">
-              <p class="text-2xl mb-4">Your collection is empty.</p>
+              <p class="text-2xl mb-4">Your wishlist is empty.</p>
               <img
                 src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/25.png"
                 alt="Pikachu"
@@ -57,41 +56,11 @@
 
         <%} else { %>
 
-        <!--Collection statistics -->
-        <%- include ("partials/statsBar.ejs") %>
-
-        <!-- Box for cards/comments buttons -->
-        <div class="flex justify-start px-4 lg:px-36 ws:px-96">
-          <!-- Cards button -->
-          <button
-            id="cards-button"
-            class="px-2 m-4 relative border-b border-container border-opacity-20 text-container bg-canvas hover:bg-container hover:text-canvas rounded-md transition-colors"
-          >
-            Cards
-          </button>
-
-          <!-- Comments button -->
-          <button
-            id="comments-button"
-            class="px-2 m-4 relative border-b border-container border-opacity-20 text-container bg-canvas hover:bg-container hover:text-canvas rounded-md transition-colors"
-          >
-            Show Comments
-          </button>
-          <a href="/mywishlist">
-            <button
-            
-            class="px-2 m-4 relative border-b border-container border-opacity-20 text-container bg-canvas hover:bg-container hover:text-canvas rounded-md transition-colors"
-          >
-            My Wishlist
-          </button>
-          </a>
-        </div>
-
         <!-- Container for cards and buttons -->
         <div class="flex w-full justify-center items-start">
           <!-- Grid for cards -->
           <div
-            class="grid lg:grid justify-center items-center gap-6 px-4 lg:px-12 ws:px-96 h-full grid-cols-1 md:grid-cols-2 xl:grid-cols-3 lg:w-full"
+            class="grid lg:grid justify-center items-center gap-6 px-4 mb-10 lg:px-12 ws:px-96 h-full grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 lg:w-full"
             id="gridDiv"
           >
             <!-- Iterating through each pokemon (row in data) and creates a card object each -->
@@ -100,19 +69,64 @@
             <div
               class="flex flex-col justify-center items-center bg-canvas text-black text-container rounded-lg"
             >
-            <%- include ("partials/card/cardLink.ejs", {card: card}) %>
+              <%- include ("partials/card/cardLink.ejs", {card: card}) %>
 
-              <!-- Container for brief card details and add button -->
               <div class="flex justify-evenly items-center rounded-lg">
-         
+                <!-- Card name and card/set number -->
 
-                <%- include ("partials/card/cardInfoBox.ejs", {card: card}) %>
+                <h2 class="text-lg mx-4"><%= card.card_name %></h2>
+
+                <div class="relative" id="card-dropdown">
+                  <!-- Button -->
+                  <button
+                    type="button"
+                    id="card-dropdown-button"
+                    cardId="<%=card.card_id%>"
+                    class="text-container flex items-center bg-container rounded-full justify-center text-2xl text-center relative w=full"
+                  >
+                    <img
+                      class="m-1 h-4 w-4"
+                      src="https://cdn-icons-png.freepik.com/512/17/17764.png"
+                    />
+                  </button>
+
+                  <!-- Dropdown options -->
+                  <div
+                    class="absolute bg-container hidden text-canvas text-lg right-0 top-8 rounded-lg w-48 flex-col"
+                    id="<%=card.card_id%>"
+                  >
+                  <!-- Add to collection -->
+                    <div class="px-2 py-1 w-full cursor-pointer">
+                      <a
+                        class="addToCollection"
+                        card="<%=card.card_id%>"
+                        collection="<%=collection.collection_id%>"
+                        >Add To Collection
+                      </a>
+                    </div>
+
+                    <!-- Remove from wishlist -->
+                    <div class="px-2 py-1 cursor-pointer">
+                      <a
+                        class="removeFromWishlist"
+                        card="<%=card.card_id%>"
+                        wishlist="<%=wishlist.wishlist_id%>"
+                      >
+                        Remove from Wishlist
+                      </a>
+                    </div>
+                    <!-- View card details -->
+                    <a class="px-2 py-1" href="/cards/<%=card.card_id%>">
+                      View Details
+                    </a>
+
+                  </div>
+                </div>
               </div>
             </div>
+
             <% }) %>
           </div>
-
-          <%- include("partials/commentsDiv.ejs") %>
         </div>
 
         <%}} %>
@@ -123,7 +137,6 @@
     <div
       id="popup"
       class="fixed hidden flex-col text-canvas text-center max-w-72 z-20 top-1/4 md:top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-container p-6 justify-center items-center shadow-lg rounded-lg"
-    
     >
       <p id="popupMessage" class="text-lg mb-4"></p>
       <button
@@ -140,6 +153,7 @@
     <script src="/functions/commentsButtonsToggle.js"></script>
     <script src="/functions/addRemoveComments.js"></script>
     <script src="/functions/swapcolours.js"></script>
+    <script src="/functions/cardDropdown.js"></script>
   </body>
   <!-- Scripts etc -->
   <%- include (`partials/tailwindDark.ejs`) %>
