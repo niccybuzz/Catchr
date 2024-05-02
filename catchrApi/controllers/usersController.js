@@ -6,6 +6,7 @@ const authenticateJWT = require("../auth/authenticateJWT");
 
 const User = require("../models/User");
 const Collection = require("../models/Collection");
+const Wishlist = require("../models/Wishlist");
 const Comment = require("../models/Comment");
 const Like = require("../models/Like");
 const { Op } = require("sequelize");
@@ -86,11 +87,12 @@ router.post("/register", async (req, res) => {
         password: hashedPassword,
       });
 
-      console.log(newUser);
-
       const newCollection = await Collection.create({
         user_id: newUser.user_id,
       });
+      const newWishlist = await Wishlist.create({
+        user_id: newUser.user_id
+      })
 
       res.status(201).json(newUser);
     }
@@ -115,7 +117,6 @@ router.post("/login", async (req, res) => {
       res.status(404).json("No user with that username or email address found");
     } else {
       //otherwise, compare entered password against stored password
-
       const hashedPassword = user.password;
       const passwordsMatch = await bcrypt.compare(password, hashedPassword);
 
@@ -128,6 +129,7 @@ router.post("/login", async (req, res) => {
         //sign the token with JWT using the payload created
         const token = jwt.sign(payload, "pokemonKey", { expiresIn: "1h" });
 
+        console.log(user.user_id)
         //message to confirm admin status
         let message = "User credentials all valid. Logged in as basic user.";
         if (user.admin) {
@@ -149,57 +151,52 @@ router.post("/login", async (req, res) => {
 });
 
 // Update a single user
-router.put("/details", authenticateJWT, async (req, res) => {
+router.put("/", authenticateJWT, async (req, res) => {
   try {
     //retrieve the user id and fields to be changed from the params and body
-    const { new_username, new_email, admin, password } = req.body;
-    const user_id = req.user.id;
+    const { new_username, new_email, admin, password, user_id } = req.body;
     //first, authenticate whether the user is updating their own profile OR the user is an admin
-
-    // Making sure that the user has entered information to update in at least 1 field
-    if (new_username || new_email || admin) {
-      //find the user profile to update
-      const userToUpdate = await User.findByPk(user_id);
-      let updateClause = {};
-      if (new_username) {
-        updateClause.username = new_username;
-      }
-      if (new_email) {
-        updateClause.email_address = new_email;
-      }
-      if (admin) {
-        updateClause.admin = admin;
-      }
-      console.log(updateClause);
-
-      if (!userToUpdate) {
-        res.status(404).json("No user with that user ID found");
+    if (user_id == req.user.id || req.user.admin) {
+      // Making sure that the user has entered information to update in at least 1 field
+      if (!new_username && !new_email && !admin) {
+        // catching the issue if no fields were entered
+        res.status(400).json("Please enter at least 1 field to update");
       } else {
-        // Check password
-        const storedPassword = userToUpdate.password;
+        //find the user profile to update
+        const userToUpdate = await User.findByPk(user_id);
 
-        const passwordsMatch = await bcrypt.compare(password, storedPassword);
-        if (passwordsMatch) {
-          //update the user's inputted data with Sequelize
-          await userToUpdate.update(updateClause);
-          console.log("Success");
-          //reload to see changes and send 200 status
-          await userToUpdate.reload();
-
-          res.status(200).json({
-            message: "User updated",
-            updatedUser: userToUpdate,
-          });
+        if (!userToUpdate) {
+          res.status(404).json("No user with that user ID found");
         } else {
-          console.log("Wrong password");
-          res.status(400).json("Wrong Password");
+          let updateClause = {};
+          if (new_username) {
+            updateClause.username = new_username;
+          }
+          if (new_email) {
+            updateClause.email_address = new_email;
+          }
+          if (admin) {
+            updateClause.admin = admin;
+          }
+          // Check password
+          const storedPassword = userToUpdate.password;
+
+          const passwordsMatch = await bcrypt.compare(password, storedPassword);
+          if (passwordsMatch) {
+            //update the user's inputted data with Sequelize
+            await userToUpdate.update(updateClause);
+            //reload to see changes and send 200 status
+            await userToUpdate.reload();
+
+            res.status(200).json(userToUpdate);
+          } else {
+            console.log("Wrong password");
+            res.status(400).json("Wrong Password");
+          }
         }
       }
     } else {
-      // catching the issue if no fields were entered
-      res.status(400).json({
-        message: "Please enter at least 1 field to update",
-      });
+      res.status(401).json("Not authorized to update that collection");
     }
   } catch (err) {
     // Any other errors
@@ -245,9 +242,9 @@ router.put("/password", authenticateJWT, async (req, res) => {
   }
 });
 
-router.delete("/:userid", authenticateJWT, async (req, res) => {
+router.delete("/:user_id", authenticateJWT, async (req, res) => {
   try {
-    const userid = req.params.userid;
+    const userid = req.params.user_id;
     if (req.user.id == userid || req.user.admin) {
       const userToDelete = await User.findByPk(userid);
       if (!userToDelete) {
@@ -266,20 +263,25 @@ router.delete("/:userid", authenticateJWT, async (req, res) => {
         });
         const likesToDelete = await Like.findAll({
           where: {
+            user_id: userid,
+          },
+        });
+        const commentsOnCollection = await Comment.findAll({
+          where: {
+            collection_id: collectionToDelete.collection_id,
+          },
+        });
+        const likesOnCollection = await Like.findAll({
+          where: {
+            collection_id: collectionToDelete.collection_id,
+          },
+        });
+        const wishlistToDelete = await Wishlist.findOne({
+          where: {
             user_id: userid
           }
         })
-        const commentsOnCollection = await Comment.findAll({
-          where: {
-            collection_id: collectionToDelete.collection_id
-          }
-        })
-        const likesOnCollection = await Like.findAll({
-          where: {
-            collection_id : collectionToDelete.collection_id
-          }
-        })
-      
+
         //Cant use forEach here because requires async
         for (const comment of commentsToDelete) {
           await comment.destroy();
@@ -289,17 +291,18 @@ router.delete("/:userid", authenticateJWT, async (req, res) => {
         }
         for (const like of likesToDelete) {
           await like.destroy();
-        }  
+        }
         for (const like of likesOnCollection) {
           await like.destroy();
-        }            
+        }
         await collectionToDelete.destroy();
+        await wishlistToDelete.destroy();
         await userToDelete.destroy();
-        
+        console.log("deleted")
         res.status(200).json("Account deleted succesfully");
       }
     } else {
-      res.status(401).json("Not authorised to delete this account",);
+      res.status(401).json("Not authorised to delete this account");
     }
   } catch (err) {
     res.status(500).json(`Internal server error: ${err}`);

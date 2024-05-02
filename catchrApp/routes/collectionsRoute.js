@@ -15,10 +15,6 @@ router.post("/comment/:collectionid", async (req, res) => {
     const token = sessionObj.authToken;
     const { comment } = req.body;
     const user_id = sessionObj.authen;
-
-    console.log(collection_id)
-    console.log(comment)
-    console.log(user_id)
     const endp = `http://localhost:4000/api/comments`;
     const postComment = {
       collection_id: collection_id,
@@ -35,6 +31,8 @@ router.post("/comment/:collectionid", async (req, res) => {
     const results = await axios.post(endp, postComment, config);
     const owner_id = results.data.owner_id
 
+    console.log(owner_id)
+
     res.redirect(`/collections/${owner_id}`);
   } catch (err) {
     res.render("error", {error: err, user: req.session})
@@ -47,9 +45,14 @@ router.delete("/comment/delete/:id", async (req, res) => {
     const sessionObj = req.session;
     const token = sessionObj.authToken;
     const comment_id = req.params.id;
+    const config = {
+      headers:{
+        "Authorization": `Bearer: ${token}`
+      }
+    }
     
     const endp = `http://localhost:4000/api/comments/${comment_id}`;
-    const result = await axios.delete(endp);
+    const result = await axios.delete(endp, config);
     res.status(200).json("Comment deleted");
   } catch (err) {
     console.log(err);
@@ -57,16 +60,15 @@ router.delete("/comment/delete/:id", async (req, res) => {
   }
 });
 
-
-
 //Gets a list of top 10 user collections by likes
 router.get("/topcollections", async (req, res) => {
   try {
     let sortBy = req.query.sortBy || "numLikes" ;
     let sortOrder = req.query.sortOrder || "desc";
+    let limit = req.query.limit || 20
     let page = req.query.page;
     const topCollectionsData = await axios.get(
-      `http://localhost:4000/api/collections/?sortBy=${sortBy}&sortOrder=${sortOrder}&page=${page}`
+      `http://localhost:4000/api/collections/?sortBy=${sortBy}&sortOrder=${sortOrder}&page=${page}&limit=${limit}`
     );
     const collections = topCollectionsData.data.collections;
     let pagination = topCollectionsData.data.paginations

@@ -22,6 +22,7 @@
           Update Your Details
         </h1>
 
+        <!-- Update details form -->
         <form
           method="POST"
           action="/myaccount/updatedetails"
@@ -54,14 +55,13 @@
           <% } %>
           <button
             type="submit"
-            class="bg-button text-container w-full hover:bg-white transition-colors duration-500 rounded-lg py-2 px-4 my-2 font-bold"
+            class="bg-button text-canvas hover:text-container w-full hover:bg-white transition-colors duration-500 rounded-lg py-2 px-4 my-2 font-bold"
           >
             Update
           </button>
         </form>
 
-
-
+        <!-- Message displayed if successful -->
         <%} else { %>
         <div class="flex flex-col text-text justify-evenly items-center">
           <H1 class="text-3xl text-center font-bold">

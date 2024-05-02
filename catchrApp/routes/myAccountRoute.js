@@ -8,8 +8,9 @@ router.delete("/delete", redirectLogin, async (req, res)=> {
   try{
     const user_id = req.session.authen
     const token = req.session.authToken
-    console.log(token)
-    const endp = `http://localhost:4000/api/users/delete/${user_id}`
+
+    const endp = `http://localhost:4000/api/users/${user_id}`
+
     const config = {
       headers: {
         "Content-Type": "application/x-www-form-urlencoded",
@@ -20,7 +21,6 @@ router.delete("/delete", redirectLogin, async (req, res)=> {
     req.session.destroy();
     res.status(200).json(deletedAccount.data)
   } catch (err) {
-    console.log(err.response.data)
     res.render("error", {error: err, user: req.session})
   }
 })
@@ -47,10 +47,10 @@ router.post("/updatedetails", redirectLogin, async (req, res) => {
         "Authorization": `Bearer ${token}`
       },
     };
-    const endp = `http://localhost:4000/api/users/details`;
+    const endp = `http://localhost:4000/api/users/`;
     const results = await axios.put(endp, newDetails, config);
     if (results) {
-      let updatedDetails = results.data.updatedUser
+      let updatedDetails = results.data
       sessionObj.user = updatedDetails.user;
       sessionObj.authen = updatedDetails.user_id;
       sessionObj.admin = updatedDetails.admin;
@@ -59,8 +59,8 @@ router.post("/updatedetails", redirectLogin, async (req, res) => {
       res.render("updateDetails", {updated:true, user: sessionObj})
     }
   } catch (err) {
-    console.log("Error updating details: " + err.data)
-    res.render("updateDetails", {updated:false, user: req.session})
+    console.log("Error updating details: " + err)
+    res.render("updateDetails", {updated:false, user: req.session, message: err.response.data})
   }
 });
 

@@ -82,7 +82,7 @@
                     type="button"
                     id="card-dropdown-button"
                     cardId="<%=card.card_id%>"
-                    class="text-container flex items-center bg-container rounded-full justify-center text-2xl text-center relative w=full"
+                    class="text-container flex items-center bg-container hover:bg-button transition-colors rounded-full justify-center text-2xl text-center relative w=full"
                   >
                     <img
                       class="m-1 h-4 w-4"
@@ -95,8 +95,8 @@
                     class="absolute bg-container hidden text-canvas text-lg right-0 top-8 rounded-lg w-48 flex-col"
                     id="<%=card.card_id%>"
                   >
-                  <!-- Add to collection -->
-                    <div class="px-2 py-1 w-full cursor-pointer">
+                    <!-- Add to collection -->
+                    <div class="px-2 py-1 w-full cursor-pointer hover:bg-button hover:text-container transition-colors">
                       <a
                         class="addToCollection"
                         card="<%=card.card_id%>"
@@ -106,7 +106,7 @@
                     </div>
 
                     <!-- Remove from wishlist -->
-                    <div class="px-2 py-1 cursor-pointer">
+                    <div class="px-2 py-1 cursor-pointer hover:bg-button hover:text-container transition-colors">
                       <a
                         class="removeFromWishlist"
                         card="<%=card.card_id%>"
@@ -116,10 +116,9 @@
                       </a>
                     </div>
                     <!-- View card details -->
-                    <a class="px-2 py-1" href="/cards/<%=card.card_id%>">
+                    <a class="px-2 py-1 hover:bg-button hover:text-container transition-colors" href="/cards/<%=card.card_id%>">
                       View Details
                     </a>
-
                   </div>
                 </div>
               </div>

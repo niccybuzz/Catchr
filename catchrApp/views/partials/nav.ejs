@@ -2,16 +2,14 @@
 <% include (`header.ejs`) %>
 <nav class="flex justify-between items-center">
   <!-- Icon -->
-  <div id="nav-icon" class="w-1/3 flex justify-start items-start filter invert text-container">
-    <a href="/" class="w-10 m-2">
-      <img  src="/images/siteIcons/pokeballIcon.png" class="h-full" />
+  <div id="nav-icon" class="w-1/3 flex justify-start items-start  text-container">
+    <a href="/" class="w-10 m-2 ">
+      <img  src="/images/siteIcons/pokeballIcon.png" class="h-full filter invert">
     </a>
     <% if (user.authen) { %>
       <div class="mx-2 text-center self-center hidden md:block md:text-sm lg:text-base">Welcome, <%=user.username%></div>
     <% } %>
   </div>
-
-
 
   <!-- Header -->
   <div class="w-1/3 flex justify-center items-center">
@@ -30,23 +28,24 @@
     <div class="hidden md:flex justify-end items-center">
       <a
         href="/cards"
-        class="py-1 px-4 mx-2 min-w-24 md:hidden lg:block hover:bg-button hover:text-canvas transition-colors rounded-lg text-center font-kanit"
+        class="py-1 px-4 mx-2 min-w-24 md:hidden lg:block hover:bg-button hover:text-container transition-colors rounded-lg text-center font-kanit"
       >
         Cards
       </a>
       <a
         href="<%= user.authen ? '/mycollection' : '/login' %>"
-        class="px-2 mx-2 min-w-24 md:hidden xl:block hover:bg-button hover:text-canvas transition-colors rounded-lg text-center font-kanit"
+        class="px-2 mx-2 min-w-24 md:hidden xl:block hover:bg-button hover:text-container transition-colors rounded-lg text-center font-kanit"
       >
         <%= user.authen ? "My Collection" : "Log In" %>
       </a>
       <a
         href="<%= user.authen ? '/collections/topcollections' : '/register' %>"
-        class="py-1 px-4 mx-2 min-w-24 md:hidden lg:block hover:bg-button hover:text-canvas transition-colors rounded-lg text-center font-kanit"
+        class="py-1 px-4 mx-2 min-w-24 md:hidden lg:block hover:bg-button hover:text-container transition-colors rounded-lg text-center font-kanit"
       >
         <%= user.authen ? "Top Collections" : "Sign Up" %>
       </a>
     </div>
+
     <!-- The button which when clicked on will toggle "hidden" for the dropdown options below -->
     <button
       id="menu-button"
@@ -58,6 +57,7 @@
       />
     </button>
 
+    <!-- Dropdown menu options -->
     <%- include("mainMenuOptions.ejs") %>
   </div>
 </nav>

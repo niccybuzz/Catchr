@@ -42,6 +42,7 @@ router.get("/", cacheChecker, async (req, res) => {
     // creating filtering and sorting clauses
     const whereClause = {};
     if (card_name) {
+      //This checks for any username containing the searched string, not a perfect match
       whereClause.card_name = { [Op.like]: `%${card_name}%` };
     }
     if (set_id) {
@@ -136,9 +137,8 @@ router.get("/", cacheChecker, async (req, res) => {
  * Get a single card by ID. returns a more detailed list of attributes and abilities
  */ 
 router.get("/:card_id", async (req, res) => {
-  let card_id = req.params.card_id;
-
   try {
+    let card_id = req.params.card_id;
     let card = await Card.findByPk(card_id, {
       attributes: [
         "card_id",

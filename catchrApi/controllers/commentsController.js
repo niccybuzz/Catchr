@@ -6,15 +6,21 @@ const authenticateJWT = require("../auth/authenticateJWT");
 
 const router = express.Router();
 
-router.delete("/:comment_id", async (req, res) => {
+router.delete("/:comment_id", authenticateJWT, async (req, res) => {
   try {
     const comment_id = req.params.comment_id;
     const comment = await Comment.findByPk(comment_id);
     if (!comment) {
       res.status(404).json("Can't find that comment");
     } else {
-      await comment.destroy();
-      res.status(200).json("Comment deleted");
+      if (req.user.id == comment.user_id || req.user.admin) {
+        await comment.destroy();
+        res.status(200).json("Comment deleted");
+      } else {
+        res
+          .status(500)
+          .json("You don't have authorization to delete that comment");
+      }
     }
   } catch (err) {
     res.status(500).json("Server Error" + err);
@@ -93,7 +99,7 @@ router.get("/", async (req, res) => {
       include: [
         {
           model: User,
-          
+
           attributes: ["username", "user_id"],
         },
         {
@@ -116,20 +122,18 @@ router.get("/", async (req, res) => {
 });
 
 //Posts a new comment
-router.post("/", async (req, res) => {
+router.post("/", authenticateJWT, async (req, res) => {
   try {
     const { collection_id, comment_body, user_id } = req.body;
-    console.log(collection_id);
-    console.log(comment_body);
-    console.log(user_id);
+
+    console.log(req.body)
     const newComment = await Comment.create({
       user_id: user_id,
       collection_id: collection_id,
       comment_body: comment_body,
     });
     const collectionOwner = await Collection.findByPk(collection_id);
-    console.log(collectionOwner);
-    owner_id = collectionOwner.user_id;
+    let owner_id = collectionOwner.user_id;
     res.status(200).json({
       newComment: newComment,
       owner_id: owner_id,

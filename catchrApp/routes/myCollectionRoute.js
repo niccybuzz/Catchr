@@ -11,8 +11,6 @@ const redirectLogin = require("../middleware/redirectLogin");
 router.get("/add", async (req, res) => {
   try {
     const { collection, card } = req.query;
-    console.log(collection)
-    console.log(card)
     const token = req.session.authToken;
     const endp = `http://localhost:4000/api/collections/card`;
     const body = {
@@ -91,10 +89,6 @@ router.get("/", redirectLogin, async (req, res) => {
       );
       
       mycollection = myCollecResults.data.collection;
-
-      
-     
-
       mywishlist = myWishlistResults.data;
       mystats = myCollecResults.data.stats;
       cards = mycollection.Cards;
@@ -127,5 +121,18 @@ router.get("/", redirectLogin, async (req, res) => {
     res.render("error", { error: err, user: req.session });
   }
 });
+
+/**
+ * Function for marking all the comments posted by the user, allowing them to delete their comments
+ * @returns marked comments
+ */
+async function markMyComments(comments, user_id) {
+  comments.forEach((comment) => {
+    if (comment.user_id == user_id) {
+      comment.isMine = true;
+    }
+  });
+  return comments;
+}
 
 module.exports = router;

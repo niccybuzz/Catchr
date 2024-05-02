@@ -11,12 +11,16 @@
     <div
       class="flex flex-col items-center justify-center flex-1 overflow-y-auto"
     >
-    <h1 class="text-black font-eightbit text-xxxxl"><%=error.response.status%></h1>
-    <h2 class="text-black text-2xl"><%=error.response.data%></h1>
-    <a href="/cards" class="shrink">
-        <button class="px-2 py-1 bg-button rounded-lg m-10 text-2xl">Home</button>
-    </a>
-</div>
+      <h1 class="text-black font-eightbit text-xxxxl">
+        <%=error.response.status%>
+      </h1>
+      <h2 class="text-black text-2xl"><%=error.response.data%></h2>
+      <a href="/cards" class="shrink">
+        <button class="px-2 py-1 bg-button rounded-lg m-10 text-2xl">
+          Home
+        </button>
+      </a>
+    </div>
 
     <%- include (`partials/footer.ejs`) %>
   </body>

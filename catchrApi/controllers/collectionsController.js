@@ -8,14 +8,11 @@ const Set = require("../models/Set");
 const Rarity = require("../models/Rarity");
 const CardCollections = require("../models/many-to-many-files/CardCollection");
 const authenticateJWT = require("../auth/authenticateJWT");
-const { Op, where } = require("sequelize");
-const cache = require("../cache/cache");
-const cacheChecker = require("../cache/cacheChecker");
 
 const router = express.Router();
 
 //Remove a card from a collection
-router.delete("/card", async (req, res) => {
+router.delete("/card", authenticateJWT, async (req, res) => {
   try {
     //Getting the specific card and collection to be modified
     const { card_id, collection_id } = req.body;
@@ -30,49 +27,57 @@ router.delete("/card", async (req, res) => {
       if (!collectionToRemoveFrom) {
         res.status(400).json("Cant find that collection");
       } else {
-        // check the user privileges
-
-        //Make sure that the card is actually in the collection. If it is, find the count
-        const isInThatCollection = await collectionToRemoveFrom.hasCard(
-          cardToRemove
-        );
-        if (isInThatCollection) {
-          const cardcollection = await CardCollections.findOne({
-            where: {
-              CardCardId: card_id,
-              CollectionCollectionId: collection_id,
-            },
-          });
-          const numInCollection = cardcollection.numInCollection;
-          if (numInCollection > 1) {
-            await cardcollection.update({
-              numInCollection: numInCollection - 1,
+        if (req.user.id == collectionToRemoveFrom.user_id || req.user.admin) {
+          //Make sure that the card is actually in the collection. If it is, find the count
+          const isInThatCollection = await collectionToRemoveFrom.hasCard(
+            cardToRemove
+          );
+          if (!isInThatCollection) {
+            res.status(400).json({
+              message: "That card isn't in that collection",
             });
-            await cardcollection.reload();
-            res
-              .status(200)
-              .json(
-                "Card removed successfully. You now have " +
-                  cardcollection.numInCollection +
-                  " " +
-                  cardToRemove.card_name +
-                  "s in your collection."
-              );
+            // Remove the card if all criteria are met
           } else {
-            await collectionToRemoveFrom.removeCard(cardToRemove);
-            await cardcollection.destroy();
-            res.status(200).json("Card removed successfully");
+            //Find the entry in the joining table
+            const cardcollection = await CardCollections.findOne({
+              where: {
+                CardCardId: card_id,
+                CollectionCollectionId: collection_id,
+              },
+            });
+            /**
+             * Checking if the number of that card in the collection is greater than 1. 
+             * If so, decrements "numInCollection"
+             * If not, removes the entry from the table
+             */
+            const numInCollection = cardcollection.numInCollection;
+            if (numInCollection > 1) {
+              await cardcollection.update({
+                numInCollection: numInCollection - 1,
+              });
+              await cardcollection.reload();
+              res
+                .status(200)
+                .json(
+                  "Card removed successfully. You now have " +
+                    cardcollection.numInCollection +
+                    " " +
+                    cardToRemove.card_name +
+                    "s in your collection."
+                );
+            } else {
+              await collectionToRemoveFrom.removeCard(cardToRemove);
+              await cardcollection.destroy();
+              res.status(200).json("Card removed successfully");
+            }
           }
-          // Remove the card if all criteria are met
         } else {
-          res.status(400).json({
-            message: "That card isn't in that collection",
-          });
+          res.status(401).json("Not authorized to modify that collection");
         }
       }
     }
   } catch (err) {
-    res.status(500).json({ message: err.message });
+    res.status(500).json("Server error: "+err);
   }
 });
 
@@ -82,6 +87,7 @@ router.post("/card", authenticateJWT, async (req, res) => {
     const { card_id, collection_id } = req.body;
     const cardToAdd = await Card.findByPk(card_id);
 
+    //Making sure the collection and card exist
     if (!cardToAdd) {
       return res.status(404).json("Can't find that card");
     } else {
@@ -92,7 +98,8 @@ router.post("/card", authenticateJWT, async (req, res) => {
 
       // Verifiying the user has access to this collection
       if (req.user.id == collectionToAddTo.user_id || req.user.admin) {
-        //checking if the card already exists in the collection. If so, incrementing the number rather than adding in duplicate data
+        //checking if the card already exists in the collection. 
+        //If so, incrementing the number rather than adding in duplicate data
         const isDuplicate = await collectionToAddTo.hasCard(cardToAdd);
         if (isDuplicate) {
           const cardcollection = await CardCollections.findOne({
@@ -169,11 +176,11 @@ async function updateStats(collection_id, collectionToAddTo) {
   await collectionToAddTo.reload();
 }
 
-//Get single collection by ID
+//Get single collection by ID, complete with a list of cards and statistics
 router.get("/user/:user_id", async (req, res) => {
   try {
     const user_id = req.params.user_id;
-  
+
     const foundCollection = await Collection.findOne({
       where: {
         user_id: user_id,
@@ -276,6 +283,7 @@ router.get("/:collection_id", async (req, res) => {
   }
 });
 
+// Used to determine stats for a set of cards including unique cards, total cards and shinies
 async function getStats(cards) {
   let uniqueCards = Object.keys(cards).length;
   let totalCards = 0;
@@ -348,7 +356,6 @@ router.get("/", async (req, res) => {
     res.status(500).json(err);
   }
 });
-
 
 //Delete a collection
 router.delete("/:id", authenticateJWT, async (req, res) => {
