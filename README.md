@@ -3,7 +3,7 @@
 Catchr is a web application designed for trading card enthusiasts, specifically focusing on Pokémon cards. The app allows users to explore a comprehensive catalogue of cards, create and manage personalized collections, and interact with other users.
 
 <div align="center">
-<img src="screenshots_gifs/intro.gif" alt="Demo of the project" />
+<img src="docs/screenshots_gifs/intro.gif" alt="Demo of the project" />
 </div>
 
 ## Features
@@ -15,7 +15,7 @@ Catchr is a web application designed for trading card enthusiasts, specifically 
 - Responsive UI: Built with modern UX principles for a smooth and engaging experience across devices.
 
 <div align="center">
-<img src="screenshots_gifs/Card details.jpg" width= "800px" alt="Single card details" />
+<img src="docs/screenshots_gifs/Card details.jpg" width= "800px" alt="Single card details" />
 </div>
 
 ## Tech Stack
@@ -28,7 +28,7 @@ Catchr is a web application designed for trading card enthusiasts, specifically 
 - Data Encryption: Secure handling of user data using bcrypt
 
 <div align="center">
-<img src="screenshots_gifs/collection.jpg" width= "800px" alt="Single card details" />
+<img src="docs/screenshots_gifs/collection.jpg" width= "800px" alt="Single card details" />
 </div>
 
 ## Setup Instructions
@@ -57,7 +57,7 @@ Catchr is a web application designed for trading card enthusiasts, specifically 
     http://localhost:3000
 
 <div align="center">
-<img src="screenshots_gifs/myaccount.jpg" width= "800px" alt="Single card details" />
+<img src="docs/screenshots_gifs/myaccount.jpg" width= "800px" alt="Single card details" />
 </div>
 
 ## API Documentation
